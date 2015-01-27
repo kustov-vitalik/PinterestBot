@@ -12,9 +12,11 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import com.age.pinterest.config.PinterestAccount;
+
 public class PinUtils {
-	private static final String PATH_TO_CHROME_DRIVER = "D:\\chromedriver.exe";
-	private static final String PATH_TO_PAHNTOM_DRIVER = "D:\\phantomjs\\phantomjs.exe";
+	private static final String PATH_TO_CHROME_DRIVER = "chrome\\chromedriver.exe";
+	private static final String PATH_TO_PAHNTOM_DRIVER = "phantomjs\\phantomjs.exe";
 	private static final String LOGIN_URL = "https://pinterest.com/login/";
 
 	public static ChromeDriver getChrome() {
@@ -34,17 +36,17 @@ public class PinUtils {
 		return new PhantomJSDriver(caps);
 	}
 
-	public static void login(WebDriver driver, String email, String password) {
+	public static void login(WebDriver driver, PinterestAccount account) {
+		String email = account.getEmail();
+		String password = account.getPassword();
 		System.out.println("Loggin in with user " + email);
 		System.out.println("Password is " + password);
 		try {
 			driver.get(LOGIN_URL);
-			while (driver.findElements(By.name("username_or_email")).size() <= 0) {
-				Thread.sleep(400);
-			}
-			driver.findElement(By.name("username_or_email")).sendKeys(email);
-			driver.findElement(By.name("password")).sendKeys(password);
-			driver.findElement(By.xpath("/html/body/div[1]/div[1]/div[1]/div/div/div/form/div[4]/div/button")).click();
+			PinUtils.waitForWithTimeout(By.name("username_or_email"), driver, 1000 * 20).sendKeys(email);
+			PinUtils.waitForWithTimeout(By.name("password"), driver, 1000 * 20).sendKeys(password);
+			PinUtils.waitForWithTimeout(By.xpath("/html/body/div[1]/div[1]/div[1]/div/div/div/form/div[4]/div/button"), driver, 1000 * 20)
+					.click();
 		} catch (Exception e) {
 			System.out.println("Failed to login");
 			e.printStackTrace();

@@ -22,7 +22,7 @@ public class UnFollowTask extends Task {
 	}
 	public void unfollowAll() throws InterruptedException {
 		WebDriver driver = PinUtils.getPhantomDriver();
-		PinUtils.login(driver, "Linda1234Williams@gmail.com", "iskamparola!");
+		PinUtils.login(driver, null);
 		JavascriptExecutor jse = (JavascriptExecutor) driver;
 		while (true) {
 			driver.get("http://www.pinterest.com/globalamericase/following/");
