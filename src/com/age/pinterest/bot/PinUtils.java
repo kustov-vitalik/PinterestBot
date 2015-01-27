@@ -57,6 +57,24 @@ public class PinUtils {
 		wait.until(ExpectedConditions.elementToBeClickable(by));
 	}
 
+	public static WebElement waitForWithTimeout(By by, WebDriver driver, long timeout) {
+		long now = System.currentTimeMillis();
+		WebElement element = null;
+		while (driver.findElements(by).size() <= 0 && System.currentTimeMillis() - now < timeout) {
+			try {
+				Thread.sleep(500);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		try {
+			element = driver.findElement(by);
+		} catch (Exception e) {
+
+		}
+		return element;
+	}
+
 	public static WebElement waitFor(By by, WebDriver driver) {
 		while (driver.findElements(by).size() <= 0) {
 			try {

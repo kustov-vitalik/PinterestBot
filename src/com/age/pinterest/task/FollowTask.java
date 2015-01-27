@@ -1,57 +1,87 @@
 package com.age.pinterest.task;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
+import com.age.pinterest.bot.FileUtill;
 import com.age.pinterest.bot.PinUtils;
 
 public class FollowTask extends Task {
+	private final WebDriver driver;
+	private final String keyword;
+	Random r = new Random();
 
-	public FollowTask(long interval) {
+	public FollowTask(WebDriver driver, String keyword, long interval) {
 		super(interval);
+		this.driver = driver;
+		this.keyword = keyword;
 	}
 
 	@Override
 	public void execute() {
-		// TODO Auto-generated method stub
-
+		try {
+			followAll(keyword);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
-	public void follow(String email, String password, String keywords) throws InterruptedException {
-		WebDriver driver = PinUtils.getPhantomDriver();
-		PinUtils.login(driver, email, password);
-		List<String> targets = this.buildList(driver, 1000, keywords);
+	private void followAll(String path) throws IOException, InterruptedException {
+		BufferedReader br = new BufferedReader(new FileReader(path));
+		String line;
+		while ((line = br.readLine()) != null) {
+			System.out.println("Now  " + line);
+			driver.navigate().to(line);
+			String btnXpath = "/html/body/div[1]/div[2]/div[1]/div[2]/div[2]/div/div/div[2]/div[1]/div[2]/button[1]";
+			WebElement btn = PinUtils.waitForWithTimeout(By.xpath(btnXpath), driver, 1000 * 15);
+			if (btn == null) {
+				continue;
+			}
+			if (btn.getText().equals("Follow")) {
+				btn.click();
+				System.out.println("Follow  " + line);
+				Thread.sleep(1000 * 10);
+			}
+		}
+		br.close();
+	}
+
+	public void follow() throws InterruptedException {
+		List<String> targets = this.buildList(driver, 1000, keyword);
 		System.out.println("You have  " + targets.size() + "  targets.");
 		for (String userItem : targets) {
 			System.out.println("Now  " + userItem);
 			driver.get(userItem + "/followers");
-			String xpath = "/html/body/div[1]/div[2]/div[1]/div[2]/div[4]/div/div";
-			while (driver.findElements(By.xpath(xpath)).size() <= 0) {
-				Thread.sleep(400);
-			}
 			JavascriptExecutor jse = (JavascriptExecutor) driver;
 			System.out.println("Scrolling");
-			for (int i = 0; i < 30; i++) {
+			for (int i = 0; i < 25; i++) {
 				jse.executeScript("window.scrollBy(0,2000)", "");
 				Thread.sleep(1800);
 			}
 			System.out.println("Scrolled");
 			PinUtils.waitForPage(driver);
 			System.out.println("Page loaded");
-			for (WebElement e : driver.findElement(By.xpath(xpath)).findElements(By.cssSelector("*"))) {
+			String xpath = "/html/body/div[1]/div[2]/div[1]/div[2]/div[4]/div/div";
+			for (WebElement e : PinUtils.waitFor(By.xpath(xpath), driver).findElements(By.tagName("span"))) {
 				try {
 					if (e.getTagName().equals("span") && e.getText().equals("Follow")) {
-						e.click();
-						System.out.println("Folowed");
-						Thread.sleep(5000);
+						WebElement btn = e.findElement(By.xpath(".."));
+						WebElement div = btn.findElement(By.xpath(".."));
+						WebElement a = div.findElement(By.tagName("a"));
+						FileUtill.appendToFile("D://fishesStacey.txt", a.getAttribute("href"));
+						System.out.println(a.getAttribute("href"));
 					}
 				} catch (Exception ex) {
-					System.out.println("Fail");
+					System.out.println("Fail " + ex.getMessage());
 				}
 			}
 			System.out.println("Done for  " + userItem);
@@ -83,6 +113,10 @@ public class FollowTask extends Task {
 		}
 		System.out.println("List ready in  " + count + "  scrolls.");
 		return targets;
+	}
+
+	private void followUser(String url) {
+		driver.get(url);
 	}
 
 }

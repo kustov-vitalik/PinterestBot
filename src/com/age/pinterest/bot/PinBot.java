@@ -5,12 +5,11 @@ import java.util.ArrayList;
 
 import org.openqa.selenium.WebDriver;
 
+import com.age.pinterest.task.FollowTask;
 import com.age.pinterest.task.PinTask;
 import com.age.pinterest.task.Task;
 
 public class PinBot {
-	private static final String BOARDS_URL_FORMAT = "http://www.pinterest.com/%s/%s";
-	private static final String LOGIN_URL = "https://pinterest.com/login/";
 	private ArrayList<Task> tasks = new ArrayList<Task>();
 	private final WebDriver driver;
 
@@ -45,6 +44,12 @@ public class PinBot {
 		}
 
 		tasks.add(new PinTask(driver, boardsLocation, board, city, source, keywords, tag, 10000));
+	}
+
+	public void addFollowTask(String keyword) {
+
+		FollowTask task = new FollowTask(driver, keyword, 5000);
+		this.tasks.add(task);
 	}
 
 	public void start() {
