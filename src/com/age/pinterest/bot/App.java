@@ -14,19 +14,25 @@ import com.age.pinterest.config.PinterestAccount;
 public class App {
 
 	public static void main(String[] args) throws InterruptedException, IOException {
-		// WebDriver driver = PinUtils.getChrome();
-		WebDriver driver = PinUtils.getPhantomDriver();
+		WebDriver driver = PinUtils.getChrome();
+		// WebDriver driver = PinUtils.getPhantomDriver();
 		// PinBot bot = new PinBot(driver, "Stacey123Gray@gmail.com",
 		// "iskamparola1");
 		// bot.addFollowTask("D:\\Stacey.txt");
 		// String path
-		PinBot bot = new PinBot(driver, getAccount("d:\\user.json"));
-		bot.addFollowTask("D:\\Coco.txt");
-		// PinBot bot = new PinBot(driver, "Linda1234Williams@gmail.com",
-		// "iskamparola");
-		// bot.addFollowTask("D:\\Linda.txt");
+		// PinBot bot = new PinBot(driver, getAccount("d:\\user.json"));
+		// bot.addFollowTask("D:\\Coco.txt");
+		PinterestAccount acc = new PinterestAccount();
+		acc.setEmail("Linda1234Williams@gmail.com");
+		acc.setPassword("iskamparola");
+		acc.setUser("linda1234willia");
+		PinBot bot = new PinBot(driver, acc);
+		bot.addFollowTask("D:\\Linda.txt");
 		// bot.addPinTask("D://configCoco.txt");
 		bot.start();
+		// EeryJwelryPin pin = new EeryJwelryPin(driver, "dreamy-jewelry");
+		// pin.generatePin();
+		// pin.startPining();
 	}
 
 	private static PinterestAccount getAccount(String jsonFile) throws JsonParseException, JsonMappingException, IOException {
