@@ -42,7 +42,7 @@ public class UnFollowTask extends Task {
 			String xpath = "/html/body/div[1]/div[2]/div[1]/div[2]/div[4]/div[1]/div/div/a[2]";
 			PinUtils.waitFor(By.xpath(xpath), driver).click();
 			Thread.sleep(2000);
-			for (int i = 0; i < 15; i++) {
+			for (int j = 0; j < 15; j++) {
 				System.out.println("Scroll");
 				jse.executeScript("window.scrollBy(0,2000)", "");
 				Thread.sleep(2000);

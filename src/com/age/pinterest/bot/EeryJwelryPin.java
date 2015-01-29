@@ -36,9 +36,9 @@ public class EeryJwelryPin {
 		ArrayList<String> hrefs = new ArrayList<String>();
 		ArrayList<EeryPin> pins = new ArrayList<EeryPin>();
 		for (int i = 2; true; i++) {
-			driver.get("http://eeryjewelry.com/product-category/necklaces/" + nextPage);
+			driver.get("http://eeryjewelry.com/product-category/rings/" + nextPage);
 			String bodyText = PinUtils.waitFor(By.tagName("body"), driver).getAttribute("class");
-			PinUtils.waitForPage(driver);
+			// PinUtils.waitForPage(driver);
 			if (bodyText.equals("error404")) {
 				break;
 			}
@@ -139,12 +139,13 @@ public class EeryJwelryPin {
 
 			String saveBtnXpath = "html/body/div[8]/div[2]/div/div/div/div/div/form/div[2]/div[2]/button[2]";
 			PinUtils.waitFor(By.xpath(saveBtnXpath), driver).click();
-
-			File f = new File(pathToFile);
-			if (f.exists()) {
-				f.delete();
-			}
-			Thread.sleep(1000*60*30);
+			FileUtill.saveToFile("D:/Stacey/", Long.toString(System.currentTimeMillis()), driver.getCurrentUrl());
+			FileUtill.saveToFile("D:/Linda/", Long.toString(System.currentTimeMillis()), driver.getCurrentUrl());
+//			File f = new File(pathToFile);
+//			if (f.exists()) {
+//				f.delete();
+//			}
+			Thread.sleep(1000 * 60 * 30);
 		}
 
 	}

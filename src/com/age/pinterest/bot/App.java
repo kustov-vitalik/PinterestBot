@@ -10,32 +10,35 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.openqa.selenium.WebDriver;
 
 import com.age.pinterest.config.PinterestAccount;
-import com.age.pinterest.task.UnFollowTask;
+import com.age.pinterest.task.RepinTask;
 
 public class App {
 
 	public static void main(String[] args) throws InterruptedException, IOException {
-//		WebDriver driver = PinUtils.getChrome();
+		WebDriver driver = PinUtils.getChrome();
+
 		// WebDriver driver = PinUtils.getPhantomDriver();
-		// PinBot bot = new PinBot(driver, "Stacey123Gray@gmail.com",
-		// "iskamparola1");
-		// bot.addFollowTask("D:\\Stacey.txt");
-		// String path
-		// PinBot bot = new PinBot(driver, getAccount("d:\\user.json"));
-		// bot.addFollowTask("D:\\Coco.txt");
-		PinterestAccount acc = new PinterestAccount();
-		acc.setEmail("Linda1234Williams@gmail.com");
-		acc.setPassword("iskamparola");
-		acc.setUser("linda1234willia");
-		UnFollowTask utask = new UnFollowTask(1000);
-		utask.execute();
-//		PinBot bot = new PinBot(driver, acc);
+		 PinterestAccount acc = new PinterestAccount();
+		 acc.setEmail("Linda1234Williams@gmail.com");
+		 acc.setPassword("iskamparola");
+		 acc.setUser("linda123williams");
+		 PinUtils.login(driver, acc);
+		 RepinTask repin = new RepinTask("D://Linda", driver, 1000);
+		 repin.execute();
+		// PinterestAccount acc = new PinterestAccount();
+		// acc.setEmail("globalamericaselfdefensejohn@gmail.com");
+		// acc.setPassword("Geni0us!");
+		// acc.setUser("globalamericase");
+
+		// UnFollowTask utask = new UnFollowTask(1000);
+		// utask.execute();
+		// PinBot bot = new PinBot(driver, acc);
 		// bot.addFollowTask("D:\\Linda.txt");
 		// bot.addPinTask("D://configCoco.txt");
-//		bot.start();
-		// EeryJwelryPin pin = new EeryJwelryPin(driver, "dreamy-jewelry");
+		// bot.start();
+//		EeryJwelryPin pin = new EeryJwelryPin(driver, "dreamy-jewelry");
 		// pin.generatePin();
-		// pin.startPining();
+//		pin.startPining();
 	}
 
 	private static PinterestAccount getAccount(String jsonFile) throws JsonParseException, JsonMappingException, IOException {
