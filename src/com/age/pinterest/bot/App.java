@@ -10,11 +10,12 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.openqa.selenium.WebDriver;
 
 import com.age.pinterest.config.PinterestAccount;
+import com.age.pinterest.task.UnFollowTask;
 
 public class App {
 
 	public static void main(String[] args) throws InterruptedException, IOException {
-		WebDriver driver = PinUtils.getChrome();
+//		WebDriver driver = PinUtils.getChrome();
 		// WebDriver driver = PinUtils.getPhantomDriver();
 		// PinBot bot = new PinBot(driver, "Stacey123Gray@gmail.com",
 		// "iskamparola1");
@@ -26,10 +27,12 @@ public class App {
 		acc.setEmail("Linda1234Williams@gmail.com");
 		acc.setPassword("iskamparola");
 		acc.setUser("linda1234willia");
-		PinBot bot = new PinBot(driver, acc);
-		bot.addFollowTask("D:\\Linda.txt");
+		UnFollowTask utask = new UnFollowTask(1000);
+		utask.execute();
+//		PinBot bot = new PinBot(driver, acc);
+		// bot.addFollowTask("D:\\Linda.txt");
 		// bot.addPinTask("D://configCoco.txt");
-		bot.start();
+//		bot.start();
 		// EeryJwelryPin pin = new EeryJwelryPin(driver, "dreamy-jewelry");
 		// pin.generatePin();
 		// pin.startPining();
