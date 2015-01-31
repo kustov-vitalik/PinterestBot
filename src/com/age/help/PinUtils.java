@@ -1,10 +1,11 @@
-package com.age.pinterest.bot;
+package com.age.help;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriverService;
@@ -24,8 +25,21 @@ public class PinUtils {
 		return new ChromeDriver();
 	}
 
+	// public static FirefoxDriver getFirefoxDriver() {
+	// DesiredCapabilities capability = DesiredCapabilities.firefox();
+	// capability.setCapability("binary",
+	// "C:\\Program Files (x86)\\Mozilla Firefox\\firefox.exe");
+	// return new FirefoxDriver(capability);
+	// }
+
 	public static HtmlUnitDriver getHtmlUnit() {
-		return new HtmlUnitDriver();
+		HtmlUnitDriver driver = new HtmlUnitDriver(DesiredCapabilities.firefox());
+		driver.setJavascriptEnabled(true);
+		return driver;
+	}
+
+	public static FirefoxDriver getFirefoxDriver() {
+		return new FirefoxDriver(DesiredCapabilities.firefox());
 	}
 
 	public static PhantomJSDriver getPhantomDriver() {
@@ -47,6 +61,7 @@ public class PinUtils {
 			PinUtils.waitForWithTimeout(By.name("password"), driver, 1000 * 20).sendKeys(password);
 			PinUtils.waitForWithTimeout(By.xpath("/html/body/div[1]/div[1]/div[1]/div/div/div/form/div[4]/div/button"), driver, 1000 * 20)
 					.click();
+			Thread.sleep(3000);
 		} catch (Exception e) {
 			System.out.println("Failed to login");
 			e.printStackTrace();

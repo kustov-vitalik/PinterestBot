@@ -4,71 +4,81 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.openqa.selenium.WebDriver;
 
+import com.age.help.PinGenerator;
+import com.age.help.PinUtils;
 import com.age.pinterest.config.PinterestAccount;
 import com.age.pinterest.task.FollowTask;
 import com.age.pinterest.task.PinTask;
 import com.age.pinterest.task.Task;
+import com.age.pinterest.task.UnFollowTask;
 
 public class PinBot {
-	private static final String ROOT_DIR_FORMAT="D:\\PinBotRoot\\%s";
-	private ArrayList<Task> tasks = new ArrayList<Task>();
-	private final WebDriver driver;
-	private final PinterestAccount account;
+	public static String ROOT_DIR = "D:/PinBot";
 
-	public PinBot(WebDriver driver, PinterestAccount account) {
+	private String userRoot;
+	private final WebDriver driver;
+	private final String user;
+	private ArrayList<Task> tasks = new ArrayList<Task>();
+
+	public PinBot(WebDriver driver, String user) {
 		this.driver = driver;
-		this.account = account;
+		this.user = user;
 		this.setUp();
 	}
 
-	public void addPinTask(String configFile) throws IOException, InterruptedException {
-		String boardsLocation = "";
-		String board = "";
-		String city = "";
-		String tag = "";
-		String source = "";
-		String keywords = "";
-		String configurations = FileUtill.getFileContents(configFile);
-		String[] cfg = configurations.split("\n");
-		for (String s : cfg) {
-			if (s.contains("boardsLocation")) {
-				boardsLocation = s.replace("boardsLocation:", "");
-			} else if (s.contains("board")) {
-				board = s.replace("board:", "");
-			} else if (s.contains("city")) {
-				city = s.replace("city:", "");
-			} else if (s.contains("keywords")) {
-				keywords = s.replace("keywords:", "");
-			} else if (s.contains("tag")) {
-				tag = s.replace("tag:", "");
-			} else if (s.contains("source")) {
-				source = s.replace("source:", "");
-			}
-		}
-
-		tasks.add(new PinTask(driver, boardsLocation, board, city, source, keywords, tag, 10000));
-	}
-
 	private void setUp() {
-		System.out.println("Setting up user  " + account.getEmail());
-		File rootDir=new File(String.format(ROOT_DIR_FORMAT, account.getUser()));
-		rootDir.mkdirs();
-		PinUtils.login(driver, account);
+		try {
+			System.out.println("Setting up user");
+			this.userRoot = ROOT_DIR + "/" + user;
+			File rootDir = new File(userRoot);
+			rootDir.mkdirs();
+			File pinDir = new File(rootDir, "pins");
+			pinDir.mkdir();
+			ObjectMapper mapper = new ObjectMapper();
+			PinterestAccount account = mapper.readValue(new File(userRoot + "/" + "acc.json"), PinterestAccount.class);
+			PinUtils.login(driver, account);
+		} catch (Exception e) {
+			System.out.println("Failed to set up  " + e.getMessage());
+		}
 	}
 
-	public void addFollowTask(String keyword) {
+	public void addFollowTask(String keyword, long interval) {
+		this.tasks.add(new FollowTask(driver, keyword, interval));
+	}
 
-		FollowTask task = new FollowTask(driver, keyword, 5000);
-		this.tasks.add(task);
+	public void addPinTask(String board, long interval) throws IOException, InterruptedException {
+		tasks.add(new PinTask(driver, board, user, interval));
+	}
+
+	public void addUnfollowTask(long interval) {
+		tasks.add(new UnFollowTask(driver, user, interval));
+	}
+
+
+	public void generateAccounts(ArrayList<PinterestAccount> accounts) throws JsonGenerationException, JsonMappingException, IOException {
+		ObjectMapper mapper = new ObjectMapper();
+		for (PinterestAccount acc : accounts) {
+			String dest = PinBot.ROOT_DIR + "/" + acc.getUser();
+			File f = new File(dest);
+			f.mkdirs();
+			dest = dest + "/" + "acc.json";
+
+			mapper.writeValue(new File(dest), acc);
+		}
 	}
 
 	public void start() {
+
 		while (true) {
 			for (Task task : tasks) {
 				task.execute();
 			}
 		}
 	}
+
 }

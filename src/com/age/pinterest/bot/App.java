@@ -2,6 +2,8 @@ package com.age.pinterest.bot;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Scanner;
 
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonParseException;
@@ -9,36 +11,25 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.openqa.selenium.WebDriver;
 
+import com.age.help.FileUtill;
+import com.age.help.PinGenerator;
+import com.age.help.PinUtils;
 import com.age.pinterest.config.PinterestAccount;
-import com.age.pinterest.task.RepinTask;
 
 public class App {
 
 	public static void main(String[] args) throws InterruptedException, IOException {
-		WebDriver driver = PinUtils.getChrome();
+//		if (args.length == 0 || args[0].isEmpty()) {
+//			System.out.println("Invalid user");
+//			return;
+//		}
+//		String user = args[0];
+		WebDriver driver = PinUtils.getFirefoxDriver();
+		PinBot bot = new PinBot(driver, "globalamericase");
+		// bot.addPinTask("jewelry", 1000 * 60);
+		bot.addUnfollowTask(7000);
+		bot.start();
 
-		// WebDriver driver = PinUtils.getPhantomDriver();
-		 PinterestAccount acc = new PinterestAccount();
-		 acc.setEmail("Linda1234Williams@gmail.com");
-		 acc.setPassword("iskamparola");
-		 acc.setUser("linda123williams");
-		 PinUtils.login(driver, acc);
-		 RepinTask repin = new RepinTask("D://Linda", driver, 1000);
-		 repin.execute();
-		// PinterestAccount acc = new PinterestAccount();
-		// acc.setEmail("globalamericaselfdefensejohn@gmail.com");
-		// acc.setPassword("Geni0us!");
-		// acc.setUser("globalamericase");
-
-		// UnFollowTask utask = new UnFollowTask(1000);
-		// utask.execute();
-		// PinBot bot = new PinBot(driver, acc);
-		// bot.addFollowTask("D:\\Linda.txt");
-		// bot.addPinTask("D://configCoco.txt");
-		// bot.start();
-//		EeryJwelryPin pin = new EeryJwelryPin(driver, "dreamy-jewelry");
-		// pin.generatePin();
-//		pin.startPining();
 	}
 
 	private static PinterestAccount getAccount(String jsonFile) throws JsonParseException, JsonMappingException, IOException {
@@ -47,12 +38,23 @@ public class App {
 
 	}
 
-	private static void wirte() throws JsonGenerationException, JsonMappingException, IOException {
-		PinterestAccount account = new PinterestAccount();
-		account.setEmail("email!!!");
-		account.setPassword("pass!!!!!!!!");
-		account.setUser("global");
-		ObjectMapper mapper = new ObjectMapper();
-		mapper.writeValue(new File("d:\\user.json"), account);
+	private static void generatePins() throws JsonGenerationException, JsonMappingException, InterruptedException, IOException {
+		WebDriver driver = PinUtils.getChrome();
+		PinGenerator generator = new PinGenerator();
+		ArrayList<String> categories = new ArrayList<String>();
+		categories.add("necklaces");
+		categories.add("pendants");
+		categories.add("fascinators");
+		categories.add("rings");
+		categories.add("earrings");
+		categories.add("cufflinks");
+		categories.add("bracelets");
+		categories.add("bellychains");
+		categories.add("bangles");
+		categories.add("Anklets");
+		categories.add("amulets");
+		for (String cat : categories) {
+			generator.generatePin(cat);
+		}
 	}
 }

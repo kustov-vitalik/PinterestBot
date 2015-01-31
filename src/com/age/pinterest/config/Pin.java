@@ -1,10 +1,10 @@
 package com.age.pinterest.config;
 
-public class EeryPin {
+public class Pin {
 	private String description;
 	private String source;
-	private String board;
 	private String image;
+	private String user;
 
 	public void setDescription(String description) {
 		this.description = description;
@@ -22,14 +22,6 @@ public class EeryPin {
 		return this.source;
 	}
 
-	public void setBoard(String board) {
-		this.board = board;
-	}
-
-	public String getBoard() {
-		return this.board;
-	}
-
 	public void setImage(String image) {
 		this.image = image;
 	}
@@ -38,9 +30,12 @@ public class EeryPin {
 		return this.image;
 	}
 
-	@Override
-	public String toString() {
-		return this.board + "\n" + this.image + "\n" + this.source + "\n" + this.description + "\n";
+	public void setUser(String user) {
+		this.user = user;
+	}
+
+	public String getUser() {
+		return this.user;
 	}
 
 }

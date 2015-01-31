@@ -12,16 +12,17 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-import com.age.pinterest.bot.FileUtill;
-import com.age.pinterest.bot.PinUtils;
+import com.age.help.FileUtill;
+import com.age.help.PinUtils;
 
 public class FollowTask extends Task {
 	private final WebDriver driver;
 	private final String keyword;
+	private final long interval;
 	Random r = new Random();
 
 	public FollowTask(WebDriver driver, String keyword, long interval) {
-		super(interval);
+		this.interval = interval;
 		this.driver = driver;
 		this.keyword = keyword;
 	}

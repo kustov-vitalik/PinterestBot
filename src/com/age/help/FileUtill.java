@@ -1,4 +1,4 @@
-package com.age.pinterest.bot;
+package com.age.help;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;

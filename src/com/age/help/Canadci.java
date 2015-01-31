@@ -1,4 +1,4 @@
-package com.age.pinterest.bot;
+package com.age.help;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
