@@ -47,8 +47,8 @@ public class PinBot {
 		}
 	}
 
-	public void addFollowTask(String keyword, long interval) {
-		this.tasks.add(new FollowTask(driver, keyword, interval));
+	public void addFollowTask(long interval) {
+		this.tasks.add(new FollowTask(driver, interval));
 	}
 
 	public void addPinTask(String board, long interval) throws IOException, InterruptedException {
@@ -58,7 +58,6 @@ public class PinBot {
 	public void addUnfollowTask(long interval) {
 		tasks.add(new UnFollowTask(driver, user, interval));
 	}
-
 
 	public void generateAccounts(ArrayList<PinterestAccount> accounts) throws JsonGenerationException, JsonMappingException, IOException {
 		ObjectMapper mapper = new ObjectMapper();

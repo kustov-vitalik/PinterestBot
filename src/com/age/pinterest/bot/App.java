@@ -3,7 +3,6 @@ package com.age.pinterest.bot;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Scanner;
 
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonParseException;
@@ -11,7 +10,6 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.openqa.selenium.WebDriver;
 
-import com.age.help.FileUtill;
 import com.age.help.PinGenerator;
 import com.age.help.PinUtils;
 import com.age.pinterest.config.PinterestAccount;
@@ -19,16 +17,19 @@ import com.age.pinterest.config.PinterestAccount;
 public class App {
 
 	public static void main(String[] args) throws InterruptedException, IOException {
-//		if (args.length == 0 || args[0].isEmpty()) {
-//			System.out.println("Invalid user");
-//			return;
-//		}
-//		String user = args[0];
+		// if (args.length == 0 || args[0].isEmpty()) {
+		// System.out.println("Invalid user");
+		// return;
+		// }
+		// String user = args[0];
 		WebDriver driver = PinUtils.getFirefoxDriver();
 		PinBot bot = new PinBot(driver, "globalamericase");
-		// bot.addPinTask("jewelry", 1000 * 60);
-		bot.addUnfollowTask(7000);
+		bot.addFollowTask(10000);
 		bot.start();
+		// PinBot bot = new PinBot(driver, "stacey123gray");
+		// bot.addPinTask("dreamy-jewelry", 1000 * 60 * 45);
+		// bot.addUnfollowTask(9000);
+		// bot.start();
 
 	}
 

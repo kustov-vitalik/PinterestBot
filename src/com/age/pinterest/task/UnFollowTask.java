@@ -26,7 +26,7 @@ public class UnFollowTask extends Task {
 	public void execute() {
 		try {
 			if (trash == null || trash.size() == 0) {
-				trash = this.getTrash(2500, 25);
+				trash = this.getTrash(4000, 25);
 			}
 			if (!this.intervalPassed(interval)) {
 				return;
@@ -77,7 +77,6 @@ public class UnFollowTask extends Task {
 		for (WebElement e : list) {
 			try {
 				if (e.getAttribute("class").equals("Module User gridItem draggable")) {
-					System.out.println("User");
 					PinUtils.waitForPage(driver);
 					WebElement a = e.findElement(By.tagName("a"));
 					WebElement p = a.findElement(By.tagName("p"));
@@ -88,7 +87,9 @@ public class UnFollowTask extends Task {
 					int followersCount = Integer.parseInt(followerString);
 
 					if (followersCount < minFollowers) {
-						junk.add(a.getAttribute("href"));
+						String href = a.getAttribute("href");
+						System.out.println("Adding " + href + " to the list.");
+						junk.add(href);
 					}
 				}
 			} catch (Exception expe) {
