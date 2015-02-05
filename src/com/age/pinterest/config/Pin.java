@@ -4,7 +4,6 @@ public class Pin {
 	private String description;
 	private String source;
 	private String image;
-	private String user;
 
 	public void setDescription(String description) {
 		this.description = description;
@@ -28,14 +27,6 @@ public class Pin {
 
 	public String getImage() {
 		return this.image;
-	}
-
-	public void setUser(String user) {
-		this.user = user;
-	}
-
-	public String getUser() {
-		return this.user;
 	}
 
 }

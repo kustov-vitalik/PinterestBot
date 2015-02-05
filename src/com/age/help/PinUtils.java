@@ -25,13 +25,6 @@ public class PinUtils {
 		return new ChromeDriver();
 	}
 
-	// public static FirefoxDriver getFirefoxDriver() {
-	// DesiredCapabilities capability = DesiredCapabilities.firefox();
-	// capability.setCapability("binary",
-	// "C:\\Program Files (x86)\\Mozilla Firefox\\firefox.exe");
-	// return new FirefoxDriver(capability);
-	// }
-
 	public static HtmlUnitDriver getHtmlUnit() {
 		HtmlUnitDriver driver = new HtmlUnitDriver(DesiredCapabilities.firefox());
 		driver.setJavascriptEnabled(true);
@@ -61,7 +54,7 @@ public class PinUtils {
 			PinUtils.waitForWithTimeout(By.name("password"), driver, 1000 * 20).sendKeys(password);
 			PinUtils.waitForWithTimeout(By.xpath("/html/body/div[1]/div[1]/div[1]/div/div/div/form/div[4]/div/button"), driver, 1000 * 20)
 					.click();
-			Thread.sleep(3000);
+			Thread.sleep(4000);
 		} catch (Exception e) {
 			System.out.println("Failed to login");
 			e.printStackTrace();

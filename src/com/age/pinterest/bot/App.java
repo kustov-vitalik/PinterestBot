@@ -9,27 +9,35 @@ import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 
+import com.age.help.ImageScraper;
 import com.age.help.PinGenerator;
 import com.age.help.PinUtils;
 import com.age.pinterest.config.PinterestAccount;
 
 public class App {
+	private static final String COCO = "globalamericase";
+	private static final String LINDA = "linda1234willia";
+	private static final String STACEY = "stacey123gray";
+	private static final String COCO_BOARD = "dreamy-jewelry";
+	private static final String LINDA_BOARD = "jewelry";
+	private static final String STACEY_BOARD = "jewelry-that-i-would-like-to-wear";
 
 	public static void main(String[] args) throws InterruptedException, IOException {
-		// if (args.length == 0 || args[0].isEmpty()) {
-		// System.out.println("Invalid user");
-		// return;
-		// }
-		// String user = args[0];
 		WebDriver driver = PinUtils.getFirefoxDriver();
-		PinBot bot = new PinBot(driver, "globalamericase");
-		bot.addFollowTask(10000);
-		bot.start();
+		// ImageScraper scrapper = new ImageScraper(driver, "wheat", "grass");
+		// scrapper.scan();
+		// PinGenerator gen = new PinGenerator();
+		// gen.generatePin("amulets");
+		PinBot bot = new PinBot(driver, STACEY);
+		// bot.addPinTask(COCO_BOARD, 1000 * 60 * 75);
+		// bot.addFollowTask(15000);
+		// bot.start();
 		// PinBot bot = new PinBot(driver, "stacey123gray");
 		// bot.addPinTask("dreamy-jewelry", 1000 * 60 * 45);
-		// bot.addUnfollowTask(9000);
-		// bot.start();
+		bot.addUnfollowTask(12000);
+		bot.start();
 
 	}
 
@@ -40,20 +48,9 @@ public class App {
 	}
 
 	private static void generatePins() throws JsonGenerationException, JsonMappingException, InterruptedException, IOException {
-		WebDriver driver = PinUtils.getChrome();
 		PinGenerator generator = new PinGenerator();
 		ArrayList<String> categories = new ArrayList<String>();
-		categories.add("necklaces");
-		categories.add("pendants");
-		categories.add("fascinators");
-		categories.add("rings");
-		categories.add("earrings");
-		categories.add("cufflinks");
-		categories.add("bracelets");
-		categories.add("bellychains");
-		categories.add("bangles");
-		categories.add("Anklets");
-		categories.add("amulets");
+		categories.add("valentines-day-offers");
 		for (String cat : categories) {
 			generator.generatePin(cat);
 		}

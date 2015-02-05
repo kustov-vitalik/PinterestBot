@@ -26,7 +26,7 @@ public class UnFollowTask extends Task {
 	public void execute() {
 		try {
 			if (trash == null || trash.size() == 0) {
-				trash = this.getTrash(4000, 25);
+				trash = this.getTrash(4400, 20);
 			}
 			if (!this.intervalPassed(interval)) {
 				return;
@@ -69,6 +69,7 @@ public class UnFollowTask extends Task {
 			jse.executeScript("window.scrollBy(0,4000)", "");
 			Thread.sleep(2000);
 		}
+		Thread.sleep(1000 * 10);
 		String rootCss = "body > div.App.full.AppBase.Module > div.appContent > div.mainContainer > div.UserProfilePage.Module > div.UserProfileContent.ajax.Module > div.Module.Grid > div";
 		WebElement divRoot = PinUtils.waitFor(By.cssSelector(rootCss), driver);
 		List<WebElement> list = divRoot.findElements(By.tagName("div"));
