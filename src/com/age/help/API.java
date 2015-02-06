@@ -3,7 +3,6 @@ package com.age.help;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -27,76 +26,95 @@ public class API {
 	private static final String pass = "iskamparola";
 
 	@SuppressWarnings("unchecked")
-	public static void main(String[] args) throws IOException, JSONException {
-		// WebDriver driver = PinUtils.getPhantomDriver();
-		// PinterestAccount acc = new PinterestAccount();
-		// acc.setEmail(email);
-		// acc.setPassword(pass);
-		// PinUtils.login(driver, acc);
-		// String cookieList =
-		// API.buildCookieString(driver.manage().getCookies());
-		// driver.quit();
+	public static void main(String[] args) throws IOException, JSONException, InterruptedException {
+		WebDriver driver = PinUtils.getPhantomDriver();
+		PinterestAccount acc = new PinterestAccount();
+		acc.setEmail(email);
+		acc.setPassword(pass);
+		PinUtils.login(driver, acc);
+		String cookieList = API.buildCookieString(driver.manage().getCookies());
+		driver.quit();
+		long first = 1423250578945l;
+		String bookmark = "PyExMnxjZTU0MTkzYTA2OGNhYjVjMWRlMTE4MzkxMmYxYzMyYzBjNzQzZDlmZjQxNjkxZjc1YWMzYzZjNDRkZjJhMjA3";
+		while (true) {
+			String url = "https://www.pinterest.com/resource/UserFollowersResource/get/?source_url=%2Flinda1234willia%2Ffollowers%2F&data=%7B%22options%22%3A%7B%22username%22%3A%22linda1234willia%22%2C%22bookmarks%22%3A%5B%22"
+					+ bookmark
+					+ "%22%5D%7D%2C%22context%22%3A%7B%7D%7D&module_path=App()%3EUserProfilePage(resource%3DUserResource(username%3Dlinda1234willia))%3EUserInfoBar(tab%3Dfollowers%2C+spinner%3D%5Bobject+Object%5D%2C+resource%3DUserResource(username%3Dlinda1234willia%2C+invite_code%3Dnull))&_="
+					+ Long.toString(first);
 
-		String base = "https://www.pinterest.com/resource/UserFollowingResource/get/?source_url=";
-		// String res =
-		// "%2Flinda1234willia%2Ffollowing%2F&data=%7B%22options%22%3A%7B%22username%22%3A%22linda1234willia%22%7D%2C%22context%22%3A%7B%7D%2C%22module%22%3A%7B%22name%22%3A%22Grid%22%2C%22options%22%3A%7B%22scrollable%22%3Atrue%2C%22show_grid_footer%22%3Afalse%2C%22centered%22%3Atrue%2C%22reflow_all%22%3Atrue%2C%22virtualize%22%3Afalse%2C%22item_options%22%3A%7B%7D%2C%22layout%22%3A%22fixed_height%22%7D%7D%2C%22render_type%22%3A1%2C%22error_strategy%22%3A0%7D&module_path=App()%3EUserProfilePage(resource%3DUserResource(username%3Dlinda1234willia))%3EUserProfileContent(resource%3DUserResource(username%3Dlinda1234willia))%3EFollowingSwitcher()%3EButton(class_name%3DnavScopeBtn%2C+text%3DPinners%2C+element_type%3Da%2C+rounded%3Dfalse)&_=1423166393196";
-		String res = "/resource/UserFollowingResource/get/?source_url=%2Fglobalamericase%2Ffollowing%2F&data=%7B%22options%22%3A%7B%22username%22%3A%22globalamericase%22%2C%22bookmarks%22%3A%5B%22Pz8xNjA1OTA3MTQuNzdfLTF8YjJkMTU1N2JhNGZmNjJhM2I0YzZjOWQzNzQ2ODVmMWFkYzc3NjhmNmI2MGIwZjVkOTJhNmQyNGZiNzZjMzIzZQ%3D%3D%22%5D%7D%2C%22context%22%3A%7B%7D%2C%22module%22%3A%7B%22name%22%3A%22GridItems%22%2C%22options%22%3A%7B%22scrollable%22%3Atrue%2C%22show_grid_footer%22%3Afalse%2C%22centered%22%3Atrue%2C%22reflow_all%22%3Atrue%2C%22virtualize%22%3Atrue%2C%22layout%22%3A%22fixed_height%22%7D%7D%2C%22render_type%22%3A3%2C%22error_strategy%22%3A1%7D&_=1423235876713";
-		res = "/resource/UserFollowingResource/get/?source_url=%2Fglobalamericase%2Ffollowing%2F&data=%7B%22options%22%3A%7B%22username%22%3A%22globalamericase%22%2C%22bookmarks%22%3A%5B%22Pz8xNjA1ODYxODUuODczXy0xfDRhNmRhOTNkMzZiYzNkYWExZTJiMTc3YTdkZGE2NmMxOTYyYjY2MWM3NTNhMTY3NDYwYjMxYmFmM2UwNWZkZWU%3D%22%5D%7D%2C%22context%22%3A%7B%7D%2C%22module%22%3A%7B%22name%22%3A%22GridItems%22%2C%22options%22%3A%7B%22scrollable%22%3Atrue%2C%22show_grid_footer%22%3Afalse%2C%22centered%22%3Atrue%2C%22reflow_all%22%3Atrue%2C%22virtualize%22%3Atrue%2C%22layout%22%3A%22fixed_height%22%7D%7D%2C%22render_type%22%3A3%2C%22error_strategy%22%3A1%7D&_=1423236389455";
+			HttpGet httpget = new HttpGet(url);
+			httpget.setHeader("User-Agent", USER_AGENT);
+			httpget.setHeader("X-NEW-APP", "1");
+			httpget.setHeader("Referer", "https://www.pinterest.com");
+			httpget.setHeader("Accept-Language", "en-gb,en;q=0.5");
+			httpget.setHeader("X-Requested-With", "XMLHttpRequest");
+			httpget.setHeader("X-APP-VERSION", "d79f67c");
+			httpget.setHeader("Cookie", cookieList);
+			httpget.setHeader("Accept-Encoding", "gzip, deflate");
+			httpget.setHeader("Host", "www.pinterest.com");
 
-		String result = java.net.URLDecoder.decode(res, "UTF-8");
-		System.out.println(result);
+			CloseableHttpClient httpclient = HttpClients.createDefault();
+			CloseableHttpResponse response = httpclient.execute(httpget);
+			InputStream instream = response.getEntity().getContent();
+			StringWriter writer = new StringWriter();
 
-		// String url = base + res;
-		// HttpGet httpget = new HttpGet(url);
-		// httpget.setHeader("User-Agent", USER_AGENT);
-		// httpget.setHeader("X-NEW-APP", "1");
-		// httpget.setHeader("Referer",
-		// "http://www.pinterest.com/linda1234willia/following/");
-		// httpget.setHeader("Accept-Language", "en-gb,en;q=0.5");
-		// httpget.setHeader("X-Requested-With", "XMLHttpRequest");
-		// httpget.setHeader("X-APP-VERSION", "d79f67c");
-		// httpget.setHeader("Cookie", cookieList);
-		// httpget.setHeader("Accept-Encoding", "gzip, deflate");
-		// httpget.setHeader("Host", "www.pinterest.com");
-		//
-		// CloseableHttpClient httpclient = HttpClients.createDefault();
-		// CloseableHttpResponse response = httpclient.execute(httpget);
-		// InputStream instream = response.getEntity().getContent();
-		// StringWriter writer = new StringWriter();
-		//
-		// IOUtils.copy(instream, writer, "utf-8");
-		// String theString = writer.toString();
-		//
-		// JSONObject jsonObject = new JSONObject(theString);
-		// JSONObject module = jsonObject.getJSONObject("module");
-		// JSONObject tree = module.getJSONObject("tree");
-		// JSONArray data = tree.getJSONArray("data");
-		// for (int i = 1; i < data.length(); i++) {
-		// JSONObject user = data.getJSONObject(i);
-		// System.out.println(user.get("username"));
-		// // Iterator<String> iter = user.keys();
-		// // System.out.println("========================");
-		// // while (iter.hasNext()) {
-		// // System.out.print(iter.next() + "   ");
-		// // }
-		// // System.out.println("========================");
-		// }
-		//
-		// }
+			IOUtils.copy(instream, writer, "utf-8");
+			String theString = writer.toString();
 
-		// JSONObject myResponse =
-		// jsonObject.getJSONObject("resource_data_cache");
-		// myResponse.
-		// JSONArray ls = (JSONArray) myResponse.get("data");
-		// for (int i = 0; i < ls.length(); i++) {
-		// System.out.println(ls.get(i));
-		// }
+			JSONObject jsonObject = new JSONObject(theString);
+			printKeys(jsonObject);
+			JSONObject resource = jsonObject.getJSONObject("resource");
+			JSONObject options = resource.getJSONObject("options");
+			printKeys(options);
+			JSONArray markArr = options.getJSONArray("bookmarks");
+			bookmark = markArr.getString(0);
+			System.out.println(bookmark);
+
+			JSONObject resp = jsonObject.getJSONObject("resource_response");
+			printKeys(resp);
+			JSONArray arr = resp.getJSONArray("data");
+			for (int i = 1; i < arr.length(); i++) {
+				try {
+					JSONObject cObject = arr.getJSONObject(i);
+					FileUtill.appendToFile("D:\\acc.txt", cObject.get("username").toString());
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			first++;
+			// JSONArray cache = jsonObject.getJSONArray("resource_data_cache");
+			// for (int i = 0; i < cache.length(); i++) {
+			// System.out.println(i);
+			// System.out.println(cache.get(i));
+			// }
+			// JSONObject tree = module.getJSONObject("tree");
+			// JSONArray data = cache.getJSONArray("data");
+			// for (int i = 1; i < data.length(); i++) {
+			// JSONObject user = data.getJSONObject(i);
+			// System.out.println(user.get("username"));
+			// Iterator<String> iter = user.keys();
+			// System.out.println("========================");
+			// while (iter.hasNext()) {
+			// System.out.print(iter.next() + "   ");
+			// }
+			// System.out.println("========================");
+		}
+	}
+
+	private static void printKeys(JSONObject obj) {
+		Iterator<String> iter = obj.keys();
+		while (iter.hasNext()) {
+			System.out.print(iter.next() + "   ");
+		}
+		System.out.println();
 	}
 
 	private static String buildCookieString(Set<Cookie> set) {
 		String cookieList = "";
 		for (Cookie cookie : set) {
-			cookieList = cookieList + cookie.getName() + "=" + cookie.getValue() + "; ";
+			if (cookie.getName().equals("csrftoken") || cookie.getName().equals("_pinterest_sess")) {
+				cookieList = cookieList + cookie.getName() + "=" + cookie.getValue() + "; ";
+			}
 		}
 		return cookieList;
 	}
