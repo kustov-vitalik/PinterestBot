@@ -22,7 +22,9 @@ public class PinUtils {
 
 	public static ChromeDriver getChrome() {
 		System.setProperty("webdriver.chrome.driver", PATH_TO_CHROME_DRIVER);
-		return new ChromeDriver();
+		ChromeDriver chrome = new ChromeDriver();
+		chrome.get("https://pinterest.com/");
+		return chrome;
 	}
 
 	public static HtmlUnitDriver getHtmlUnit() {
@@ -54,7 +56,6 @@ public class PinUtils {
 			PinUtils.waitForWithTimeout(By.name("password"), driver, 1000 * 20).sendKeys(password);
 			PinUtils.waitForWithTimeout(By.xpath("/html/body/div[1]/div[1]/div[1]/div/div/div/form/div[4]/div/button"), driver, 1000 * 20)
 					.click();
-			Thread.sleep(4000);
 		} catch (Exception e) {
 			System.out.println("Failed to login");
 			e.printStackTrace();

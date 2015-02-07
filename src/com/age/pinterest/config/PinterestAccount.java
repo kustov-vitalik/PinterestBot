@@ -4,6 +4,7 @@ public class PinterestAccount {
 	private String email;
 	private String password;
 	private String user;
+	private String sslToken;
 
 	public void setEmail(String email) {
 		this.email = email;
@@ -27,5 +28,13 @@ public class PinterestAccount {
 
 	public String getUser() {
 		return this.user;
+	}
+
+	public String getSslToken() {
+		return this.sslToken;
+	}
+
+	public void setSslToken(String sslToken) {
+		this.sslToken = sslToken;
 	}
 }

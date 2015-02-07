@@ -8,10 +8,9 @@ import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.json.JSONException;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 
-import com.age.help.ImageScraper;
 import com.age.help.PinGenerator;
 import com.age.help.PinUtils;
 import com.age.pinterest.config.PinterestAccount;
@@ -24,20 +23,25 @@ public class App {
 	private static final String LINDA_BOARD = "jewelry";
 	private static final String STACEY_BOARD = "jewelry-that-i-would-like-to-wear";
 
-	public static void main(String[] args) throws InterruptedException, IOException {
-		WebDriver driver = PinUtils.getFirefoxDriver();
+	public static void main(String[] args) throws InterruptedException, IOException, JSONException {
+		// PinterestAccount acc =
+		// getAccount("D:\\PinBot\\globalamericase\\acc.json");
+		WebDriver driver = PinUtils.getChrome();
 		// ImageScraper scrapper = new ImageScraper(driver, "wheat", "grass");
 		// scrapper.scan();
 		// PinGenerator gen = new PinGenerator();
 		// gen.generatePin("amulets");
-		PinBot bot = new PinBot(driver, STACEY);
+		PinBot bot = new PinBot(driver, LINDA);
+		// bot.addUnfollowTask(10000, 5000);
+		bot.addFollowTask(10000, "jewelry", 5000);
+		bot.start();
 		// bot.addPinTask(COCO_BOARD, 1000 * 60 * 75);
 		// bot.addFollowTask(15000);
 		// bot.start();
 		// PinBot bot = new PinBot(driver, "stacey123gray");
 		// bot.addPinTask("dreamy-jewelry", 1000 * 60 * 45);
-		bot.addUnfollowTask(12000);
-		bot.start();
+		// Zbot.addUnfollowTask(12000);
+		// Cbot.start();
 
 	}
 

@@ -13,21 +13,17 @@ import com.age.help.PinUtils;
 public class UnFollowTask extends Task {
 	private final long interval;
 	private final WebDriver driver;
-	private final String user;
-	private ArrayList<String> trash = new ArrayList<String>();
+	private final ArrayList<String> trash;
 
-	public UnFollowTask(WebDriver driver, String user, long interval) {
+	public UnFollowTask(WebDriver driver, long interval, ArrayList<String> trash) {
 		this.interval = interval;
 		this.driver = driver;
-		this.user = user;
+		this.trash = trash;
 	}
 
 	@Override
 	public void execute() {
 		try {
-			if (trash == null || trash.size() == 0) {
-				trash = this.getTrash(4400, 20);
-			}
 			if (!this.intervalPassed(interval)) {
 				return;
 			}
@@ -56,48 +52,4 @@ public class UnFollowTask extends Task {
 
 	}
 
-	private ArrayList<String> getTrash(int minFollowers, int depth) throws InterruptedException {
-		JavascriptExecutor jse = (JavascriptExecutor) driver;
-		driver.get("http://www.pinterest.com/" + user + "/following/");
-
-		PinUtils.waitForPage(driver);
-		String xpath = "/html/body/div[1]/div[2]/div[1]/div[2]/div[4]/div[1]/div/div/a[2]";
-		PinUtils.waitFor(By.xpath(xpath), driver).click();
-		Thread.sleep(2000);
-		for (int j = 0; j < depth; j++) {
-			System.out.println("Scroll  " + j);
-			jse.executeScript("window.scrollBy(0,4000)", "");
-			Thread.sleep(2000);
-		}
-		Thread.sleep(1000 * 10);
-		String rootCss = "body > div.App.full.AppBase.Module > div.appContent > div.mainContainer > div.UserProfilePage.Module > div.UserProfileContent.ajax.Module > div.Module.Grid > div";
-		WebElement divRoot = PinUtils.waitFor(By.cssSelector(rootCss), driver);
-		List<WebElement> list = divRoot.findElements(By.tagName("div"));
-		System.out.println("Scaning  " + list.size());
-		ArrayList<String> junk = new ArrayList<String>();
-		for (WebElement e : list) {
-			try {
-				if (e.getAttribute("class").equals("Module User gridItem draggable")) {
-					PinUtils.waitForPage(driver);
-					WebElement a = e.findElement(By.tagName("a"));
-					WebElement p = a.findElement(By.tagName("p"));
-					List<WebElement> spans = p.findElements(By.tagName("span"));
-
-					PinUtils.waitForPage(driver);
-					String followerString = spans.get(2).getText();
-					int followersCount = Integer.parseInt(followerString);
-
-					if (followersCount < minFollowers) {
-						String href = a.getAttribute("href");
-						System.out.println("Adding " + href + " to the list.");
-						junk.add(href);
-					}
-				}
-			} catch (Exception expe) {
-				System.out.println("Failed to get user href  " + expe.getMessage());
-			}
-		}
-		return junk;
-
-	}
 }
