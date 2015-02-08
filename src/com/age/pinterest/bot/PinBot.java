@@ -13,6 +13,7 @@ import org.json.JSONException;
 import org.openqa.selenium.WebDriver;
 
 import com.age.data.Pinner;
+import com.age.help.FileUtill;
 import com.age.pinterest.api.Manager;
 import com.age.pinterest.config.PinterestAccount;
 import com.age.pinterest.task.FollowTask;
@@ -37,12 +38,13 @@ public class PinBot {
 
 	private void setUp() {
 		try {
-			System.out.println("Setting up user");
-			this.userRoot = ROOT_DIR + "/" + user;
+			System.out.println("Setting up user  " + user);
+			this.userRoot = ROOT_DIR + "/Users/" + user;
 			File rootDir = new File(userRoot);
 			rootDir.mkdirs();
 			File pinDir = new File(rootDir, "pins");
 			pinDir.mkdir();
+			System.out.println(userRoot);
 			ObjectMapper mapper = new ObjectMapper();
 			PinterestAccount account = mapper.readValue(new File(userRoot + "/" + "acc.json"), PinterestAccount.class);
 			manager = new Manager(account, driver);
@@ -51,8 +53,19 @@ public class PinBot {
 		}
 	}
 
+	public static void addAccount(PinterestAccount acc) throws JsonGenerationException, JsonMappingException, IOException {
+		System.out.println("Setting up user " + acc.getUser());
+		String root = ROOT_DIR + "/Users/" + acc.getUser();
+		File rootDir = new File(root);
+		rootDir.mkdirs();
+		File pinDir = new File(rootDir, "pins");
+		pinDir.mkdir();
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.writeValue(new File(rootDir, "acc.json"), acc);
+	}
+
 	public void addFollowTask(long interval, String keyword, int count) throws ClientProtocolException, IOException, JSONException {
-		this.tasks.add(new FollowTask(driver, interval, getTargets(keyword, count)));
+		this.tasks.add(new FollowTask(driver, interval, user, getTargets(keyword, count)));
 	}
 
 	public void addPinTask(String board, long interval) throws IOException, InterruptedException {
@@ -61,6 +74,10 @@ public class PinBot {
 
 	public void addUnfollowTask(long interval, int minFollower) throws IOException, JSONException, InterruptedException {
 		tasks.add(new UnFollowTask(driver, interval, getTrash(minFollower)));
+	}
+
+	public void buildHistory() throws ClientProtocolException, IOException, JSONException {
+		manager.buildFollowHistory();
 	}
 
 	public void generateAccounts(ArrayList<PinterestAccount> accounts) throws JsonGenerationException, JsonMappingException, IOException {
@@ -93,6 +110,16 @@ public class PinBot {
 		}
 		return list;
 
+	}
+
+	public static List<String> listAccount() {
+		String root = ROOT_DIR + "/Users";
+		File f = new File(root);
+		ArrayList<String> fileNames = new ArrayList<String>();
+		for (File file : f.listFiles()) {
+			fileNames.add(file.getName());
+		}
+		return fileNames;
 	}
 
 	private ArrayList<String> getTargets(String keyword, int count) throws ClientProtocolException, IOException, JSONException {

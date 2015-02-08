@@ -127,7 +127,7 @@ public class PinTask extends Task {
 	private void setUpPins() {
 		ObjectMapper mapper = new ObjectMapper();
 		try {
-			String pinsLocation = PinBot.ROOT_DIR + "/" + user + "/" + "pins";
+			String pinsLocation = PinBot.ROOT_DIR + "/Users/" + user + "/" + "pins";
 			for (String pinFile : FileUtill.getAllFiles(pinsLocation)) {
 				Pin pin = mapper.readValue(new File(pinFile), Pin.class);
 				pins.add(pin);

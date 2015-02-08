@@ -1,19 +1,11 @@
 package com.age.pinterest.bot;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.json.JSONException;
 import org.openqa.selenium.WebDriver;
 
-import com.age.help.PinGenerator;
 import com.age.help.PinUtils;
-import com.age.pinterest.config.PinterestAccount;
 
 public class App {
 	private static final String COCO = "globalamericase";
@@ -24,39 +16,20 @@ public class App {
 	private static final String STACEY_BOARD = "jewelry-that-i-would-like-to-wear";
 
 	public static void main(String[] args) throws InterruptedException, IOException, JSONException {
-		// PinterestAccount acc =
-		// getAccount("D:\\PinBot\\globalamericase\\acc.json");
 		WebDriver driver = PinUtils.getChrome();
-		// ImageScraper scrapper = new ImageScraper(driver, "wheat", "grass");
-		// scrapper.scan();
-		// PinGenerator gen = new PinGenerator();
-		// gen.generatePin("amulets");
-		PinBot bot = new PinBot(driver, LINDA);
-		// bot.addUnfollowTask(10000, 5000);
-		bot.addFollowTask(10000, "jewelry", 5000);
+		PinBot bot = new PinBot(driver, STACEY);
+		bot.addPinTask(STACEY_BOARD, 1000 * 60 * 40);
 		bot.start();
-		// bot.addPinTask(COCO_BOARD, 1000 * 60 * 75);
-		// bot.addFollowTask(15000);
-		// bot.start();
-		// PinBot bot = new PinBot(driver, "stacey123gray");
-		// bot.addPinTask("dreamy-jewelry", 1000 * 60 * 45);
-		// Zbot.addUnfollowTask(12000);
-		// Cbot.start();
+		// PinGenerator gen = new PinGenerator();
+		// gen.generatePin("bracelets");
+		// gen.generatePin("bellychains");
+		// gen.generatePin("bangles");
+		// gen.generatePin("Anklets");
+		// gen.generatePin("amulets");
+		// gen.generatePin("pendants");
+		// gen.generatePin("rings");
+		// gen.generatePin("earrings");
 
 	}
 
-	private static PinterestAccount getAccount(String jsonFile) throws JsonParseException, JsonMappingException, IOException {
-		ObjectMapper mapper = new ObjectMapper();
-		return mapper.readValue(new File(jsonFile), PinterestAccount.class);
-
-	}
-
-	private static void generatePins() throws JsonGenerationException, JsonMappingException, InterruptedException, IOException {
-		PinGenerator generator = new PinGenerator();
-		ArrayList<String> categories = new ArrayList<String>();
-		categories.add("valentines-day-offers");
-		for (String cat : categories) {
-			generator.generatePin(cat);
-		}
-	}
 }

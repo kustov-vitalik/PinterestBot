@@ -6,6 +6,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriverService;
@@ -22,7 +23,11 @@ public class PinUtils {
 
 	public static ChromeDriver getChrome() {
 		System.setProperty("webdriver.chrome.driver", PATH_TO_CHROME_DRIVER);
-		ChromeDriver chrome = new ChromeDriver();
+		DesiredCapabilities cap = DesiredCapabilities.chrome();
+		cap.setCapability("permissions.default.stylesheet", "2");
+		cap.setCapability("permissions.default.image", "2");
+		cap.setCapability("dom.ipc.plugins.enabled.libflashplayer.so", "false");
+		ChromeDriver chrome = new ChromeDriver(cap);
 		chrome.get("https://pinterest.com/");
 		return chrome;
 	}
@@ -34,7 +39,12 @@ public class PinUtils {
 	}
 
 	public static FirefoxDriver getFirefoxDriver() {
-		return new FirefoxDriver(DesiredCapabilities.firefox());
+		FirefoxProfile profile = new FirefoxProfile();
+		profile.setPreference("permissions.default.stylesheet", "2");
+		profile.setPreference("permissions.default.image", "2");
+		FirefoxDriver driver = new FirefoxDriver(profile);
+		driver.get("https://pinterest.com/");
+		return driver;
 	}
 
 	public static PhantomJSDriver getPhantomDriver() {
@@ -54,8 +64,7 @@ public class PinUtils {
 			driver.get(LOGIN_URL);
 			PinUtils.waitForWithTimeout(By.name("username_or_email"), driver, 1000 * 20).sendKeys(email);
 			PinUtils.waitForWithTimeout(By.name("password"), driver, 1000 * 20).sendKeys(password);
-			PinUtils.waitForWithTimeout(By.xpath("/html/body/div[1]/div[1]/div[1]/div/div/div/form/div[4]/div/button"), driver, 1000 * 20)
-					.click();
+			PinUtils.waitForWithTimeout(By.xpath("/html/body/div[1]/div[1]/div[1]/div/div/div/form/div[4]/div/button"), driver, 1000 * 20).click();
 		} catch (Exception e) {
 			System.out.println("Failed to login");
 			e.printStackTrace();

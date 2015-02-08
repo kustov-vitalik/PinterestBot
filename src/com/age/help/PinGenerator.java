@@ -46,9 +46,9 @@ public class PinGenerator {
 				driver.navigate().to(href);
 				PinUtils.waitForPage(driver);
 				String imgXpath = "#kd_image_large_gallery > div.owl-wrapper-outer > div > div:nth-child(1) > div";
-				WebElement pic = PinUtils.waitFor(By.cssSelector(imgXpath), driver);
+				WebElement pic = PinUtils.waitForWithTimeout(By.cssSelector(imgXpath), driver, 1000 * 5);
 				String image = pic.findElement(By.tagName("a")).getAttribute("href");
-				WebElement descrDiv = PinUtils.waitFor(By.id("tab-description"), driver);
+				WebElement descrDiv = PinUtils.waitForWithTimeout(By.id("tab-description"), driver, 1000 * 5);
 				String descr = descrDiv.findElement(By.tagName("p")).getText();
 
 				Pin pin = new Pin();
@@ -69,4 +69,27 @@ public class PinGenerator {
 			mapper.writeValue(new File(path), pins.get(i));
 		}
 	}
+
+	public void test() {
+		String href = "http://eeryjewelry.com/product/towall-womens-gold-belly-chain-sexy-bikini-body-chain-infinity-belly-chain/";
+		System.out.println("Now  " + href);
+		try {
+			driver.navigate().to(href);
+			PinUtils.waitForPage(driver);
+			String imgXpath = "#kd_image_large_gallery > div.owl-wrapper-outer > div > div:nth-child(1) > div";
+			WebElement pic = PinUtils.waitForWithTimeout(By.cssSelector(imgXpath), driver, 1000 * 5);
+			String image = pic.findElement(By.tagName("a")).getAttribute("href");
+			WebElement descrDiv = PinUtils.waitForWithTimeout(By.id("tab-description"), driver, 1000 * 5);
+			String descr = descrDiv.findElement(By.tagName("p")).getText();
+
+			Pin pin = new Pin();
+			pin.setDescription(descr);
+			pin.setSource(href);
+			pin.setImage(image);
+			System.out.println(pin);
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+	}
+
 }

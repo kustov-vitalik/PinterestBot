@@ -73,3 +73,9 @@ Temporary Items
 *.gen
 *.zip
 .metadata/.mylyn/.taskListIndex/segments_1
+phantomjs/ChangeLog
+*.coffee
+*.js
+*.BSD
+*.md
+*.txt

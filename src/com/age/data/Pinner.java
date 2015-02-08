@@ -6,7 +6,6 @@ public class Pinner {
 	private String id;
 	private int pins;
 	private String fullName;
-	private boolean followed;
 
 	public String getUsername() {
 		return this.username;
@@ -42,14 +41,6 @@ public class Pinner {
 
 	public void setFullName(String fullName) {
 		this.fullName = fullName;
-	}
-
-	public void setFollowed(boolean followed) {
-		this.followed = followed;
-	}
-
-	public boolean getFollowed() {
-		return this.followed;
 	}
 
 	@Override

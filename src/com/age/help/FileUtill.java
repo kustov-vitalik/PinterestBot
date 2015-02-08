@@ -33,6 +33,7 @@ public class FileUtill {
 	}
 
 	public static void appendToFile(String file, String content) throws IOException {
+
 		FileWriter fw = new FileWriter(file, true);
 		fw.write(content + "\n");
 		fw.close();
@@ -65,7 +66,7 @@ public class FileUtill {
 
 	public static void stripDuplicatesFromFile(String filename) throws IOException {
 		BufferedReader reader = new BufferedReader(new FileReader(filename));
-		Set<String> lines = new HashSet<String>(50000); 
+		Set<String> lines = new HashSet<String>(50000);
 		String line;
 		while ((line = reader.readLine()) != null) {
 			lines.add(line);
