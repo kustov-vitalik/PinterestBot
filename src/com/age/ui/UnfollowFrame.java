@@ -70,13 +70,12 @@ public class UnfollowFrame extends JFrame implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("start")) {
-			WebDriver driver = PinUtils.getChrome();
-			PinBot bot = new PinBot(driver, (String) users.getSelectedItem());
+			String username=(String) users.getSelectedItem();
+			PinBot bot = new PinBot(username);
 			long time = Long.parseLong(interval.getText());
 			int min = Integer.parseInt(minFollowers.getText());
 			try {
 				bot.addUnfollowTask(time, min);
-				bot.start();
 			} catch (IOException | JSONException | InterruptedException e1) {
 				e1.printStackTrace();
 			}

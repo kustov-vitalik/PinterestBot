@@ -78,14 +78,13 @@ public class FollowFrame extends JFrame implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("start")) {
-			WebDriver driver = PinUtils.getChrome();
-			PinBot bot = new PinBot(driver, (String) users.getSelectedItem());
+			String username = (String) users.getSelectedItem();
+			PinBot bot = new PinBot(username);
 			long time = Long.parseLong(interval.getText());
 			int count = Integer.parseInt(num.getText());
 			String word = keyword.getText();
 			try {
-				bot.addFollowTask(time, word, count);
-				bot.start();
+				bot.addFollowTask(username, word, count, time);
 			} catch (IOException | JSONException e1) {
 				e1.printStackTrace();
 			}

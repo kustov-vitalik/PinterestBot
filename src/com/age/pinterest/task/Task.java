@@ -1,9 +1,7 @@
 package com.age.pinterest.task;
 
-public abstract class Task {
+public abstract class Task implements Runnable {
 	private long lastTimeOut = System.currentTimeMillis();
-
-	public abstract void execute();
 
 	protected boolean intervalPassed(long interval) {
 		if (System.currentTimeMillis() - lastTimeOut > interval) {

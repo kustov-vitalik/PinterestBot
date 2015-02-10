@@ -19,7 +19,6 @@ public class UnFollowTask extends Task {
 		this.trash = trash;
 	}
 
-	@Override
 	public void execute() {
 		try {
 			if (!this.intervalPassed(interval)) {
@@ -48,6 +47,12 @@ public class UnFollowTask extends Task {
 		}
 		trash.remove(0);
 
+	}
+
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

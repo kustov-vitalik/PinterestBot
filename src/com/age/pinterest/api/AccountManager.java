@@ -26,21 +26,21 @@ import com.age.help.FileUtill;
 import com.age.help.PinUtils;
 import com.age.pinterest.bot.PinBot;
 import com.age.pinterest.config.PinterestAccount;
+import com.age.pinterest.task.FollowTask;
 
-public class Manager {
-	public static final String HISTORY_PATH_FORMAT = PinBot.ROOT_DIR + "//%1$s//%2$s";
-	public static final String HISTORY_FILE = "followed.txt";
+public class AccountManager {
 	private static final String USER_AGENT = "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0";
+
 	private final PinterestAccount account;
 	private final WebDriver driver;
 
-	public Manager(PinterestAccount account, WebDriver driver) {
+	public AccountManager(PinterestAccount account, WebDriver driver) {
 		this.account = account;
 		this.driver = driver;
 		manageSsl();
 	}
 
-	public List<Pinner> getFollowList(int size, String keyword) throws ClientProtocolException, IOException, JSONException {
+	public List<Pinner> getFollowList(int size, String keyword) {
 		System.out.println("Collection users related to  " + keyword);
 		ArrayList<Pinner> followList = new ArrayList<Pinner>();
 		String url = "https://www.pinterest.com/search/boards/?q=" + keyword;
@@ -56,34 +56,40 @@ public class Manager {
 		httpget.setHeader("Accept-Encoding", "gzip, deflate");
 		httpget.setHeader("Host", "www.pinterest.com");
 		CloseableHttpClient httpclient = HttpClients.createDefault();
-		CloseableHttpResponse response = httpclient.execute(httpget);
-		InputStream instream = response.getEntity().getContent();
-		StringWriter writer = new StringWriter();
+		try {
+			CloseableHttpResponse response = httpclient.execute(httpget);
+			InputStream instream = response.getEntity().getContent();
+			StringWriter writer = new StringWriter();
 
-		IOUtils.copy(instream, writer, "utf-8");
-		String theString = writer.toString();
-		JSONObject jsonObject = new JSONObject(theString);
-		JSONObject mod = jsonObject.getJSONObject("module");
-		JSONObject tree = mod.getJSONObject("tree");
-		JSONObject data = tree.getJSONObject("data");
-		JSONArray results = data.getJSONArray("results");
-		System.out.println("Found " + results.length() + "  users");
-		for (int i = 1; i < results.length(); i++) {
-			if (followList.size() > size) {
-				break;
+			IOUtils.copy(instream, writer, "utf-8");
+			String theString = writer.toString();
+			JSONObject jsonObject = new JSONObject(theString);
+			JSONObject mod = jsonObject.getJSONObject("module");
+			JSONObject tree = mod.getJSONObject("tree");
+			JSONObject data = tree.getJSONObject("data");
+			JSONArray results = data.getJSONArray("results");
+			System.out.println("Found " + results.length() + "  users");
+			for (int i = 1; i < results.length(); i++) {
+				if (followList.size() > size) {
+					break;
+				}
+
+				JSONObject user = results.getJSONObject(i);
+				JSONObject owner = user.getJSONObject("owner");
+				String usr = owner.getString("username");
+
+				List<Pinner> pinners = this.getList(usr, size - followList.size(), -1);
+				for (Pinner p : pinners) {
+					followList.add(p);
+				}
+				System.out.println("Follow list is:  " + followList.size());
 			}
-
-			JSONObject user = results.getJSONObject(i);
-			JSONObject owner = user.getJSONObject("owner");
-			String usr = owner.getString("username");
-
-			List<Pinner> pinners = this.getList(usr, size - followList.size(), -1);
-			for (Pinner p : pinners) {
-				followList.add(p);
-			}
-			System.out.println("Follow list is:  " + followList.size());
+			return followList;
+		} catch (Exception e) {
+			System.out.println("Account manager failed to get follow list. It will probably return empty list.");
+			e.printStackTrace();
 		}
-		return followList;
+		return new ArrayList<Pinner>();
 	}
 
 	private List<Pinner> getList(String user, int maxListSize, int minFollowers) {
@@ -197,7 +203,7 @@ public class Manager {
 	public void buildFollowHistory() throws ClientProtocolException, IOException, JSONException {
 		List<Pinner> pinners = this.getList(account.getUser(), -1, -1);
 		for (Pinner p : pinners) {
-			FileUtill.appendToFile(PinBot.ROOT_DIR + "/Users/" + account.getUser() + "/" + HISTORY_FILE, p.getUsername());
+			FileUtill.appendToFile(String.format(FollowTask.PATH_TO_HISTORY_FORMAT, account.getUser()), p.getUsername());
 		}
 	}
 

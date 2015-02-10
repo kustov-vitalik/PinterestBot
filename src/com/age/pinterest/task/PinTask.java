@@ -38,7 +38,6 @@ public class PinTask extends Task {
 
 	}
 
-	@Override
 	public void execute() {
 		if (!this.intervalPassed(interval)) {
 			return;
@@ -135,6 +134,12 @@ public class PinTask extends Task {
 		} catch (Exception e) {
 			System.out.println("Failed to set up pins.  " + e.getMessage());
 		}
+	}
+
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

@@ -62,7 +62,6 @@ public class ImageScraper {
 				addImage(driver.getCurrentUrl());
 			} catch (Exception e) {
 				System.out.println("Skip click");
-				i--;
 			}
 		}
 		System.out.println("Downloading");

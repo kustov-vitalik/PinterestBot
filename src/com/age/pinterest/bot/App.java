@@ -5,6 +5,7 @@ import java.io.IOException;
 import org.json.JSONException;
 import org.openqa.selenium.WebDriver;
 
+import com.age.help.ImageScraper;
 import com.age.help.PinUtils;
 
 public class App {
@@ -17,9 +18,11 @@ public class App {
 
 	public static void main(String[] args) throws InterruptedException, IOException, JSONException {
 		WebDriver driver = PinUtils.getChrome();
-		PinBot bot = new PinBot(driver, STACEY);
-		bot.addPinTask(STACEY_BOARD, 1000 * 60 * 40);
-		bot.start();
+		ImageScraper srapper = new ImageScraper(driver, "cool", "cool");
+		srapper.scan();
+		// PinBot bot = new PinBot(driver, COCO);
+		// bot.addPinTask(COCO_BOARD, 1000 * 60 * 40);
+		// bot.start();
 		// PinGenerator gen = new PinGenerator();
 		// gen.generatePin("bracelets");
 		// gen.generatePin("bellychains");
@@ -31,5 +34,4 @@ public class App {
 		// gen.generatePin("earrings");
 
 	}
-
 }
