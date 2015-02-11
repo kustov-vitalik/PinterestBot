@@ -11,8 +11,6 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.json.JSONException;
 
-import com.age.data.Pinner;
-import com.age.pinterest.api.AccountManager;
 import com.age.pinterest.config.PinterestAccount;
 import com.age.pinterest.task.FollowTask;
 import com.age.pinterest.task.PinTask;
@@ -20,10 +18,8 @@ import com.age.pinterest.task.Task;
 import com.age.pinterest.task.UnfollowTask;
 
 public class PinBot {
-	public static String ROOT_DIR = "D:/PinBot";
+	public static String ROOT_DIR = "C:/PinBot";
 
-	private AccountManager manager;
-	private ArrayList<Task> tasks = new ArrayList<Task>();
 
 	public static void addAccount(PinterestAccount acc) throws JsonGenerationException, JsonMappingException, IOException {
 		System.out.println("Setting up user " + acc.getUser());
@@ -51,9 +47,6 @@ public class PinBot {
 		this.startNewTask(new UnfollowTask(account, minFollower, interval));
 	}
 
-	public void buildHistory() throws ClientProtocolException, IOException, JSONException {
-		manager.buildFollowHistory();
-	}
 
 	public void generateAccounts(ArrayList<PinterestAccount> accounts) throws JsonGenerationException, JsonMappingException, IOException {
 		ObjectMapper mapper = new ObjectMapper();
@@ -67,16 +60,6 @@ public class PinBot {
 		}
 	}
 
-	private ArrayList<String> getTrash(int followers) throws IOException, JSONException, InterruptedException {
-		ArrayList<String> list = new ArrayList<String>();
-
-		List<Pinner> pinners = manager.getUnfollowList(followers);
-		for (Pinner p : pinners) {
-			list.add(String.format("https://www.pinterest.com/%s/", p.getUsername()));
-		}
-		return list;
-
-	}
 
 	public static List<String> listAccount() {
 		String root = ROOT_DIR + "/Users";

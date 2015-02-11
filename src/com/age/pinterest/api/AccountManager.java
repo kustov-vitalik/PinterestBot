@@ -40,6 +40,79 @@ public class AccountManager {
 		manageSsl();
 	}
 
+	public void getFollowers(String user) {
+		String username = account.getUser();
+		String bookmark = "";
+		while (!bookmark.equals("-end-")) {
+			try {
+				String num = Long.toString(System.currentTimeMillis());
+				String url = "";
+				if (bookmark.isEmpty()) {
+					url = "https://www.pinterest.com/resource/UserResource/get/?source_url=%2F"
+							+ username
+							+ "%2F&data=%7B%22options%22%3A%7B%22username%22%3A%22"
+							+ username
+							+ "%22%2C%22invite_code%22%3Anull%7D%2C%22context%22%3A%7B%7D%2C%22module%22%3A%7B%22name%22%3A%22UserProfileContent%22%2C%22options%22%3A%7B%22tab%22%3A%22followers%22%7D%7D%2C%22render_type%22%3A1%2C%22error_strategy%22%3A0%7D&module_path=App()%3EUserProfilePage(resource%3DUserResource(username%3D"
+							+ username + "))%3EUserInfoBar(tab%3Dfollowers%2C+spinner%3D%5Bobject+Object%5D%2C+resource%3DUserResource(username%3D" + username
+							+ "%2C+invite_code%3Dnull))&_=" + num;
+				} else {
+					url = "https://www.pinterest.com/resource/UserFollowersResource/get/?source_url=%2F" + username
+							+ "%2Ffollowers%2F&data=%7B%22options%22%3A%7B%22username%22%3A%22" + username + "%22%2C%22bookmarks%22%3A%5B%22" + bookmark
+							+ "%22%5D%7D%2C%22context%22%3A%7B%7D%7D&module_path=App()%3EUserProfilePage(resource%3DUserResource(username%3D" + username
+							+ "))%3EUserInfoBar(tab%3Dfollowers%2C+spinner%3D%5Bobject+Object%5D%2C+resource%3DUserResource(username%3D" + username
+							+ "%2C+invite_code%3Dnull))&_=" + num;
+				}
+				HttpGet httpget = new HttpGet(url);
+				httpget.setHeader("User-Agent", USER_AGENT);
+				httpget.setHeader("X-NEW-APP", "1");
+				httpget.setHeader("Referer", "http://www.pinterest.com/");
+				httpget.setHeader("Accept-Language", "en-gb,en;q=0.5");
+				httpget.setHeader("X-Requested-With", "XMLHttpRequest");
+				httpget.setHeader("X-APP-VERSION", "0cc7472");
+				httpget.setHeader("X-NEW-APP", "1");
+				httpget.setHeader("Cookie", account.getSslToken() + ";");
+				httpget.setHeader("Accept-Encoding", "gzip, deflate");
+				httpget.setHeader("Host", "www.pinterest.com");
+
+				CloseableHttpClient httpclient = HttpClients.createDefault();
+				CloseableHttpResponse response = httpclient.execute(httpget);
+				InputStream instream = response.getEntity().getContent();
+				StringWriter writer = new StringWriter();
+
+				IOUtils.copy(instream, writer, "utf-8");
+				String theString = writer.toString();
+				JSONObject jsonObject = new JSONObject(theString);
+				if (bookmark.isEmpty()) {
+					JSONObject module = jsonObject.getJSONObject("module");
+					JSONObject tree = module.getJSONObject("tree");
+					JSONArray children = tree.getJSONArray("children");
+					JSONObject empty = children.getJSONObject(0);
+					JSONObject resource = empty.getJSONObject("resource");
+					JSONObject options = resource.getJSONObject("options");
+					JSONArray bookmarks = options.getJSONArray("bookmarks");
+					bookmark = bookmarks.getString(0);
+				} else {
+					JSONObject resource_response = jsonObject.getJSONObject("resource_response");
+					this.printKeys(resource_response);
+					JSONArray data = resource_response.getJSONArray("data");
+					for (int i = 0; i < data.length(); i++) {
+						JSONObject obj = data.getJSONObject(i);
+						// String userStr = obj.getString("username");
+						// System.out.println(userStr);
+						String full = obj.getString("full_name");
+						System.out.println(full);
+					}
+					JSONObject resource = jsonObject.getJSONObject("resource");
+					JSONObject options = resource.getJSONObject("options");
+					JSONArray bookmarks = options.getJSONArray("bookmarks");
+					bookmark = bookmarks.getString(0);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
 	public List<Pinner> getFollowList(int size, String keyword) {
 		System.out.println("Collection users related to  " + keyword);
 		ArrayList<Pinner> followList = new ArrayList<Pinner>();
@@ -208,12 +281,23 @@ public class AccountManager {
 	}
 
 	@SuppressWarnings({ "unchecked", "unused" })
-	private static void printKeys(JSONObject obj) {
+	private void printKeys(JSONObject obj) {
 		Iterator<String> iter = obj.keys();
 		while (iter.hasNext()) {
 			System.out.print(iter.next() + "   ");
 		}
 		System.out.println();
+	}
+
+	@SuppressWarnings({ "unused" })
+	private void printJsonArray(JSONArray arr) {
+		for (int i = 0; i < arr.length(); i++) {
+			try {
+				System.out.println(arr.get(i));
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	public List<Pinner> getUnfollowList(int followers) {
