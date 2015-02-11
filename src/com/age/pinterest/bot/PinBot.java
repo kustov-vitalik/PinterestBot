@@ -18,7 +18,7 @@ import com.age.pinterest.task.Task;
 import com.age.pinterest.task.UnfollowTask;
 
 public class PinBot {
-	public static String ROOT_DIR = "C:/PinBot";
+	public static String ROOT_DIR = "PinBotROOT";
 
 
 	public static void addAccount(PinterestAccount acc) throws JsonGenerationException, JsonMappingException, IOException {
