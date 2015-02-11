@@ -13,24 +13,22 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
-import org.json.JSONException;
-
 import com.age.pinterest.bot.PinBot;
 
 @SuppressWarnings("serial")
-public class FollowFrame extends JFrame implements ActionListener {
+public class PinFrame extends JFrame implements ActionListener {
+
 	private static final Dimension mainSize = new Dimension(500, 500);
 	private static final Dimension textSize = new Dimension((int) (mainSize.width * 0.3f), (int) (mainSize.height * 0.04f));
 	private static final Dimension btnSize = new Dimension((int) (mainSize.width * 0.9f), (int) (mainSize.height * 0.05f));
 
 	private final JComboBox<String> users;
 	private final JButton start;
-	private final JTextArea keyword;
 	private final JTextArea interval;
-	private final JTextArea num;
+	private final JTextArea board;
 
-	public FollowFrame() {
-		this.setTitle("Follow");
+	public PinFrame() {
+		this.setTitle("Pin");
 		JPanel panel = new JPanel();
 		panel.setLayout(new FlowLayout());
 		users = new JComboBox<String>();
@@ -38,35 +36,29 @@ public class FollowFrame extends JFrame implements ActionListener {
 		for (String s : usersItems) {
 			users.addItem(s);
 		}
-		start = new JButton();
-		start.setText("start");
-		start.setSize(btnSize);
-		start.setPreferredSize(btnSize);
-		start.addActionListener(this);
+		panel.add(users);
 
 		interval = new JTextArea();
 		interval.setSize(textSize);
 		interval.setPreferredSize(textSize);
 		interval.setToolTipText("Interval");
-		interval.setText("seconds");
-
-		keyword = new JTextArea();
-		keyword.setSize(textSize);
-		keyword.setPreferredSize(textSize);
-		keyword.setText("jewelry");
-		keyword.setToolTipText("keyword");
-
-		num = new JTextArea();
-		num.setSize(textSize);
-		num.setPreferredSize(textSize);
-		num.setText("5000");
-		num.setToolTipText("Count");
-
-		panel.add(users);
-		panel.add(keyword);
+		interval.setText("Minutes");
 		panel.add(interval);
-		panel.add(num);
+
+		board = new JTextArea();
+		board.setSize(textSize);
+		board.setPreferredSize(textSize);
+		board.setText("BOARD");
+		board.setToolTipText("Count");
+		panel.add(board);
+
+		start = new JButton();
+		start.setText("start");
+		start.setSize(btnSize);
+		start.setPreferredSize(btnSize);
+		start.addActionListener(this);
 		panel.add(start);
+
 		this.add(panel);
 		this.setVisible(true);
 		this.setLocationRelativeTo(null);
@@ -74,20 +66,20 @@ public class FollowFrame extends JFrame implements ActionListener {
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent e) {
-		if (e.getActionCommand().equals("start")) {
-			String username = (String) users.getSelectedItem();
+	public void actionPerformed(ActionEvent a) {
+		if (a.getActionCommand().equals("start")) {
 			PinBot bot = new PinBot();
+			String user = (String) this.users.getSelectedItem();
+			String boardStr = board.getText();
 			long time = Long.parseLong(interval.getText());
-			time *= 1000;
-			int count = Integer.parseInt(num.getText());
-			String word = keyword.getText();
+			time *= 1000 * 60;
 			try {
-				bot.addFollowTask(username, word, count, time);
-			} catch (IOException | JSONException e1) {
-				e1.printStackTrace();
+				bot.addPinTask(user, boardStr, time);
+			} catch (IOException | InterruptedException e) {
+				e.printStackTrace();
 			}
 		}
 
 	}
+
 }

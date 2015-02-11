@@ -40,7 +40,7 @@ public class FollowTask extends Task {
 		for (Pinner pinner : followList) {
 			users.add(String.format(USER_URL_FORMAT, pinner.getUsername()));
 		}
-		while (true) {
+		while (!users.isEmpty()) {
 			if (this.intervalPassed(interval)) {
 				try {
 					boolean followed = false;

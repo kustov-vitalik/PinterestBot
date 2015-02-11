@@ -1,24 +1,14 @@
 package com.age.ui;
 
-import java.awt.BorderLayout;
-import java.awt.CardLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
 
-import javax.swing.BoxLayout;
-import javax.swing.GroupLayout;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.JTextArea;
 import javax.swing.WindowConstants;
-
-import com.age.pinterest.bot.PinBot;
-import com.age.pinterest.config.PinterestAccount;
 
 public class UI implements ActionListener {
 	private static final Dimension mainSize = new Dimension(500, 500);
@@ -29,6 +19,7 @@ public class UI implements ActionListener {
 	private JButton addAccBtn;
 	private JButton unfollowTask;
 	private JButton followTask;
+	private JButton pinTask;
 
 	public UI() {
 		init();
@@ -60,6 +51,13 @@ public class UI implements ActionListener {
 		followTask.setPreferredSize(btnSize);
 		panel.add(followTask);
 
+		pinTask = new JButton();
+		pinTask.addActionListener(this);
+		pinTask.setText("Pin");
+		pinTask.setSize(btnSize);
+		pinTask.setPreferredSize(btnSize);
+		panel.add(pinTask);
+
 		mainFrame.add(panel);
 		mainFrame.setSize(mainSize);
 		mainFrame.setLocationRelativeTo(null);
@@ -80,6 +78,8 @@ public class UI implements ActionListener {
 			new UnfollowFrame();
 		} else if (e.getActionCommand().equals("Follow")) {
 			new FollowFrame();
+		} else if (e.getActionCommand().equals("Pin")) {
+			new PinFrame();
 		}
 	}
 

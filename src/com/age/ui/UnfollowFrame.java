@@ -14,9 +14,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
 import org.json.JSONException;
-import org.openqa.selenium.WebDriver;
 
-import com.age.help.PinUtils;
 import com.age.pinterest.bot.PinBot;
 
 @SuppressWarnings("serial")
@@ -25,10 +23,10 @@ public class UnfollowFrame extends JFrame implements ActionListener {
 	private static final Dimension textSize = new Dimension((int) (mainSize.width * 0.3f), (int) (mainSize.height * 0.04f));
 	private static final Dimension btnSize = new Dimension((int) (mainSize.width * 0.9f), (int) (mainSize.height * 0.05f));
 
-	private JComboBox<String> users;
-	private JButton start;
-	private JTextArea minFollowers;
-	private JTextArea interval;
+	private final JComboBox<String> users;
+	private final JButton start;
+	private final JTextArea minFollowers;
+	private final JTextArea interval;
 
 	public UnfollowFrame() {
 		this.setTitle("Unfollow");
@@ -49,7 +47,7 @@ public class UnfollowFrame extends JFrame implements ActionListener {
 		interval.setSize(textSize);
 		interval.setToolTipText("Interval");
 		interval.setPreferredSize(textSize);
-		interval.setText("10000");
+		interval.setText("seconds");
 
 		minFollowers = new JTextArea();
 		minFollowers.setSize(textSize);
@@ -70,12 +68,13 @@ public class UnfollowFrame extends JFrame implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("start")) {
-			String username=(String) users.getSelectedItem();
-			PinBot bot = new PinBot(username);
+			String username = (String) users.getSelectedItem();
+			PinBot bot = new PinBot();
 			long time = Long.parseLong(interval.getText());
+			time *= 1000;
 			int min = Integer.parseInt(minFollowers.getText());
 			try {
-				bot.addUnfollowTask(time, min);
+				bot.addUnfollowTask(username, min, time);
 			} catch (IOException | JSONException | InterruptedException e1) {
 				e1.printStackTrace();
 			}

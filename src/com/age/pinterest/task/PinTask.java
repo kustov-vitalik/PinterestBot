@@ -17,39 +17,54 @@ import org.openqa.selenium.interactions.Actions;
 
 import com.age.help.FileUtill;
 import com.age.help.PinUtils;
+import com.age.pinterest.api.AccountManager;
 import com.age.pinterest.bot.PinBot;
 import com.age.pinterest.config.Pin;
+import com.age.pinterest.config.PinterestAccount;
 
 public class PinTask extends Task {
 	private static final String BOARDS_URL_FORMAT = "http://www.pinterest.com/%s/%s";
+	private static final String PINS_LOCATION_URL = PinBot.ROOT_DIR + "/Users/%s/pins";
 	private final long interval;
-	private ArrayList<Pin> pins = new ArrayList<Pin>();
-
-	private final WebDriver driver;
 	private final String board;
-	private final String user;
+	private final PinterestAccount acc;
 
-	public PinTask(WebDriver driver, String board, String user, long interval) {
+	public PinTask(PinterestAccount acc, String board, long interval) {
 		this.interval = interval;
-		this.driver = driver;
 		this.board = board;
-		this.user = user;
-		setUpPins();
+		this.acc = acc;
 
 	}
 
-	public void execute() {
-		if (!this.intervalPassed(interval)) {
-			return;
+	@Override
+	public void run() {
+		WebDriver driver = PinUtils.getChrome();
+		new AccountManager(acc, driver);
+		List<Pin> pins = this.setUpPins();
+		System.out.println("Theare are  " + pins.size() + "  pins for  " + acc.getUser());
+		while (!pins.isEmpty()) {
+			if (this.intervalPassed(interval)) {
+				boolean pinned = false;
+				while (!pinned) {
+					try {
+						pinned = this.pin(pins, driver);
+					} catch (InterruptedException | IOException e) {
+						e.printStackTrace();
+					}
+				}
+			}
 		}
-		try {
-			Pin pin = pins.get(0);
+		System.out.println("No more pins for " + acc.getUser());
+	}
 
-			String location = "New York";
+	private boolean pin(List<Pin> pins, WebDriver driver) throws InterruptedException, IOException {
+		Pin pin = pins.get(0);
+		boolean result = false;
+		try {
 			String pathToFile = this.downloadImage(pin.getImage());
 			System.out.println("Pinning to board: " + board);
 
-			driver.navigate().to(String.format(BOARDS_URL_FORMAT, user, board));
+			driver.navigate().to(String.format(BOARDS_URL_FORMAT, acc.getUser(), board));
 			PinUtils.waitForPage(driver);
 			String ccsPath = "body > div.App.full.AppBase.Module > div.appContent > div.mainContainer > div.BoardPage.Module > div.locationBoardPageContentWrapper > div > div.hasFooter.Grid.Module > div.padItems.Module.centeredWithinWrapper.GridItems.variableHeightLayout > div:nth-child(1) > a";
 			PinUtils.waitFor(By.cssSelector(ccsPath), driver).click();
@@ -70,7 +85,7 @@ public class PinTask extends Task {
 			PinUtils.waitFor(By.cssSelector(cssPath), driver).click();
 
 			PinUtils.waitForPage(driver);
-			List<WebElement> ls = this.getPinList(board);
+			List<WebElement> ls = this.getPinList(board, driver);
 			ls.get(0).click();
 
 			String editXpaht = "/html/body/div[1]/div[2]/div[2]/div/div[1]/div/div[2]/button[1]";
@@ -79,25 +94,18 @@ public class PinTask extends Task {
 			String sourceId = "pinFormLink";
 			PinUtils.waitFor(By.id(sourceId), driver).sendKeys(pin.getSource());
 
-			String cityXpaht = "body > div.Module.Modal.absoluteCenter.show > div.modalScroller > div > div > div > div > div > form > ul > li.placeWrapper > div > div > div > div > input";
-			WebElement city = PinUtils.waitFor(By.cssSelector(cityXpaht), driver);
-			city.sendKeys(location);
-			Actions act = new Actions(driver);
-			Thread.sleep(1000);
-			act.moveToElement(city).moveByOffset(10, 10).click().perform();
-
 			String saveBtnXpath = "html/body/div[8]/div[2]/div/div/div/div/div/form/div[2]/div[2]/button[2]";
 			PinUtils.waitFor(By.xpath(saveBtnXpath), driver).click();
-			
+
 			pins.remove(0);
 		} catch (Exception e) {
-			System.out.println("Failed to pin  " + e.getMessage());
+			e.printStackTrace();
 		}
-
+		return result;
 	}
 
-	private List<WebElement> getPinList(String board) {
-		driver.navigate().to(String.format(BOARDS_URL_FORMAT, user, board));
+	private List<WebElement> getPinList(String board, WebDriver driver) {
+		driver.navigate().to(String.format(BOARDS_URL_FORMAT, acc.getUser(), board));
 		String cssPath = "body > div.App.full.AppBase.Module > div.appContent > div.mainContainer > div.Module.BoardPage > div.locationBoardPageContentWrapper > div > div.Module.Grid.hasFooter > div.Module.GridItems.centeredWithinWrapper.padItems.variableHeightLayout";
 		PinUtils.waitForElement(By.cssSelector(cssPath), driver);
 		ArrayList<WebElement> pins = new ArrayList<WebElement>();
@@ -123,23 +131,18 @@ public class PinTask extends Task {
 		return file.getAbsolutePath();
 	}
 
-	private void setUpPins() {
+	private List<Pin> setUpPins() {
+		ArrayList<Pin> pins = new ArrayList<Pin>();
 		ObjectMapper mapper = new ObjectMapper();
 		try {
-			String pinsLocation = PinBot.ROOT_DIR + "/Users/" + user + "/" + "pins";
-			for (String pinFile : FileUtill.getAllFiles(pinsLocation)) {
+			for (String pinFile : FileUtill.getAllFiles(String.format(PINS_LOCATION_URL, acc.getUser()))) {
 				Pin pin = mapper.readValue(new File(pinFile), Pin.class);
 				pins.add(pin);
 			}
 		} catch (Exception e) {
 			System.out.println("Failed to set up pins.  " + e.getMessage());
 		}
-	}
-
-	@Override
-	public void run() {
-		// TODO Auto-generated method stub
-		
+		return pins;
 	}
 
 }

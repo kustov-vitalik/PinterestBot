@@ -10,7 +10,6 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
-import javax.swing.WindowConstants;
 
 import com.age.pinterest.bot.PinBot;
 import com.age.pinterest.config.PinterestAccount;
@@ -21,10 +20,10 @@ public class AddAccountFrame extends JFrame implements ActionListener {
 	private static final Dimension textSize = new Dimension((int) (mainSize.width * 0.3f), (int) (mainSize.height * 0.04f));
 	private static final Dimension btnSize = new Dimension((int) (mainSize.width * 0.3f), (int) (mainSize.height * 0.05f));
 
-	private JTextArea email;
-	private JTextArea pass;
-	private JTextArea user;
-	private JButton addAccount;
+	private final JTextArea email;
+	private final JTextArea pass;
+	private final JTextArea user;
+	private final JButton addAccount;
 
 	public AddAccountFrame() {
 		this.setTitle("Add Account");

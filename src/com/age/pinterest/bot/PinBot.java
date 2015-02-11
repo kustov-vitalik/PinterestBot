@@ -4,14 +4,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Future;
 
 import org.apache.http.client.ClientProtocolException;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.json.JSONException;
-import org.openqa.selenium.WebDriver;
 
 import com.age.data.Pinner;
 import com.age.pinterest.api.AccountManager;
@@ -19,38 +17,13 @@ import com.age.pinterest.config.PinterestAccount;
 import com.age.pinterest.task.FollowTask;
 import com.age.pinterest.task.PinTask;
 import com.age.pinterest.task.Task;
-import com.age.pinterest.task.UnFollowTask;
-
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import com.age.pinterest.task.UnfollowTask;
 
 public class PinBot {
 	public static String ROOT_DIR = "D:/PinBot";
 
-	private String userRoot;
-	private final String user;
 	private AccountManager manager;
 	private ArrayList<Task> tasks = new ArrayList<Task>();
-
-	public PinBot(String user) {
-		this.user = user;
-		this.setUp();
-	}
-
-	private void setUp() {
-		try {
-			System.out.println("Setting up user  " + user);
-			this.userRoot = ROOT_DIR + "/Users/" + user;
-			File rootDir = new File(userRoot);
-			rootDir.mkdirs();
-			File pinDir = new File(rootDir, "pins");
-			pinDir.mkdir();
-			ObjectMapper mapper = new ObjectMapper();
-			PinterestAccount account = mapper.readValue(new File(userRoot + "/" + "acc.json"), PinterestAccount.class);
-		} catch (Exception e) {
-			System.out.println("Failed to set up  " + e.getMessage());
-		}
-	}
 
 	public static void addAccount(PinterestAccount acc) throws JsonGenerationException, JsonMappingException, IOException {
 		System.out.println("Setting up user " + acc.getUser());
@@ -68,12 +41,14 @@ public class PinBot {
 		this.startNewTask(new FollowTask(account, keyword, count, interval));
 	}
 
-	public void addPinTask(String board, long interval) throws IOException, InterruptedException {
-		tasks.add(new PinTask(null, board, user, interval));
+	public void addPinTask(String user, String board, long interval) throws IOException, InterruptedException {
+		PinterestAccount account = this.getAccount(user);
+		this.startNewTask(new PinTask(account, board, interval));
 	}
 
-	public void addUnfollowTask(long interval, int minFollower) throws IOException, JSONException, InterruptedException {
-		tasks.add(new UnFollowTask(null, interval, getTrash(minFollower)));
+	public void addUnfollowTask(String user, int minFollower, long interval) throws IOException, JSONException, InterruptedException {
+		PinterestAccount account = this.getAccount(user);
+		this.startNewTask(new UnfollowTask(account, minFollower, interval));
 	}
 
 	public void buildHistory() throws ClientProtocolException, IOException, JSONException {
@@ -116,15 +91,6 @@ public class PinBot {
 	private void startNewTask(Task task) {
 		Thread thread = new Thread(task);
 		thread.start();
-	}
-
-	private ArrayList<String> getTargets(String keyword, int count) throws ClientProtocolException, IOException, JSONException {
-		ArrayList<String> list = new ArrayList<String>();
-		List<Pinner> pinners = manager.getFollowList(count, keyword);
-		for (Pinner p : pinners) {
-			list.add(String.format("https://www.pinterest.com/%s/", p.getUsername()));
-		}
-		return list;
 	}
 
 	private PinterestAccount getAccount(String username) {

@@ -1,58 +1,65 @@
 package com.age.pinterest.task;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
+import com.age.data.Pinner;
 import com.age.help.PinUtils;
+import com.age.pinterest.api.AccountManager;
+import com.age.pinterest.config.PinterestAccount;
 
-public class UnFollowTask extends Task {
+public class UnfollowTask extends Task {
+	private static final String USER_URL_FORMAT = "https://www.pinterest.com/%s/";
 	private final long interval;
-	private final WebDriver driver;
-	private final ArrayList<String> trash;
+	private final PinterestAccount acc;
+	private final int minFollowers;
 
-	public UnFollowTask(WebDriver driver, long interval, ArrayList<String> trash) {
+	public UnfollowTask(PinterestAccount acc, int minFollowers, long interval) {
 		this.interval = interval;
-		this.driver = driver;
-		this.trash = trash;
-	}
-
-	public void execute() {
-		try {
-			if (!this.intervalPassed(interval)) {
-				return;
-			}
-			System.out.println("Accounts to unfollow  " + trash.size());
-			if (trash.size() <= 0) {
-				System.out.println("No more trash. Exiting");
-				return;
-			}
-			String trashItem = trash.get(0);
-			try {
-				driver.navigate().to(trashItem);
-				PinUtils.waitForPage(driver);
-				String btnXpath = "/html/body/div[1]/div[2]/div[1]/div[2]/div[2]/div/div/div[2]/div[1]/div[2]/button[1]";
-				WebElement btn = PinUtils.waitForWithTimeout(By.xpath(btnXpath), driver, 1000 * 15);
-				if (btn != null && btn.getText().equals("Unfollow")) {
-					btn.click();
-					System.out.println("UnFollow  " + trashItem);
-				}
-			} catch (Exception ex) {
-				System.out.println(ex.getMessage());
-			}
-		} catch (Exception e) {
-			System.out.println("Failed to unfollow  " + e.getMessage());
-		}
-		trash.remove(0);
-
+		this.acc = acc;
+		this.minFollowers = minFollowers;
 	}
 
 	@Override
 	public void run() {
-		// TODO Auto-generated method stub
-		
+		WebDriver driver = PinUtils.getChrome();
+		AccountManager manager = new AccountManager(acc, driver);
+		List<Pinner> trashPinners = manager.getUnfollowList(minFollowers);
+		ArrayList<String> trash = new ArrayList<String>();
+		for (Pinner p : trashPinners) {
+			trash.add(String.format(USER_URL_FORMAT, p.getUsername()));
+		}
+		while (!trash.isEmpty()) {
+			if (this.intervalPassed(interval)) {
+				try {
+					boolean unfollowed = false;
+					while (!unfollowed) {
+						unfollowed = this.unfollow(trash, driver);
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 
+	private boolean unfollow(List<String> trash, WebDriver driver) throws InterruptedException {
+		String trashItem = trash.get(0);
+		boolean result = false;
+		driver.navigate().to(trashItem);
+		PinUtils.waitForPage(driver);
+		String btnXpath = "/html/body/div[1]/div[2]/div[1]/div[2]/div[2]/div/div/div[2]/div[1]/div[2]/button[1]";
+		WebElement btn = PinUtils.waitForWithTimeout(By.xpath(btnXpath), driver, 1000 * 15);
+		if (btn != null && btn.getText().equals("Unfollow")) {
+			btn.click();
+			System.out.println("UnFollow  " + trashItem);
+			result = true;
+		}
+		trash.remove(0);
+		return result;
+	}
 }
