@@ -22,13 +22,11 @@ public class App {
 		// WebDriver driver = PinUtils.getChrome();
 		// ImageScraper srapper = new ImageScraper(driver, "cool", "cool");
 		// srapper.scan();
-		WebDriver driver = PinUtils.getPhantomDriver();
-		PinterestAccount acc = new PinterestAccount();
-		acc.setEmail("globalamericaselfdefensejohn@gmail.com");
-		acc.setPassword("Geni0us!");
-		acc.setUser("globalamericase");
-		AccountManager manager = new AccountManager(acc, driver);
-		manager.getFollowers("globalamericase");
+//		WebDriver driver = PinUtils.getPhantomDriver();
+//		PinterestAccount acc = new PinterestAccount();
+//		acc.setEmail("globalamericaselfdefensejohn@gmail.com");
+//		acc.setPassword("Geni0us!");
+//		acc.setUser("globalamericase");
 		// PinBot bot = new PinBot(driver, COCO);
 		// bot.addPinTask(COCO_BOARD, 1000 * 60 * 40);
 		// bot.start();

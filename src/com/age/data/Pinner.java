@@ -35,6 +35,10 @@ public class Pinner {
 		return this.pins;
 	}
 
+	public void setPins(int pins) {
+		this.pins = pins;
+	}
+
 	public String getFullName() {
 		return this.fullName;
 	}
@@ -45,8 +49,18 @@ public class Pinner {
 
 	@Override
 	public String toString() {
-		return "User: " + this.fullName + "  followers:" + this.followers + "  pins:" + this.pins + "  username:" + this.username + "  ID:"
-				+ this.id;
+		return "User: " + this.fullName + "  followers:" + this.followers + "  pins:" + this.pins + "  username:" + this.username + "  ID:" + this.id;
+	}
+
+	@Override
+	public boolean equals(Object p) {
+		if (p instanceof Pinner) {
+			Pinner pinner = (Pinner) p;
+			if (pinner.getUsername().equals(this.getUsername())) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 }

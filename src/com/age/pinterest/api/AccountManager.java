@@ -40,11 +40,14 @@ public class AccountManager {
 		manageSsl();
 	}
 
-	public void getFollowers(String user) {
+	private List<Pinner> getFollowers(String user, int max) {
+		System.out.println("Getting followers for  " + user);
+		ArrayList<Pinner> result = new ArrayList<Pinner>();
 		String username = account.getUser();
 		String bookmark = "";
 		while (!bookmark.equals("-end-")) {
 			try {
+				System.out.println(result.size() + "  followers from " + user);
 				String num = Long.toString(System.currentTimeMillis());
 				String url = "";
 				if (bookmark.isEmpty()) {
@@ -93,14 +96,27 @@ public class AccountManager {
 					bookmark = bookmarks.getString(0);
 				} else {
 					JSONObject resource_response = jsonObject.getJSONObject("resource_response");
-					this.printKeys(resource_response);
 					JSONArray data = resource_response.getJSONArray("data");
 					for (int i = 0; i < data.length(); i++) {
 						JSONObject obj = data.getJSONObject(i);
-						// String userStr = obj.getString("username");
-						// System.out.println(userStr);
+						String userStr = obj.getString("username");
 						String full = obj.getString("full_name");
-						System.out.println(full);
+						int followers = Integer.parseInt(obj.getString("follower_count"));
+						int pinCount = Integer.parseInt(obj.getString("pin_count"));
+						String id = obj.getString("id");
+						Pinner pinner = new Pinner();
+						pinner.setFollowers(followers);
+						pinner.setFullName(full);
+						pinner.setId(id);
+						pinner.setUsername(userStr);
+						pinner.setPins(pinCount);
+						if (!result.contains(pinner)) {
+							result.add(pinner);
+						}
+						if (result.size() >= max) {
+							System.out.println("Got  " + result.size() + "  followers from " + user);
+							return result;
+						}
 					}
 					JSONObject resource = jsonObject.getJSONObject("resource");
 					JSONObject options = resource.getJSONObject("options");
@@ -111,9 +127,11 @@ public class AccountManager {
 				e.printStackTrace();
 			}
 		}
+		System.out.println("Got  " + result.size() + "  followers from " + user);
+		return result;
 	}
 
-	public List<Pinner> getFollowList(int size, String keyword) {
+	public List<Pinner> getPinnersByKeyword(int size, String keyword) {
 		System.out.println("Collection users related to  " + keyword);
 		ArrayList<Pinner> followList = new ArrayList<Pinner>();
 		String url = "https://www.pinterest.com/search/boards/?q=" + keyword;
@@ -146,12 +164,10 @@ public class AccountManager {
 				if (followList.size() > size) {
 					break;
 				}
-
 				JSONObject user = results.getJSONObject(i);
 				JSONObject owner = user.getJSONObject("owner");
 				String usr = owner.getString("username");
-
-				List<Pinner> pinners = this.getList(usr, size - followList.size(), -1);
+				List<Pinner> pinners = this.getFollowed(usr, size - followList.size(), -1);
 				for (Pinner p : pinners) {
 					followList.add(p);
 				}
@@ -165,7 +181,27 @@ public class AccountManager {
 		return new ArrayList<Pinner>();
 	}
 
-	private List<Pinner> getList(String user, int maxListSize, int minFollowers) {
+	public List<Pinner> getFollowList(int size) {
+		String history = this.getFollowHistory();
+		int targetCount = size / 50;
+		List<Pinner> userFollowers = this.getFollowers(account.getUser(), targetCount);
+		ArrayList<Pinner> targets = new ArrayList<Pinner>();
+		for (Pinner p : userFollowers) {
+			List<Pinner> part = this.getFollowers(p.getUsername(), size - targets.size());
+			for (Pinner pnr : part) {
+				if (!history.contains(pnr.getUsername())) {
+					targets.add(pnr);
+				} else {
+					System.out.println(pnr.getUsername() + "  was already followed");
+				}
+			}
+			System.out.println("You have  " + targets.size() + "  targets");
+		}
+		return targets;
+
+	}
+
+	private List<Pinner> getFollowed(String user, int maxListSize, int minFollowers) {
 		List<Pinner> resultList = new ArrayList<Pinner>();
 		String bookmark = "";
 		while (!bookmark.equals("-end-")) {
@@ -274,10 +310,21 @@ public class AccountManager {
 	}
 
 	public void buildFollowHistory() throws ClientProtocolException, IOException, JSONException {
-		List<Pinner> pinners = this.getList(account.getUser(), -1, -1);
+		List<Pinner> pinners = this.getFollowed(account.getUser(), -1, -1);
 		for (Pinner p : pinners) {
 			FileUtill.appendToFile(String.format(FollowTask.PATH_TO_HISTORY_FORMAT, account.getUser()), p.getUsername());
 		}
+	}
+
+	private String getFollowHistory() {
+		String history = "";
+		try {
+			history = FileUtill.getFileContents(String.format(FollowTask.PATH_TO_HISTORY_FORMAT, account.getUser()));
+		} catch (IOException e) {
+			System.out.println("Failed to get history for  " + account.getUser());
+			e.printStackTrace();
+		}
+		return history;
 	}
 
 	@SuppressWarnings({ "unchecked", "unused" })
@@ -301,7 +348,7 @@ public class AccountManager {
 	}
 
 	public List<Pinner> getUnfollowList(int followers) {
-		return this.getList(account.getUser(), -1, followers);
+		return this.getFollowed(account.getUser(), -1, followers);
 	}
 
 }

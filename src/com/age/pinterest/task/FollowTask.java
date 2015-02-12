@@ -35,7 +35,7 @@ public class FollowTask extends Task {
 	public void run() {
 		WebDriver driver = PinUtils.getChrome();
 		AccountManager manager = new AccountManager(acc, driver);
-		List<Pinner> followList = manager.getFollowList(size, keyword);
+		List<Pinner> followList = manager.getFollowList(size);
 		List<String> users = new ArrayList<String>();
 		for (Pinner pinner : followList) {
 			users.add(String.format(USER_URL_FORMAT, pinner.getUsername()));
