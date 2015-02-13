@@ -1,0 +1,16 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+
+
+repositories {
+    mavenCentral()
+}
+dependencies {
+    compile  'org.seleniumhq.selenium:selenium-java:2.44.0'
+	compile  'org.seleniumhq.selenium:selenium-server:2.0a2'
+	compile  'org.seleniumhq.selenium:selenium-firefox-driver:2.39.0'
+	compile  'org.json:json:20090211'
+	compile  'commons-io:commons-io:2.4'
+	compile  'org.apache.httpcomponents:httpclient:4.3.2'
+	compile  'org.codehaus.jackson:jackson-mapper-asl:1.8.5'
+}

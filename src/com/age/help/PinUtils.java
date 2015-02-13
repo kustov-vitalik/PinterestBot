@@ -8,8 +8,6 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
-import org.openqa.selenium.phantomjs.PhantomJSDriver;
-import org.openqa.selenium.phantomjs.PhantomJSDriverService;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -47,13 +45,14 @@ public class PinUtils {
 		return driver;
 	}
 
-	public static PhantomJSDriver getPhantomDriver() {
-		System.setProperty("http.proxyHost", "162.222.178.194");
-		System.setProperty("http.proxyPort", "80");
-		DesiredCapabilities caps = new DesiredCapabilities();
-		caps.setCapability(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY, PATH_TO_PAHNTOM_DRIVER);
-		return new PhantomJSDriver(caps);
-	}
+	// public static PhantomJSDriver getPhantomDriver() {
+	// System.setProperty("http.proxyHost", "162.222.178.194");
+	// System.setProperty("http.proxyPort", "80");
+	// DesiredCapabilities caps = new DesiredCapabilities();
+	// caps.setCapability(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY,
+	// PATH_TO_PAHNTOM_DRIVER);
+	// return new PhantomJSDriver(caps);
+	// }
 
 	public static void login(WebDriver driver, PinterestAccount account) {
 		String email = account.getEmail();
