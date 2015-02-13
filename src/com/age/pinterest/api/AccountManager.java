@@ -1,24 +1,33 @@
 package com.age.pinterest.api;
 
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.charset.Charset;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+
 import org.apache.commons.io.IOUtils;
-import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.http.message.BasicNameValuePair;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -35,7 +44,7 @@ import com.age.pinterest.task.FollowTask;
 
 public class AccountManager {
 	private static final String USER_AGENT = "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0";
-
+	private String sslValue = "";
 	private final PinterestAccount account;
 	private final WebDriver driver;
 
@@ -51,6 +60,7 @@ public class AccountManager {
 		String username = account.getUser();
 		String bookmark = "";
 		while (!bookmark.equals("-end-")) {
+			CloseableHttpClient httpclient = HttpClients.createDefault();
 			try {
 				System.out.println(result.size() + "  followers from " + user);
 				String num = Long.toString(System.currentTimeMillis());
@@ -82,7 +92,6 @@ public class AccountManager {
 				httpget.setHeader("Accept-Encoding", "gzip, deflate");
 				httpget.setHeader("Host", "www.pinterest.com");
 
-				CloseableHttpClient httpclient = HttpClients.createDefault();
 				CloseableHttpResponse response = httpclient.execute(httpget);
 				InputStream instream = response.getEntity().getContent();
 				StringWriter writer = new StringWriter();
@@ -130,6 +139,12 @@ public class AccountManager {
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
+			} finally {
+				try {
+					httpclient.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 		System.out.println("Got  " + result.size() + "  followers from " + user);
@@ -188,9 +203,9 @@ public class AccountManager {
 
 	public List<Pinner> getFollowList(int size) {
 		String history = this.getFollowHistory();
-		if (size > 1000) {
-			size = 1000;
-		}
+		// if (size > 1000) {
+		// size = 1000;
+		// }
 		int targetCount = size;
 		List<Pinner> userFollowers = this.getFollowers(account.getUser(), targetCount);
 		ArrayList<Pinner> targets = new ArrayList<Pinner>();
@@ -214,6 +229,7 @@ public class AccountManager {
 		String bookmark = "";
 		while (!bookmark.equals("-end-")) {
 			System.out.println("Target list:  " + resultList.size());
+			CloseableHttpClient httpclient = HttpClients.createDefault();
 			try {
 				String num = Long.toString(System.currentTimeMillis());
 				String url = "";
@@ -245,7 +261,6 @@ public class AccountManager {
 				httpget.setHeader("Accept-Encoding", "gzip, deflate");
 				httpget.setHeader("Host", "www.pinterest.com");
 
-				CloseableHttpClient httpclient = HttpClients.createDefault();
 				CloseableHttpResponse response = httpclient.execute(httpget);
 				InputStream instream = response.getEntity().getContent();
 				StringWriter writer = new StringWriter();
@@ -283,6 +298,12 @@ public class AccountManager {
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
+			} finally {
+				try {
+					httpclient.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
 
 		}
@@ -294,8 +315,12 @@ public class AccountManager {
 		String sslToken = "";
 		for (Cookie cookie : driver.manage().getCookies()) {
 			if (cookie.getName().equals("csrftoken")) {
-				sslToken = cookie.getName() + "=" + cookie.getValue();
+				sslToken = sslToken + cookie.getName() + "=" + cookie.getValue() + "; ";
+				this.sslValue = cookie.getValue();
+			} else if (cookie.getName().equals("_pinterest_sess")) {
+				sslToken = sslToken + cookie.getName() + "=" + cookie.getValue() + "; ";
 			}
+
 		}
 		return sslToken;
 	}
@@ -359,49 +384,122 @@ public class AccountManager {
 		return this.getFollowed(account.getUser(), -1, followers);
 	}
 
-	public void follow() throws ClientProtocolException, IOException, JSONException {
-		String username = "Orientart";
-		String id = "362680713650133627";
-		String url = "https://www.pinterest.com/resource/UserFollowResource/create/";
-		HttpPost httpPost = new HttpPost(url);
-		httpPost.setHeader("User-Agent", USER_AGENT);
-		httpPost.setHeader("X-NEW-APP", "1");
-		httpPost.setHeader("Accept-Language", "en-gb,en;q=0.5");
-		httpPost.setHeader("X-Requested-With", "XMLHttpRequest");
-		httpPost.setHeader("X-APP-VERSION", "f1ab27d");
-		httpPost.setHeader("X-NEW-APP", "1");
-		httpPost.setHeader("Cookie", account.getSslToken() + ";");
-		httpPost.setHeader("Accept-Encoding", "gzip, deflate");
-		httpPost.setHeader("Host", "www.pinterest.com");
-		httpPost.setHeader("Content-Type", "application/json; charset=UTF-8");
-		ArrayList<NameValuePair> postParameters;
-		postParameters = new ArrayList<NameValuePair>();
-		postParameters.add(new BasicNameValuePair("source_url", "/bertyalvarez/"));
-		postParameters.add(new BasicNameValuePair("data", "{\"options\":{\"user_id\":\"120893708655660286\"},\"context\":{}}"));
-		postParameters
-				.add(new BasicNameValuePair(
-						"module_path",
-						"App()>UserProfilePage(resource=UserResource(username=bertyalvarez))>UserProfileContent(resource=UserResource(username=bertyalvarez))>Grid(resource=UserFollowingResource(username=bertyalvarez))>GridItems(resource=UserFollowingResource(username=bertyalvarez))>User(resource=UserResource(username=bertyalvarez))>UserFollowButton(followed=false, class_name=gridItem, unfollow_text=Unfollow, follow_ga_category=user_follow, unfollow_ga_category=user_unfollow, disabled=false, is_me=false, follow_class=default, log_element_type=62, text=Follow, user_id=120893708655660286, follow_text=Follow, color=default)"));
-		httpPost.setEntity(new UrlEncodedFormEntity(postParameters));
+	public void follow() throws ClientProtocolException, IOException, JSONException, InterruptedException, NoSuchAlgorithmException, KeyManagementException {
+		// String sslCookie = account.getSslToken();
+		// System.out.println(sslCookie);
+		// String url =
+		// "https://www.pinterest.com/source_url=%2F247homerescue%2F&data=%7B%22options%22%3A%7B%22user_id%22%3A%22431712451688421354%22%7D%2C%22context%22%3A%7B%7D%7D&module_path=App()%3EUserProfilePage(resource%3DUserResource(username%3D247homerescue%2C+invite_code%3Dnull))%3EUserProfileHeader(resource%3DUserResource(username%3D247homerescue%2C+invite_code%3Dnull))%3EUserFollowButton(followed%3Dfalse%2C+is_me%3Dfalse%2C+unfollow_text%3DUnfollow%2C+memo%3D%5Bobject+Object%5D%2C+follow_ga_category%3Duser_follow%2C+unfollow_ga_category%3Duser_unfollow%2C+disabled%3Dfalse%2C+color%3Dprimary%2C+text%3DFollow%2C+user_id%3D431712451688421354%2C+follow_text%3DFollow%2C+follow_class%3Dprimary)";
+		// HttpGet httpPost = new HttpGet(url);
+		// httpPost.setHeader("User-Agent", USER_AGENT);
+		// httpPost.setHeader("X-NEW-APP", "1");
+		// httpPost.setHeader("Accept",
+		// "application/json, text/javascript, */*; q=0.01");
+		// httpPost.setHeader("Accept-Language", "en-gb,en;q=0.5");
+		// httpPost.setHeader("X-Requested-With", "XMLHttpRequest");
+		// httpPost.setHeader("X-APP-VERSION", "f1ab27d");
+		// httpPost.setHeader("X-NEW-APP", "1");
+		// httpPost.setHeader("Cookie", sslCookie + ";");
+		// httpPost.setHeader("Accept-Encoding", "gzip, deflate");
+		// httpPost.setHeader("Host", "www.pinterest.com");
+		// httpPost.setHeader("Content-Type",
+		// "application/x-www-form-urlencoded; charset=UTF-8");
+		// httpPost.setHeader("X-CSRFToken", sslCookie.replace("csrftoken=",
+		// ""));
+		// ArrayList<NameValuePair> postParameters;
+		// postParameters = new ArrayList<NameValuePair>();
+		// postParameters.add(new BasicNameValuePair("source_url",
+		// "/bertyalvarez/"));
+		// postParameters.add(new BasicNameValuePair("data",
+		// "{\"options\":{\"user_id\":\"120893708655660286\"},\"context\":{}}"));
+		// postParameters
+		// .add(new BasicNameValuePair(
+		// "module_path",
+		// "App()>UserProfilePage(resource=UserResource(username=bertyalvarez))>UserProfileContent(resource=UserResource(username=bertyalvarez))>Grid(resource=UserFollowingResource(username=bertyalvarez))>GridItems(resource=UserFollowingResource(username=bertyalvarez))>User(resource=UserResource(username=bertyalvarez))>UserFollowButton(followed=false, class_name=gridItem, unfollow_text=Unfollow, follow_ga_category=user_follow, unfollow_ga_category=user_unfollow, disabled=false, is_me=false, follow_class=default, log_element_type=62, text=Follow, user_id=120893708655660286, follow_text=Follow, color=default)"));
+		// httpPost.setEntity(new UrlEncodedFormEntity(postParameters));
 
-		CloseableHttpClient httpclient = HttpClients.createDefault();
-		CloseableHttpResponse response = httpclient.execute(httpPost);
-		InputStream instream = response.getEntity().getContent();
+		// CloseableHttpClient httpclient = HttpClients.createDefault();
+		// CloseableHttpResponse response = httpclient.execute(httpPost);
+		// InputStream instream = response.getEntity().getContent();
+		// System.out.println(response.getStatusLine());
+		// StringWriter writer = new StringWriter();
+		//
+		// IOUtils.copy(instream, writer, "utf-8");
+		// String theString = writer.toString();
+		// JSONObject jsonObject = new JSONObject(theString);
+		// this.printKeys(jsonObject);
+		// // JSONObject response_res =
+		// // jsonObject.getJSONObject("resource_response");
+		// // this.printKeys(response_res);
+		// // String err = response_res.getString("error");
+		// // System.out.println(err);
+		// // JSONArray error = response_res.getJSONArray("error");
+		// // this.printJsonArray(error);
+		// // String data = response_res.getString("data");
+		// // System.out.println(data);
+		// Thread.sleep(1000 * 10);
+		SSLContext sc = SSLContext.getInstance("SSL");
+		sc.init(null, trustAllCerts, new java.security.SecureRandom());
+		HostnameVerifier allHostsValid = new HostnameVerifier() {
+			public boolean verify(String hostname, SSLSession session) {
+				return true;
+			}
+		};
+		HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);
+		HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+
+		String sslCookie = account.getSslToken();
+		String sslCookieValue = this.sslValue;
+		System.out.println(" ssl  " + sslCookie);
+		System.out.println(sslCookieValue);
+		String urlParameters = "source_url=/litchil/&data={\"options\":{\"user_id\":\"472667060799808629\"},\"context\":{}}&module_path=App()>UserProfilePage(resource=UserResource(username=litchil))>UserProfileContent(resource=UserResource(username=litchil))>Grid(resource=UserFollowingResource(username=litchil))>GridItems(resource=UserFollowingResource(username=litchil))>User(resource=UserResource(username=litchil))>UserFollowButton(followed=false, class_name=gridItem, unfollow_text=Unfollow, follow_ga_category=user_follow, unfollow_ga_category=user_unfollow, disabled=false, is_me=false, follow_class=default, log_element_type=62, text=Follow, user_id=472667060799808629, follow_text=Follow, color=default)";
+		byte[] postData = urlParameters.getBytes(Charset.forName("UTF-8"));
+		int postDataLength = postData.length;
+		String request = "https://www.pinterest.com/resource/UserFollowResource/create/";
+		URL url = new URL(request);
+		HttpURLConnection cox = (HttpURLConnection) url.openConnection();
+		cox.setDoOutput(true);
+		cox.setDoInput(true);
+		cox.setInstanceFollowRedirects(false);
+		cox.setRequestMethod("POST");
+		cox.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+		cox.setRequestProperty("Accept-Encoding", "gzip, deflate");
+		cox.setRequestProperty("X-NEW-APP", "1");
+		cox.setRequestProperty("Accept-Language", "en-gb,en;q=0.5");
+		cox.setRequestProperty("X-APP-VERSION", "8718db9");
+		cox.setRequestProperty("Accept", "application/json, text/javascript, */*; q=0.01");
+		cox.setRequestProperty("Content-Length", Integer.toString(postDataLength));
+		cox.setRequestProperty("Cookie", account.getSslToken());
+		cox.setRequestProperty("X-Requested-With", "XMLHttpRequest");
+		cox.setRequestProperty("X-CSRFToken", sslCookieValue);
+		cox.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/40.0.2214.111 Safari/537.36");
+		cox.setRequestProperty("Referer", "https://www.pinterest.com/litchil/");
+		cox.setUseCaches(false);
+
+		try (DataOutputStream wr = new DataOutputStream(cox.getOutputStream())) {
+			wr.write(postData);
+		}
+		cox.connect();
+		System.out.println(cox.getResponseCode());
+		InputStream response = cox.getInputStream();
 		StringWriter writer = new StringWriter();
 
-		IOUtils.copy(instream, writer, "utf-8");
+		IOUtils.copy(response, writer, "utf-8");
 		String theString = writer.toString();
-		JSONObject jsonObject = new JSONObject(theString);
 		System.out.println(theString);
+		JSONObject jsonObject = new JSONObject(theString);
 		this.printKeys(jsonObject);
-		JSONObject response_res = jsonObject.getJSONObject("resource_response");
-		this.printKeys(response_res);
-		String err = response_res.getString("error");
-		System.out.println(err);
-		// JSONArray error = response_res.getJSONArray("error");
-		// this.printJsonArray(error);
-		String data = response_res.getString("data");
-		System.out.println(data);
 
 	}
+
+	TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
+		public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+			return null;
+		}
+
+		public void checkClientTrusted(X509Certificate[] certs, String authType) {
+		}
+
+		public void checkServerTrusted(X509Certificate[] certs, String authType) {
+		}
+	} };
 }
