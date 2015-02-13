@@ -45,6 +45,7 @@ public class UnfollowTask extends Task {
 				}
 			}
 		}
+		driver.quit();
 	}
 
 	private boolean unfollow(List<String> trash, WebDriver driver) throws InterruptedException {

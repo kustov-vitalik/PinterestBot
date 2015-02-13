@@ -54,7 +54,7 @@ public class PinTask extends Task {
 				}
 			}
 		}
-		System.out.println("No more pins for " + acc.getUser());
+		System.out.println("No more pins for " + acc.getUser());driver.quit();
 	}
 
 	private boolean pin(List<Pin> pins, WebDriver driver) throws InterruptedException, IOException {

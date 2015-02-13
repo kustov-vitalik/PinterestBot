@@ -53,6 +53,7 @@ public class FollowTask extends Task {
 				}
 			}
 		}
+		driver.quit();
 	}
 
 	private boolean follow(List<String> users, WebDriver driver) throws InterruptedException, IOException {
@@ -66,9 +67,9 @@ public class FollowTask extends Task {
 		if (btn != null && btn.getText().equals("Follow")) {
 			btn.click();
 			System.out.println("Followed  " + userItem);
-			FileUtill.appendToFile(String.format(PATH_TO_HISTORY_FORMAT, this.acc.getUser()), userItem);
 			result = true;
 		}
+		FileUtill.appendToFile(String.format(PATH_TO_HISTORY_FORMAT, this.acc.getUser()), userItem);
 		users.remove(0);
 		return result;
 	}

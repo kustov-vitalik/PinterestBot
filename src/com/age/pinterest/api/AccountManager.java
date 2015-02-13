@@ -9,11 +9,16 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicNameValuePair;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -183,7 +188,10 @@ public class AccountManager {
 
 	public List<Pinner> getFollowList(int size) {
 		String history = this.getFollowHistory();
-		int targetCount = size / 50;
+		if (size > 1000) {
+			size = 1000;
+		}
+		int targetCount = size;
 		List<Pinner> userFollowers = this.getFollowers(account.getUser(), targetCount);
 		ArrayList<Pinner> targets = new ArrayList<Pinner>();
 		for (Pinner p : userFollowers) {
@@ -351,4 +359,49 @@ public class AccountManager {
 		return this.getFollowed(account.getUser(), -1, followers);
 	}
 
+	public void follow() throws ClientProtocolException, IOException, JSONException {
+		String username = "Orientart";
+		String id = "362680713650133627";
+		String url = "https://www.pinterest.com/resource/UserFollowResource/create/";
+		HttpPost httpPost = new HttpPost(url);
+		httpPost.setHeader("User-Agent", USER_AGENT);
+		httpPost.setHeader("X-NEW-APP", "1");
+		httpPost.setHeader("Accept-Language", "en-gb,en;q=0.5");
+		httpPost.setHeader("X-Requested-With", "XMLHttpRequest");
+		httpPost.setHeader("X-APP-VERSION", "f1ab27d");
+		httpPost.setHeader("X-NEW-APP", "1");
+		httpPost.setHeader("Cookie", account.getSslToken() + ";");
+		httpPost.setHeader("Accept-Encoding", "gzip, deflate");
+		httpPost.setHeader("Host", "www.pinterest.com");
+		httpPost.setHeader("Content-Type", "application/json; charset=UTF-8");
+		ArrayList<NameValuePair> postParameters;
+		postParameters = new ArrayList<NameValuePair>();
+		postParameters.add(new BasicNameValuePair("source_url", "/bertyalvarez/"));
+		postParameters.add(new BasicNameValuePair("data", "{\"options\":{\"user_id\":\"120893708655660286\"},\"context\":{}}"));
+		postParameters
+				.add(new BasicNameValuePair(
+						"module_path",
+						"App()>UserProfilePage(resource=UserResource(username=bertyalvarez))>UserProfileContent(resource=UserResource(username=bertyalvarez))>Grid(resource=UserFollowingResource(username=bertyalvarez))>GridItems(resource=UserFollowingResource(username=bertyalvarez))>User(resource=UserResource(username=bertyalvarez))>UserFollowButton(followed=false, class_name=gridItem, unfollow_text=Unfollow, follow_ga_category=user_follow, unfollow_ga_category=user_unfollow, disabled=false, is_me=false, follow_class=default, log_element_type=62, text=Follow, user_id=120893708655660286, follow_text=Follow, color=default)"));
+		httpPost.setEntity(new UrlEncodedFormEntity(postParameters));
+
+		CloseableHttpClient httpclient = HttpClients.createDefault();
+		CloseableHttpResponse response = httpclient.execute(httpPost);
+		InputStream instream = response.getEntity().getContent();
+		StringWriter writer = new StringWriter();
+
+		IOUtils.copy(instream, writer, "utf-8");
+		String theString = writer.toString();
+		JSONObject jsonObject = new JSONObject(theString);
+		System.out.println(theString);
+		this.printKeys(jsonObject);
+		JSONObject response_res = jsonObject.getJSONObject("resource_response");
+		this.printKeys(response_res);
+		String err = response_res.getString("error");
+		System.out.println(err);
+		// JSONArray error = response_res.getJSONArray("error");
+		// this.printJsonArray(error);
+		String data = response_res.getString("data");
+		System.out.println(data);
+
+	}
 }
