@@ -32,9 +32,9 @@ public class PinBot {
 		mapper.writeValue(new File(rootDir, "acc.json"), acc);
 	}
 
-	public void addFollowTask(String user, String keyword, int count, long interval) throws ClientProtocolException, IOException, JSONException {
+	public void addFollowTask(String user, int count, long interval) throws ClientProtocolException, IOException, JSONException {
 		PinterestAccount account = this.getAccount(user);
-		this.startNewTask(new FollowTask(account, keyword, count, interval));
+		this.startNewTask(new FollowTask(account, "", count, interval));
 	}
 
 	public void addPinTask(String user, String board, long interval) throws IOException, InterruptedException {

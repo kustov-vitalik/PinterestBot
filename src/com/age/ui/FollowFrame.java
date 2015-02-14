@@ -25,7 +25,6 @@ public class FollowFrame extends JFrame implements ActionListener {
 
 	private final JComboBox<String> users;
 	private final JButton start;
-	private final JTextArea keyword;
 	private final JTextArea interval;
 	private final JTextArea num;
 
@@ -47,14 +46,8 @@ public class FollowFrame extends JFrame implements ActionListener {
 		interval = new JTextArea();
 		interval.setSize(textSize);
 		interval.setPreferredSize(textSize);
-		interval.setToolTipText("Interval");
-		interval.setText("seconds");
-
-		keyword = new JTextArea();
-		keyword.setSize(textSize);
-		keyword.setPreferredSize(textSize);
-		keyword.setText("jewelry");
-		keyword.setToolTipText("keyword");
+		interval.setToolTipText("Interval in seconds");
+		interval.setText("10");
 
 		num = new JTextArea();
 		num.setSize(textSize);
@@ -63,7 +56,6 @@ public class FollowFrame extends JFrame implements ActionListener {
 		num.setToolTipText("Count");
 
 		panel.add(users);
-		panel.add(keyword);
 		panel.add(interval);
 		panel.add(num);
 		panel.add(start);
@@ -81,9 +73,8 @@ public class FollowFrame extends JFrame implements ActionListener {
 			long time = Long.parseLong(interval.getText());
 			time *= 1000;
 			int count = Integer.parseInt(num.getText());
-			String word = keyword.getText();
 			try {
-				bot.addFollowTask(username, word, count, time);
+				bot.addFollowTask(username, count, time);
 			} catch (IOException | JSONException e1) {
 				e1.printStackTrace();
 			}

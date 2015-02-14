@@ -127,6 +127,8 @@ public class AccountManager {
 						if (!result.contains(pinner)) {
 							result.add(pinner);
 						}
+						System.out.println("Current size is  " + result.size());
+						System.out.println("Max is  " + max);
 						if (max > 0 && result.size() >= max) {
 							System.out.println("Got  " + result.size() + "  followers from " + user);
 							return result;
@@ -203,13 +205,17 @@ public class AccountManager {
 
 	public List<Pinner> getFollowList(int size) {
 		String history = this.getFollowHistory();
-		// if (size > 1000) {
-		// size = 1000;
-		// }
 		int targetCount = size;
+		if (size > 100) {
+			targetCount = 100;
+		}
 		List<Pinner> userFollowers = this.getFollowers(account.getUser(), targetCount);
 		ArrayList<Pinner> targets = new ArrayList<Pinner>();
 		for (Pinner p : userFollowers) {
+			int remaining = size - targets.size();
+			if (remaining <= 0) {
+				break;
+			}
 			List<Pinner> part = this.getFollowers(p.getUsername(), size - targets.size());
 			for (Pinner pnr : part) {
 				if (!history.contains(pnr.getUsername())) {
@@ -219,6 +225,9 @@ public class AccountManager {
 				}
 			}
 			System.out.println("You have  " + targets.size() + "  targets");
+			if (targets.size() > size) {
+				break;
+			}
 		}
 		return targets;
 
