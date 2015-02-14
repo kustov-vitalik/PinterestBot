@@ -20,6 +20,7 @@ public class UI implements ActionListener {
 	private JButton unfollowTask;
 	private JButton followTask;
 	private JButton pinTask;
+	private JButton followByUserButton;
 
 	public UI() {
 		init();
@@ -51,6 +52,13 @@ public class UI implements ActionListener {
 		followTask.setPreferredSize(btnSize);
 		panel.add(followTask);
 
+		followByUserButton = new JButton();
+		followByUserButton.addActionListener(this);
+		followByUserButton.setText("Follow By User");
+		followByUserButton.setSize(btnSize);
+		followByUserButton.setPreferredSize(btnSize);
+		panel.add(followByUserButton);
+
 		pinTask = new JButton();
 		pinTask.addActionListener(this);
 		pinTask.setText("Pin");
@@ -80,6 +88,8 @@ public class UI implements ActionListener {
 			new FollowFrame();
 		} else if (e.getActionCommand().equals("Pin")) {
 			new PinFrame();
+		} else if (e.getActionCommand().equals("Follow By User")) {
+			new FollowByUserFrame();
 		}
 	}
 

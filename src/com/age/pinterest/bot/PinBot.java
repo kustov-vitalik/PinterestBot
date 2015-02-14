@@ -12,6 +12,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.json.JSONException;
 
 import com.age.pinterest.config.PinterestAccount;
+import com.age.pinterest.task.FollowByUserTask;
 import com.age.pinterest.task.FollowTask;
 import com.age.pinterest.task.PinTask;
 import com.age.pinterest.task.Task;
@@ -19,7 +20,6 @@ import com.age.pinterest.task.UnfollowTask;
 
 public class PinBot {
 	public static String ROOT_DIR = "PinBotROOT";
-
 
 	public static void addAccount(PinterestAccount acc) throws JsonGenerationException, JsonMappingException, IOException {
 		System.out.println("Setting up user " + acc.getUser());
@@ -47,6 +47,10 @@ public class PinBot {
 		this.startNewTask(new UnfollowTask(account, minFollower, interval));
 	}
 
+	public void addFollowByUserTaks(String user, String targetUser, long interval) {
+		PinterestAccount account = this.getAccount(user);
+		this.startNewTask(new FollowByUserTask(account, targetUser, interval));
+	}
 
 	public void generateAccounts(ArrayList<PinterestAccount> accounts) throws JsonGenerationException, JsonMappingException, IOException {
 		ObjectMapper mapper = new ObjectMapper();
@@ -59,7 +63,6 @@ public class PinBot {
 			mapper.writeValue(new File(dest), acc);
 		}
 	}
-
 
 	public static List<String> listAccount() {
 		String root = ROOT_DIR + "/Users";
