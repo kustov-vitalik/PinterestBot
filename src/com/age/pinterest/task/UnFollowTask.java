@@ -12,13 +12,13 @@ import com.age.help.PinUtils;
 import com.age.pinterest.api.AccountManager;
 import com.age.pinterest.config.PinterestAccount;
 
-public class UnfollowTask extends Task {
+public class UnFollowTask extends Task {
 	private static final String USER_URL_FORMAT = "https://www.pinterest.com/%s/";
 	private final long interval;
 	private final PinterestAccount acc;
 	private final int minFollowers;
 
-	public UnfollowTask(PinterestAccount acc, int minFollowers, long interval) {
+	public UnFollowTask(PinterestAccount acc, int minFollowers, long interval) {
 		this.interval = interval;
 		this.acc = acc;
 		this.minFollowers = minFollowers;

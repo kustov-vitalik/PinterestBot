@@ -16,7 +16,7 @@ import com.age.pinterest.task.FollowByUserTask;
 import com.age.pinterest.task.FollowTask;
 import com.age.pinterest.task.PinTask;
 import com.age.pinterest.task.Task;
-import com.age.pinterest.task.UnfollowTask;
+import com.age.pinterest.task.UnFollowTask;
 
 public class PinBot {
 	public static String ROOT_DIR = "PinBotROOT";
@@ -44,7 +44,7 @@ public class PinBot {
 
 	public void addUnfollowTask(String user, int minFollower, long interval) throws IOException, JSONException, InterruptedException {
 		PinterestAccount account = this.getAccount(user);
-		this.startNewTask(new UnfollowTask(account, minFollower, interval));
+		this.startNewTask(new UnFollowTask(account, minFollower, interval));
 	}
 
 	public void addFollowByUserTaks(String user, String targetUser, long interval) {
