@@ -26,17 +26,17 @@ public class App {
 		// ImageScraper srapper = new ImageScraper(driver, "cool", "cool");
 		// srapper.scan();
 		// WebDriver driver = PinUtils.getPhantomDriver();
-		// PinterestAccount acc = new PinterestAccount();
-		// acc.setEmail("globalamericaselfdefensejohn@gmail.com");
-		// acc.setPassword("Geni0us!");
-		// acc.setUser("globalamericase");
-		// AccountManager manager = new AccountManager(acc,
-		// PinUtils.getChrome());
+		PinterestAccount acc = new PinterestAccount();
+		acc.setEmail("globalamericaselfdefensejohn@gmail.com");
+		acc.setPassword("Geni0us!");
+		acc.setUser("globalamericase");
+		AccountManager manager = new AccountManager(acc, PinUtils.getChrome());
 		System.setProperty("http.proxyHost", "127.0.0.1");
 		System.setProperty("https.proxyHost", "127.0.0.1");
 		System.setProperty("http.proxyPort", "8888");
 		System.setProperty("https.proxyPort", "8888");
-		ApiLogin.login();
+		manager.pin();
+		// ApiLogin.login();
 		// manager.follow();
 		// PinBot bot = new PinBot(driver, COCO);
 		// bot.addPinTask(COCO_BOARD, 1000 * 60 * 40);

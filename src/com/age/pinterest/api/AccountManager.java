@@ -168,4 +168,15 @@ public class AccountManager {
 		Cookie sessionCookie = driver.manage().getCookieNamed("_pinterest_sess");
 		ApiUnfollow.unfollow(account.getUser(), pinner, sslCookie, sessionCookie);
 	}
+
+	public void pin() throws KeyManagementException, NoSuchAlgorithmException, IOException, JSONException {
+		for (Cookie c : driver.manage().getCookies()) {
+			System.out.println(c.getName());
+		}
+		Cookie bCookie=driver.manage().getCookieNamed("_b");
+		Cookie sslCookie = driver.manage().getCookieNamed("csrftoken");
+		Cookie sessionCookie = driver.manage().getCookieNamed("_pinterest_sess");
+
+		ApiPin.upload(sslCookie, sessionCookie,bCookie);
+	}
 }
