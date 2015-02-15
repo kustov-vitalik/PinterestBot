@@ -36,17 +36,12 @@ public class FollowTask extends Task {
 		WebDriver driver = PinUtils.getChrome();
 		AccountManager manager = new AccountManager(acc, driver);
 		List<Pinner> followList = manager.getFollowList(size);
-		List<String> users = new ArrayList<String>();
-		for (Pinner pinner : followList) {
-			users.add(String.format(USER_URL_FORMAT, pinner.getUsername()));
-		}
-		while (!users.isEmpty()) {
+		while (!followList.isEmpty()) {
 			if (this.intervalPassed(interval)) {
 				try {
-					boolean followed = false;
-					while (!followed) {
-						followed = this.follow(users, driver);
-					}
+					Pinner pinner = followList.get(0);
+					manager.follow(pinner);
+					followList.remove(0);
 				} catch (Exception e) {
 					System.out.println(acc.getUser() + "  Failed to follow");
 					e.printStackTrace();
@@ -55,23 +50,4 @@ public class FollowTask extends Task {
 		}
 		driver.quit();
 	}
-
-	private boolean follow(List<String> users, WebDriver driver) throws InterruptedException, IOException {
-		System.out.println("You have  " + users.size() + "  targets.");
-		String userItem = users.get(0);
-		driver.get(userItem);
-		PinUtils.waitForPage(driver);
-		String btnXpath = "/html/body/div[1]/div[2]/div[1]/div[2]/div[2]/div/div/div[2]/div[1]/div[2]/button[1]";
-		WebElement btn = PinUtils.waitForWithTimeout(By.xpath(btnXpath), driver, 1000 * 15);
-		boolean result = false;
-		if (btn != null && btn.getText().equals("Follow")) {
-			btn.click();
-			System.out.println("Followed  " + userItem);
-			result = true;
-		}
-		FileUtill.appendToFile(String.format(PATH_TO_HISTORY_FORMAT, this.acc.getUser()), userItem);
-		users.remove(0);
-		return result;
-	}
-
 }
