@@ -7,7 +7,10 @@ import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
+import java.util.Random;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.imageio.ImageIO;
 
@@ -16,29 +19,24 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 public class ImageScraper {
-	private static final String IMAGE_LOCATION = "D://image//";
-	private final ArrayList<String> images;
+	// private final ArrayList<String> images;
 	private final WebDriver driver;
 	private final String keywords;
-	private final String tag;
 	private final String dowloadLocation;
 
 	public ImageScraper(WebDriver driver, String keywords, String tag) {
 		this.driver = driver;
 		this.keywords = keywords;
-		this.tag = tag;
-		this.dowloadLocation = IMAGE_LOCATION + tag;
-		images = new ArrayList<String>();
+		this.dowloadLocation = BotPaths.IMAGES_DIR + tag;
+		// images = new ArrayList<String>();
 	}
 
 	public String getDownloadLocation() {
 		return this.dowloadLocation;
 	}
 
-	public void scan() throws InterruptedException, IOException {
-		// if (!checkForTag()) {
-		// return;
-		// }
+	public void scrape() throws InterruptedException, IOException {
+		ArrayList<String> images = new ArrayList<String>();
 		String googleSearchFormat = "https://www.google.bg/search?as_st=y&tbm=isch&hl=en&as_q=" + keywords.replace(" ", "+")
 				+ "&as_epq=&as_oq=&as_eq=&cr=&as_sitesearch=&safe=images&tbs=isz:l";
 		driver.get(googleSearchFormat);
@@ -53,46 +51,43 @@ public class ImageScraper {
 			}
 		}
 		PinUtils.waitForPage(driver);
-		for (int i = 0; i < 2000; i++) {
+		long last = System.currentTimeMillis();
+		int max = 1000;
+		for (int i = 0; i < max; i++) {
 			try {
-				System.out.println("Loop");
 				WebElement btn = PinUtils.waitFor(By.id("irc_ra"), driver);
 				WebElement div = btn.findElement(By.tagName("div"));
 				div.click();
-				addImage(driver.getCurrentUrl());
+				images.add(driver.getCurrentUrl());
+				if (System.currentTimeMillis() - last > 1000 * 1) {
+					System.out.println((i * 100.0f) / max + "%");
+					last = System.currentTimeMillis();
+				}
 			} catch (Exception e) {
-				System.out.println("Skip click");
 			}
 		}
 		System.out.println("Downloading");
-		downloadAll();
+		driver.quit();
+		downloadAll(images);
 
 	}
 
-	private void downloadAll() throws IOException {
-		File root = new File(dowloadLocation);
-		if (!root.exists()) {
-			root.mkdir();
-		}
+	private void downloadAll(List<String> images) throws IOException {
+		new File(dowloadLocation).mkdirs();
+		ExecutorService pool = Executors.newFixedThreadPool(20);
 		for (String str : images) {
-			String imgDestination = "not yet set!";
 			try {
-				imgDestination = this.cutImageUrl(str);
-				System.out.println("Downloading  " + imgDestination);
-				BufferedImage image1 = null;
-
-				URL url = new URL(imgDestination);
-				image1 = ImageIO.read(url);
-				if (image1 != null) {
-					File file = new File(dowloadLocation + "/" + System.currentTimeMillis() + ".jpg");
-					file.createNewFile();
-					ImageIO.write(image1, "jpg", file);
-				}
+				String imgDestination = this.cutImageUrl(str);
+				pool.submit(new DownloadCallable(imgDestination));
 			} catch (Exception e) {
-				System.out.println("Failed to download:  " + imgDestination + "  " + e.getMessage());
+				System.out.println("Failed to start download " + e.getMessage());
 			}
 		}
-		System.out.println("Go to  " + dowloadLocation + "   and remove ugly images.");
+		pool.shutdown();
+		while (!pool.isShutdown()) {
+
+		}
+		System.out.println("Scrape for  " + this.keywords + "  completed");
 	}
 
 	private String cutImageUrl(String url) throws UnsupportedEncodingException {
@@ -118,23 +113,32 @@ public class ImageScraper {
 
 	}
 
-	private boolean checkForTag() {
-		File f = new File(dowloadLocation);
-		if (f.exists()) {
-			Scanner in = new Scanner(System.in);
-			System.out.println(tag + " already has some files add more enter 'n' to skip or any key to continue.");
-			String line = in.nextLine();
-			in.close();
-			if (line.toLowerCase().equals("n")) {
-				return false;
-			}
-		}
-		return true;
-	}
+	private class DownloadCallable implements Callable<String> {
+		private final String imgDestination;
 
-	private void addImage(String image) {
-		if (image != null && !images.contains(image)) {
-			images.add(image);
+		public DownloadCallable(String imgDestination) {
+			this.imgDestination = imgDestination;
 		}
+
+		@Override
+		public String call() {
+			Random r = new Random();
+			try {
+				System.out.println("Downloading  " + imgDestination);
+				BufferedImage image1 = null;
+				URL url = new URL(imgDestination);
+				image1 = ImageIO.read(url);
+				if (image1 != null) {
+					File file = new File(dowloadLocation + "/" + System.currentTimeMillis() + r.nextInt() + ".png");
+					file.createNewFile();
+					ImageIO.write(image1, "png", file);
+					System.out.println("Downloaded " + imgDestination);
+				}
+			} catch (Exception e) {
+				System.out.println("Failed to download:  " + imgDestination + "  " + e.getMessage());
+			}
+			return "OK";
+		}
+
 	}
 }

@@ -7,6 +7,7 @@ import java.security.NoSuchAlgorithmException;
 import org.json.JSONException;
 import org.openqa.selenium.WebDriver;
 
+import com.age.help.DescriptionGenerator;
 import com.age.help.ImageScraper;
 import com.age.help.PinUtils;
 import com.age.pinterest.api.AccountManager;
@@ -22,20 +23,25 @@ public class App {
 	private static final String STACEY_BOARD = "jewelry-that-i-would-like-to-wear";
 
 	public static void main(String[] args) throws InterruptedException, IOException, JSONException, KeyManagementException, NoSuchAlgorithmException {
+//		PinBot bot = new PinBot();
+//		bot.addPinTask(COCO, COCO_BOARD, 1000 * 60 * 50);
+//		bot.addPinTask(LINDA, LINDA_BOARD, 1000 * 60 * 50);
+		
 		// WebDriver driver = PinUtils.getChrome();
 		// ImageScraper srapper = new ImageScraper(driver, "cool", "cool");
 		// srapper.scan();
 		// WebDriver driver = PinUtils.getPhantomDriver();
-		PinterestAccount acc = new PinterestAccount();
-		acc.setEmail("globalamericaselfdefensejohn@gmail.com");
-		acc.setPassword("Geni0us!");
-		acc.setUser("globalamericase");
-		AccountManager manager = new AccountManager(acc, PinUtils.getChrome());
-		System.setProperty("http.proxyHost", "127.0.0.1");
-		System.setProperty("https.proxyHost", "127.0.0.1");
-		System.setProperty("http.proxyPort", "8888");
-		System.setProperty("https.proxyPort", "8888");
-		manager.pin();
+		// PinterestAccount acc = new PinterestAccount();
+		// acc.setEmail("globalamericaselfdefensejohn@gmail.com");
+		// acc.setPassword("Geni0us!");
+		// acc.setUser("globalamericase");
+		// AccountManager manager = new AccountManager(acc,
+		// PinUtils.getChrome());
+		// System.setProperty("http.proxyHost", "127.0.0.1");
+		// System.setProperty("https.proxyHost", "127.0.0.1");
+		// System.setProperty("http.proxyPort", "8888");
+		// System.setProperty("https.proxyPort", "8888");
+		// manager.pin();
 		// ApiLogin.login();
 		// manager.follow();
 		// PinBot bot = new PinBot(driver, COCO);

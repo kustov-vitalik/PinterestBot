@@ -13,18 +13,17 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
 
+import com.age.help.BotPaths;
 import com.age.help.FileUtill;
 import com.age.help.PinUtils;
 import com.age.pinterest.api.AccountManager;
-import com.age.pinterest.bot.PinBot;
 import com.age.pinterest.config.Pin;
 import com.age.pinterest.config.PinterestAccount;
 
 public class PinTask extends Task {
 	private static final String BOARDS_URL_FORMAT = "http://www.pinterest.com/%s/%s";
-	private static final String PINS_LOCATION_URL = PinBot.ROOT_DIR + "/Users/%s/pins";
+	private static final String PINS_LOCATION_URL = BotPaths.ROOT_DIR + "Users/%s/pins";
 	private final long interval;
 	private final String board;
 	private final PinterestAccount acc;

@@ -12,21 +12,18 @@ import javax.swing.WindowConstants;
 
 public class UI implements ActionListener {
 	private static final Dimension mainSize = new Dimension(500, 500);
-	private static final Dimension textSize = new Dimension((int) (mainSize.width * 0.3f), (int) (mainSize.height * 0.04f));
 	private static final Dimension btnSize = new Dimension((int) (mainSize.width * 0.9f), (int) (mainSize.height * 0.05f));
 
-	private JFrame mainFrame;
-	private JButton addAccBtn;
-	private JButton unfollowTask;
-	private JButton followTask;
-	private JButton pinTask;
-	private JButton followByUserButton;
+	private final JFrame mainFrame;
+	private final JButton addAccBtn;
+	private final JButton unfollowTask;
+	private final JButton followTask;
+	private final JButton pinTask;
+	private final JButton followByUserButton;
+	private final JButton scrapeButton;
+	private final JButton genBasicPinsButton;
 
 	public UI() {
-		init();
-	}
-
-	private void init() {
 		mainFrame = new JFrame("Pinterest bot");
 		JPanel panel = new JPanel();
 		panel.setLayout(new FlowLayout());
@@ -66,16 +63,26 @@ public class UI implements ActionListener {
 		pinTask.setPreferredSize(btnSize);
 		panel.add(pinTask);
 
+		scrapeButton = new JButton();
+		scrapeButton.addActionListener(this);
+		scrapeButton.setText("Scrape");
+		scrapeButton.setSize(btnSize);
+		scrapeButton.setPreferredSize(btnSize);
+		panel.add(scrapeButton);
+
+		genBasicPinsButton = new JButton();
+		genBasicPinsButton.addActionListener(this);
+		genBasicPinsButton.setText("Generate Pins");
+		genBasicPinsButton.setSize(btnSize);
+		genBasicPinsButton.setPreferredSize(btnSize);
+		panel.add(genBasicPinsButton);
+
 		mainFrame.add(panel);
 		mainFrame.setSize(mainSize);
 		mainFrame.setLocationRelativeTo(null);
 		mainFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		mainFrame.setVisible(true);
 
-	}
-
-	public static void main(String[] args) {
-		new UI();
 	}
 
 	@Override
@@ -90,7 +97,14 @@ public class UI implements ActionListener {
 			new PinFrame();
 		} else if (e.getActionCommand().equals("Follow By User")) {
 			new FollowByUserFrame();
+		} else if (e.getActionCommand().equals("Scrape")) {
+			new ScrapeFrame();
+		} else if (e.getActionCommand().equals("Generate Pins")) {
+			new GenerateBasicPinsFrame();
 		}
 	}
 
+	public static void main(String[] args) {
+		new UI();
+	}
 }

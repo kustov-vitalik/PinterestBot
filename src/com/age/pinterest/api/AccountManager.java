@@ -36,6 +36,7 @@ import org.openqa.selenium.Cookie;
 import org.openqa.selenium.WebDriver;
 
 import com.age.data.Pinner;
+import com.age.help.BotPaths;
 import com.age.help.FileUtill;
 import com.age.help.PinUtils;
 import com.age.pinterest.bot.PinBot;
@@ -43,8 +44,6 @@ import com.age.pinterest.config.PinterestAccount;
 import com.age.pinterest.task.FollowTask;
 
 public class AccountManager {
-	private static final String USER_AGENT = "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0";
-	private String sslValue = "";
 	private final PinterestAccount account;
 	private final WebDriver driver;
 
@@ -94,12 +93,12 @@ public class AccountManager {
 		for (Cookie cookie : driver.manage().getCookies()) {
 			if (cookie.getName().equals("csrftoken")) {
 				sslToken = sslToken + cookie.getName() + "=" + cookie.getValue() + "; ";
-				this.sslValue = cookie.getValue();
 			} else if (cookie.getName().equals("_pinterest_sess")) {
 				sslToken = sslToken + cookie.getName() + "=" + cookie.getValue() + "; ";
 			}
 
 		}
+		driver.quit();
 		return sslToken;
 	}
 
@@ -113,7 +112,7 @@ public class AccountManager {
 			account.setSslToken(sslToken);
 			ObjectMapper mapper = new ObjectMapper();
 			try {
-				mapper.writeValue(new File(PinBot.ROOT_DIR + "/Users/" + account.getUser() + "/acc.json"), account);
+				mapper.writeValue(new File(BotPaths.ROOT_DIR + "/Users/" + account.getUser() + "/acc.json"), account);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -170,13 +169,9 @@ public class AccountManager {
 	}
 
 	public void pin() throws KeyManagementException, NoSuchAlgorithmException, IOException, JSONException {
-		for (Cookie c : driver.manage().getCookies()) {
-			System.out.println(c.getName());
-		}
-		Cookie bCookie=driver.manage().getCookieNamed("_b");
+		Cookie bCookie = driver.manage().getCookieNamed("_b");
 		Cookie sslCookie = driver.manage().getCookieNamed("csrftoken");
 		Cookie sessionCookie = driver.manage().getCookieNamed("_pinterest_sess");
-
-		ApiPin.upload(sslCookie, sessionCookie,bCookie);
+		ApiPin.upload(sslCookie, sessionCookie, bCookie);
 	}
 }

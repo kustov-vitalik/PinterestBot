@@ -11,19 +11,21 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.json.JSONException;
 
+import com.age.help.BotPaths;
 import com.age.pinterest.config.PinterestAccount;
 import com.age.pinterest.task.FollowByUserTask;
 import com.age.pinterest.task.FollowTask;
+import com.age.pinterest.task.GenerateBasicPinsTask;
 import com.age.pinterest.task.PinTask;
+import com.age.pinterest.task.ScrapeTask;
 import com.age.pinterest.task.Task;
 import com.age.pinterest.task.UnFollowTask;
 
 public class PinBot {
-	public static String ROOT_DIR = "PinBotROOT";
 
 	public static void addAccount(PinterestAccount acc) throws JsonGenerationException, JsonMappingException, IOException {
 		System.out.println("Setting up user " + acc.getUser());
-		String root = ROOT_DIR + "/Users/" + acc.getUser();
+		String root = BotPaths.ROOT_DIR + "/Users/" + acc.getUser();
 		File rootDir = new File(root);
 		rootDir.mkdirs();
 		File pinDir = new File(rootDir, "pins");
@@ -34,7 +36,7 @@ public class PinBot {
 
 	public void addFollowTask(String user, int count, long interval) throws ClientProtocolException, IOException, JSONException {
 		PinterestAccount account = this.getAccount(user);
-		this.startNewTask(new FollowTask(account, "", count, interval));
+		this.startNewTask(new FollowTask(account, count, interval));
 	}
 
 	public void addPinTask(String user, String board, long interval) throws IOException, InterruptedException {
@@ -52,10 +54,18 @@ public class PinBot {
 		this.startNewTask(new FollowByUserTask(account, targetUser, interval));
 	}
 
+	public void addScrapeTask(String keyword, String tag) {
+		this.startNewTask(new ScrapeTask(keyword, tag));
+	}
+
+	public void addGenerateBasicPinsTask(String tag, String source) {
+		this.startNewTask(new GenerateBasicPinsTask(tag, source));
+	}
+
 	public void generateAccounts(ArrayList<PinterestAccount> accounts) throws JsonGenerationException, JsonMappingException, IOException {
 		ObjectMapper mapper = new ObjectMapper();
 		for (PinterestAccount acc : accounts) {
-			String dest = PinBot.ROOT_DIR + "/" + acc.getUser();
+			String dest = BotPaths.ROOT_DIR + "/" + acc.getUser();
 			File f = new File(dest);
 			f.mkdirs();
 			dest = dest + "/" + "acc.json";
@@ -65,7 +75,7 @@ public class PinBot {
 	}
 
 	public static List<String> listAccount() {
-		String root = ROOT_DIR + "/Users";
+		String root = BotPaths.ROOT_DIR + "/Users";
 		File f = new File(root);
 		ArrayList<String> fileNames = new ArrayList<String>();
 		for (File file : f.listFiles()) {
@@ -82,7 +92,7 @@ public class PinBot {
 	private PinterestAccount getAccount(String username) {
 		ObjectMapper mapper = new ObjectMapper();
 		PinterestAccount account = null;
-		String pathToUser = ROOT_DIR + "/Users/" + username;
+		String pathToUser = BotPaths.ROOT_DIR + "/Users/" + username;
 		try {
 			account = mapper.readValue(new File(pathToUser + "/acc.json"), PinterestAccount.class);
 		} catch (IOException e) {

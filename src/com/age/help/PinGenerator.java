@@ -15,7 +15,6 @@ import com.age.pinterest.bot.PinBot;
 import com.age.pinterest.config.Pin;
 
 public class PinGenerator {
-	private final String PINS_ROOT = PinBot.ROOT_DIR + "/pins";
 	private final WebDriver driver;
 
 	public PinGenerator() {
@@ -62,8 +61,8 @@ public class PinGenerator {
 		}
 		ObjectMapper mapper = new ObjectMapper();
 		for (int i = 0; i < pins.size(); i++) {
-			String path = PINS_ROOT + "/" + category + "/";
-			File file = new File(PINS_ROOT + "/" + category + "/");
+			String path = BotPaths.PINS_ROOT + category + "/";
+			File file = new File(path);
 			file.mkdirs();
 			path = path + Integer.toString(i) + ".json";
 			mapper.writeValue(new File(path), pins.get(i));

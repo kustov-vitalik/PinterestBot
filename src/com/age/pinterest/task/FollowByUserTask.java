@@ -9,6 +9,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 import com.age.data.Pinner;
+import com.age.help.BotPaths;
 import com.age.help.FileUtill;
 import com.age.help.PinUtils;
 import com.age.pinterest.api.AccountManager;
@@ -16,7 +17,7 @@ import com.age.pinterest.bot.PinBot;
 import com.age.pinterest.config.PinterestAccount;
 
 public class FollowByUserTask extends Task {
-	public static final String PATH_TO_HISTORY_FORMAT = PinBot.ROOT_DIR + "/Users/%s/followed.txt";
+	public static final String PATH_TO_HISTORY_FORMAT = BotPaths.ROOT_DIR + "Users/%s/followed.txt";
 	private static final String USER_URL_FORMAT = "https://www.pinterest.com/%s/";
 	private final String user;
 	private final PinterestAccount acc;
