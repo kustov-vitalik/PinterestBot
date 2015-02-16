@@ -52,7 +52,7 @@ public class ImageScraper {
 		}
 		PinUtils.waitForPage(driver);
 		long last = System.currentTimeMillis();
-		int max = 1000;
+		int max = 500;
 		for (int i = 0; i < max; i++) {
 			try {
 				WebElement btn = PinUtils.waitFor(By.id("irc_ra"), driver);

@@ -46,6 +46,9 @@ import com.age.pinterest.task.FollowTask;
 public class AccountManager {
 	private final PinterestAccount account;
 	private final WebDriver driver;
+	Cookie bCookie = null;
+	Cookie sslCookie = null;
+	Cookie sessionCookie = null;
 
 	public AccountManager(PinterestAccount account, WebDriver driver) {
 		this.account = account;
@@ -98,6 +101,9 @@ public class AccountManager {
 			}
 
 		}
+		bCookie = driver.manage().getCookieNamed("_b");
+		sslCookie = driver.manage().getCookieNamed("csrftoken");
+		sessionCookie = driver.manage().getCookieNamed("_pinterest_sess");
 		driver.quit();
 		return sslToken;
 	}
@@ -156,22 +162,15 @@ public class AccountManager {
 
 	public void follow(Pinner pinner) throws ClientProtocolException, IOException, JSONException, InterruptedException, NoSuchAlgorithmException,
 			KeyManagementException {
-		Cookie sslCookie = driver.manage().getCookieNamed("csrftoken");
-		Cookie sessionCookie = driver.manage().getCookieNamed("_pinterest_sess");
 		ApiFollow.follow(pinner, sslCookie, sessionCookie);
 	}
 
 	public void unfollow(Pinner pinner) throws KeyManagementException, ClientProtocolException, NoSuchAlgorithmException, IOException, JSONException,
 			InterruptedException {
-		Cookie sslCookie = driver.manage().getCookieNamed("csrftoken");
-		Cookie sessionCookie = driver.manage().getCookieNamed("_pinterest_sess");
 		ApiUnfollow.unfollow(account.getUser(), pinner, sslCookie, sessionCookie);
 	}
 
 	public void pin() throws KeyManagementException, NoSuchAlgorithmException, IOException, JSONException {
-		Cookie bCookie = driver.manage().getCookieNamed("_b");
-		Cookie sslCookie = driver.manage().getCookieNamed("csrftoken");
-		Cookie sessionCookie = driver.manage().getCookieNamed("_pinterest_sess");
 		ApiPin.upload(sslCookie, sessionCookie, bCookie);
 	}
 }
