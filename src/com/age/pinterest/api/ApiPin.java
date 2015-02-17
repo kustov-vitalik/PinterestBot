@@ -1,5 +1,6 @@
 package com.age.pinterest.api;
 
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -9,6 +10,8 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLEncoder;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -28,15 +31,19 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.openqa.selenium.Cookie;
 
+import com.age.pinterest.config.Pin;
+
 public class ApiPin {
 
-	public static void upload(Cookie sslCookie, Cookie sessionCookie, Cookie b) throws NoSuchAlgorithmException, KeyManagementException, IOException,
-			JSONException {
+	public static void upload(Pin pin, String user, String board, Cookie sslCookie, Cookie sessionCookie, Cookie b) throws NoSuchAlgorithmException,
+			KeyManagementException, IOException, JSONException {
 		String cookieList = b.getName() + "=" + b.getValue() + "; ";
 		cookieList = cookieList + "_pinterest_pfob=disabled; ";
 		cookieList = cookieList + sessionCookie.getName() + "=" + sessionCookie.getValue() + "; ";
 		cookieList = cookieList + sslCookie.getName() + "=" + sslCookie.getValue() + "; ";
-		String imgUrl = "C:/Users/Borio/Desktop/g.png";
+		String imgUrl = pin.getImage();
+		File imageFile=new File(imgUrl);
+		
 
 		SSLContext sc = SSLContext.getInstance("SSL");
 		sc.init(null, trustAllCerts, new java.security.SecureRandom());
@@ -47,43 +54,12 @@ public class ApiPin {
 		};
 		HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);
 		HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
-		// byte[] postData = ArrayUtils.addAll(extraString.getBytes(),
-		// Files.readAllBytes(Paths.get(imgUrl)));
 		File img = new File(imgUrl);
 		int postDataLength = Files.readAllBytes(Paths.get(imgUrl)).length;
-		String request = "https://www.pinterest.com/upload-image/?img=g.png";
+		String request = "https://www.pinterest.com/upload-image/?img="+imageFile.getName();
 		URL url = new URL(request);
-		// HttpClient httpclient = HttpClients.createDefault();
-		// HttpPost httppost = new HttpPost(request);
-		// httppost.setHeader("Content-Type",
-		// "multipart/form-data; boundary=----------------------------8d2175e05d11be8");
-		// httppost.setHeader("Accept-Encoding", "gzip,deflate,sdch");
-		// httppost.setHeader("X-NEW-APP", "1");
-		// httppost.setHeader("Accept-Language", "en-gb,en;q=0.8");
-		// httppost.setHeader("X-APP-VERSION", "8718db9");
-		// httppost.setHeader("Accept", "*/*");
-		// httppost.setHeader("Cookie", cookieList);
-		// httppost.setHeader("X-Requested-With", "XMLHttpRequest");
-		// httppost.setHeader("X-CSRFToken", sslCookie.getValue());
-		// httppost.setHeader("X-File-Name", "1.png");
-		// httppost.setHeader("User-Agent",
-		// "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/40.0.2214.111 Safari/537.36");
-		// httppost.setHeader("Referer", "https://www.pinterest.com/");
-		//
-		// MultipartEntity reqEntity = new MultipartEntity();
-		// // reqEntity.addPart("someParam", "someValue");
-		// reqEntity.addPart("Content-Disposition: form-data; name=\"img\"; filename=\"1.png\"\nContent-Type: image/png",
-		// new FileBody(new File(imgUrl)));
-		// httppost.setEntity(reqEntity);
-		//
-		// HttpResponse response = httpclient.execute(httppost);
-		// System.out.println(response.getStatusLine());
-
-		// String boundary = Long.toHexString(System.currentTimeMillis());
 		Path path = Paths.get(imgUrl);
 		byte[] data = Files.readAllBytes(path);
-		// String boundary = "----------------------------" +
-		// Long.toHexString(System.currentTimeMillis());
 		String boundary = "---------------------------14956123715492";
 		String CRLF = "\r\n";
 		HttpsURLConnection cox = (HttpsURLConnection) url.openConnection();
@@ -120,10 +96,46 @@ public class ApiPin {
 		IOUtils.copy(cox.getInputStream(), writer, "utf-8");
 		String theString = writer.toString();
 
-		System.out.println(theString);
-		// JSONObject jsonObject = new JSONObject(theString);
-		// System.out.println(jsonObject);
+		JSONObject jsonObject = new JSONObject(theString);
+		String image_url = jsonObject.getString("image_url");
+
+		String username = user;
+		String boardId = "547539335885608951";
+		String boardName = board;
+		String description = pin.getDescription();
+		description = URLEncoder.encode(description, "UTF-8");
+		String imageUrl = URLEncoder.encode(image_url, "UTF-8");
+		String pinUrl = "https://www.pinterest.com/source_url=%2F" + username + "%2F" + boardName + "%2F&data=%7B%22options%22%3A%7B%22board_id%22%3A%22"
+				+ boardId + "%22%2C%22description%22%3A%22" + description + "%22%2C%22link%22%3A%22%22%2C%22image_url%22%3A%22" + imageUrl
+				+ "%22%2C%22method%22%3A%22uploaded%22%7D%2C%22context%22%3A%7B%7D%7D&module_path=PinUploader(default_board_id%3D" + boardId
+				+ ")%23Modal(module%3DPinCreate())";
+		byte[] postData = pinUrl.getBytes(Charset.forName("UTF-8"));
+		int len = postData.length;
+		String req = "https://www.pinterest.com/resource/PinResource/create/";
+		HttpsURLConnection con = (HttpsURLConnection) new URL(req).openConnection();
+		con.setDoOutput(true);
+		con.setDoInput(true);
+		con.setInstanceFollowRedirects(true);
+		con.setRequestMethod("POST");
+		con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+		con.setRequestProperty("Accept-Encoding", "json,deflate");
+		con.setRequestProperty("Accept-Language", "en-gb,en;q=0.5");
+		con.setRequestProperty("Accept", "application/json");
+		con.setRequestProperty("X-Requested-With", "XMLHttpRequest");
+		con.setRequestProperty("Cookie", cookieList);
+		con.setRequestProperty("X-APP-VERSION", "9a6ed57");
+		con.setRequestProperty("Content-Length", Integer.toString(len));
+		con.setRequestProperty("X-CSRFToken", sslCookie.getValue());
+		con.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.3; WOW64; rv:35.0) Gecko/20100101 Firefox/35.0");
+		con.setRequestProperty("Referer", "https://www.pinterest.com/globalamericase/motivation/");
+		con.setRequestProperty("Origin", "https://www.pinterest.com/");
+		con.setUseCaches(false);
+		try (DataOutputStream wr = new DataOutputStream(con.getOutputStream())) {
+			wr.write(postData);
+		}
+		System.out.println("Respoinse code: " + con.getResponseCode());
 		cox.disconnect();
+		con.disconnect();
 
 	}
 

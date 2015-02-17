@@ -136,8 +136,8 @@ public class AccountManager {
 		return history;
 	}
 
-	@SuppressWarnings({ "unchecked", "unused" })
-	private void printKeys(JSONObject obj) {
+	@SuppressWarnings("unchecked")
+	static void printKeys(JSONObject obj) {
 		Iterator<String> iter = obj.keys();
 		while (iter.hasNext()) {
 			System.out.print(iter.next() + "   ");
@@ -145,8 +145,7 @@ public class AccountManager {
 		System.out.println();
 	}
 
-	@SuppressWarnings({ "unused" })
-	private void printJsonArray(JSONArray arr) {
+	static void printJsonArray(JSONArray arr) {
 		for (int i = 0; i < arr.length(); i++) {
 			try {
 				System.out.println(arr.get(i));
