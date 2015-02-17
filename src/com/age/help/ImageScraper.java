@@ -84,7 +84,7 @@ public class ImageScraper {
 			}
 		}
 		pool.shutdown();
-		while (!pool.isShutdown()) {
+		while (!pool.isTerminated()) {
 
 		}
 		System.out.println("Scrape for  " + this.keywords + "  completed");

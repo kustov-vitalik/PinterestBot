@@ -96,3 +96,6 @@ PinBotROOT/Users/linda1234willia/acc.json
 PinBotROOT/Users/globalamericase/acc.json
 *.png
 *.json
+/bin/
+
+*.prefs

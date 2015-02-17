@@ -46,7 +46,7 @@ public class GenerateBasicPinsTask extends Task {
 				pin.setSource(source);
 				String tagDir = BotPaths.PINS_ROOT + this.tag;
 				File pathDirFile = new File(tagDir);
-				pathDirFile.mkdir();
+				pathDirFile.mkdirs();
 				File jsonFile = new File(pathDirFile, r.nextInt() + ".json");
 				mapper.writeValue(jsonFile, pin);
 			}

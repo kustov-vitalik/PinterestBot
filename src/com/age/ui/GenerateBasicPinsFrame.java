@@ -26,7 +26,7 @@ public class GenerateBasicPinsFrame extends JFrame implements ActionListener {
 	private final JTextArea source;
 
 	public GenerateBasicPinsFrame() {
-		this.setTitle("Follow");
+		this.setTitle("Generate basic pins");
 		JPanel panel = new JPanel();
 		panel.setLayout(new FlowLayout());
 		tags = new JComboBox<String>();
