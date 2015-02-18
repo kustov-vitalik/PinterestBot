@@ -24,8 +24,8 @@ import com.age.data.Pinner;
 
 public class ApiUnfollow {
 
-	public static void unfollow(String thisUser, Pinner target, Cookie sslCookie, Cookie sessionCookie) throws ClientProtocolException, IOException,
-			JSONException, InterruptedException, NoSuchAlgorithmException, KeyManagementException {
+	public static void unfollow(String thisUser, Pinner target, Cookie sslCookie, Cookie sessionCookie) throws ClientProtocolException,
+			IOException, JSONException, InterruptedException, NoSuchAlgorithmException, KeyManagementException {
 
 		String username = target.getUsername();
 		String id = target.getId();
@@ -63,23 +63,16 @@ public class ApiUnfollow {
 		String request = "https://www.pinterest.com/resource/UserFollowResource/delete/";
 		URL url = new URL(request);
 		HttpURLConnection cox = (HttpURLConnection) url.openConnection();
-		cox.setDoOutput(true);
-		cox.setDoInput(true);
-		cox.setInstanceFollowRedirects(false);
+		CommonHeaders.addCommonHeaders(cox);
 		cox.setRequestMethod("POST");
 		cox.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
 		cox.setRequestProperty("Accept-Encoding", "gzip, deflate");
-		cox.setRequestProperty("X-NEW-APP", "1");
-		cox.setRequestProperty("Accept-Language", "en-gb,en;q=0.5");
-		cox.setRequestProperty("X-APP-VERSION", "8718db9");
 		cox.setRequestProperty("Accept", "application/json, text/javascript, */*; q=0.01");
 		cox.setRequestProperty("Content-Length", Integer.toString(postDataLength));
 		cox.setRequestProperty("Cookie", cookieList);
-		cox.setRequestProperty("X-Requested-With", "XMLHttpRequest");
 		cox.setRequestProperty("X-CSRFToken", sslCookie.getValue());
-		cox.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/40.0.2214.111 Safari/537.36");
 		cox.setRequestProperty("Referer", "https://www.pinterest.com/" + thisUser + "/following/");
-		cox.setUseCaches(false);
+
 		try (DataOutputStream wr = new DataOutputStream(cox.getOutputStream())) {
 			wr.write(postData);
 		}

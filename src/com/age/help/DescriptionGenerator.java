@@ -11,14 +11,16 @@ import org.openqa.selenium.WebElement;
 
 public class DescriptionGenerator {
 
-	public List<String> getQuotes(String keyword, int size) throws FileNotFoundException, UnsupportedEncodingException, InterruptedException {
+	public List<String> getQuotes(String keyword, int size) throws FileNotFoundException, UnsupportedEncodingException,
+			InterruptedException {
 		System.out.println("Generating quotes for " + keyword);
 		WebDriver driver = PinUtils.getChrome();
 		ArrayList<String> quotes = new ArrayList<String>();
 		String num = "";
-		String urlFormat = "http://www.brainyquote.com/quotes/keywords/" + keyword + "%s.html";
+		String urlFormat = "http://www.brainyquote.com/quotes/topics/topic_" + keyword + "%s.html";
+		
 		driver.get(String.format(urlFormat, num));
-		int i = 0;
+		int i = 2;
 		while (quotes.size() < size) {
 			PinUtils.waitForElement(By.id("quotesList"), driver);
 			List<WebElement> elements = driver.findElement(By.id("quotesList")).findElements(By.cssSelector("*"));
@@ -36,7 +38,7 @@ public class DescriptionGenerator {
 			}
 			PinUtils.waitForPage(driver);
 			num = Integer.toString(i);
-			String url = String.format(urlFormat, "_" + num);
+			String url = String.format(urlFormat, "_"+num);
 			driver.get(url);
 			System.out.println("Got  " + quotes.size() + "  quotes. Remaining " + (size - quotes.size()));
 			i++;

@@ -2,6 +2,8 @@ package com.age.pinterest.api;
 
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,21 +24,18 @@ public class ApiGetPinners {
 		System.out.println("Collection users related to  " + keyword);
 		ArrayList<Pinner> followList = new ArrayList<Pinner>();
 		String url = "https://www.pinterest.com/search/boards/?q=" + keyword;
-		HttpGet httpget = new HttpGet(url);
-		httpget.setHeader("User-Agent", USER_AGENT);
-		httpget.setHeader("X-NEW-APP", "1");
-		httpget.setHeader("Referer", "http://www.pinterest.com/" + username + "/following/");
-		httpget.setHeader("Accept-Language", "en-gb,en;q=0.5");
-		httpget.setHeader("X-Requested-With", "XMLHttpRequest");
-		httpget.setHeader("X-APP-VERSION", "0cc7472");
-		httpget.setHeader("X-NEW-APP", "1");
-		httpget.setHeader("Cookie", sslToken + ";");
-		httpget.setHeader("Accept-Encoding", "gzip, deflate");
-		httpget.setHeader("Host", "www.pinterest.com");
-		CloseableHttpClient httpclient = HttpClients.createDefault();
 		try {
-			CloseableHttpResponse response = httpclient.execute(httpget);
-			InputStream instream = response.getEntity().getContent();
+			URL requestUrl = new URL(url);
+			HttpURLConnection cox = (HttpURLConnection) requestUrl.openConnection();
+			CommonHeaders.addCommonHeaders(cox);
+			cox.setRequestMethod("GET");
+			cox.setRequestProperty("Referer", "http://www.pinterest.com/" + username + "/following/");
+			cox.setRequestProperty("X-Requested-With", "XMLHttpRequest");
+			cox.setRequestProperty("Cookie", sslToken + ";");
+			cox.setRequestProperty("Accept-Encoding", "json, deflate");
+			System.out.println(cox.getResponseMessage());
+
+			InputStream instream = cox.getInputStream();
 			StringWriter writer = new StringWriter();
 
 			IOUtils.copy(instream, writer, "utf-8");

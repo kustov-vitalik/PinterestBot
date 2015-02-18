@@ -26,8 +26,8 @@ public class App {
 	private static final String LINDA_BOARD = "jewelry";
 	private static final String STACEY_BOARD = "jewelry-that-i-would-like-to-wear";
 
-	public static void main(String[] args) throws InterruptedException, IOException, JSONException, KeyManagementException, NoSuchAlgorithmException,
-			URISyntaxException {
+	public static void main(String[] args) throws InterruptedException, IOException, JSONException, KeyManagementException,
+			NoSuchAlgorithmException, URISyntaxException {
 		// PinBot bot = new PinBot();
 		// bot.addPinTask(COCO, COCO_BOARD, 1000 * 60 * 50);
 		// bot.addPinTask(LINDA, LINDA_BOARD, 1000 * 60 * 50);
@@ -36,23 +36,23 @@ public class App {
 		// ImageScraper srapper = new ImageScraper(driver, "cool", "cool");
 		// srapper.scan();
 		// WebDriver driver = PinUtils.getPhantomDriver();
-		 PinterestAccount acc = new PinterestAccount();
-		 acc.setEmail("globalamericaselfdefensejohn@gmail.com");
-		 acc.setPassword("Geni0us!");
-		 acc.setUser("globalamericase");
-		 AccountManager manager = new AccountManager(acc,
-		 PinUtils.getChrome());
-		 System.setProperty("http.proxyHost", "127.0.0.1");
-		 System.setProperty("https.proxyHost", "127.0.0.1");
-		 System.setProperty("http.proxyPort", "8888");
-		 System.setProperty("https.proxyPort", "8888");
-		 manager.pin();
-//		String text = "http%3A%2F%2Fs3.amazonaws.com%2Fmedia.pinterest.com%2Fpreviews%2FyWS37vsQ.png";
-//		String encoded = URLEncoder.encode(text, "UTF-8");
-//		System.out.println(encoded);
-//		String decoded = URLDecoder.decode(text, "UTF-8");
-//		System.out.println(decoded);
-//		System.out.println(URLEncoder.encode(decoded, "UTF-8"));
+		PinterestAccount acc = new PinterestAccount();
+		acc.setEmail("globalamericaselfdefensejohn@gmail.com");
+		acc.setPassword("Geni0us!");
+		acc.setUser("globalamericase");
+		AccountManager manager = new AccountManager(acc, PinUtils.getChrome());
+		System.setProperty("http.proxyHost", "127.0.0.1");
+		System.setProperty("https.proxyHost", "127.0.0.1");
+		System.setProperty("http.proxyPort", "8888");
+		System.setProperty("https.proxyPort", "8888");
+		manager.getFollowers(COCO, 100);
+		// String text =
+		// "http%3A%2F%2Fs3.amazonaws.com%2Fmedia.pinterest.com%2Fpreviews%2FyWS37vsQ.png";
+		// String encoded = URLEncoder.encode(text, "UTF-8");
+		// System.out.println(encoded);
+		// String decoded = URLDecoder.decode(text, "UTF-8");
+		// System.out.println(decoded);
+		// System.out.println(URLEncoder.encode(decoded, "UTF-8"));
 
 		// ApiLogin.login();
 		// manager.follow();

@@ -23,7 +23,7 @@ import com.age.pinterest.config.PinterestAccount;
 
 public class PinTask extends Task {
 	private static final String BOARDS_URL_FORMAT = "http://www.pinterest.com/%s/%s";
-	private static final String PINS_LOCATION_URL = BotPaths.ROOT_DIR + "Users/%s/pins";
+	private static final String PINS_LOCATION_URL = BotPaths.ROOT_DIR + "/Users/%s/pins";
 	private final long interval;
 	private final String board;
 	private final PinterestAccount acc;
@@ -38,29 +38,30 @@ public class PinTask extends Task {
 	@Override
 	public void run() {
 		WebDriver driver = PinUtils.getChrome();
-		new AccountManager(acc, driver);
-		List<Pin> pins = this.setUpPins();
-		System.out.println("Theare are  " + pins.size() + "  pins for  " + acc.getUser());
-		while (!pins.isEmpty()) {
+		PinUtils.login(driver, acc);
+		ObjectMapper mapper = new ObjectMapper();
+		ArrayList<String> pinFiles = FileUtill.getAllFiles(String.format(PINS_LOCATION_URL, acc.getUser()));
+		while (!pinFiles.isEmpty()) {
 			if (this.intervalPassed(interval)) {
-				boolean pinned = false;
-				while (!pinned) {
-					try {
-						pinned = this.pin(pins, driver);
-					} catch (InterruptedException | IOException e) {
-						e.printStackTrace();
-					}
+				try {
+					String filePath = pinFiles.get(0);
+					Pin pin = mapper.readValue(new File(filePath), Pin.class);
+					this.pin(pin, driver);
+					new File(filePath).delete();
+					pinFiles.remove(0);
+				} catch (Exception e) {
+					System.out.println("Failed to pin  " + e.getMessage());
 				}
 			}
 		}
-		System.out.println("No more pins for " + acc.getUser());driver.quit();
+		System.out.println("No more pins for " + acc.getUser());
+		driver.quit();
 	}
 
-	private boolean pin(List<Pin> pins, WebDriver driver) throws InterruptedException, IOException {
-		Pin pin = pins.get(0);
+	private boolean pin(Pin pin, WebDriver driver) throws InterruptedException, IOException {
 		boolean result = false;
 		try {
-			String pathToFile = this.downloadImage(pin.getImage());
+			String pathToFile = pin.getImage();
 			System.out.println("Pinning to board: " + board);
 
 			driver.navigate().to(String.format(BOARDS_URL_FORMAT, acc.getUser(), board));
@@ -96,7 +97,6 @@ public class PinTask extends Task {
 			String saveBtnXpath = "html/body/div[8]/div[2]/div/div/div/div/div/form/div[2]/div[2]/button[2]";
 			PinUtils.waitFor(By.xpath(saveBtnXpath), driver).click();
 
-			pins.remove(0);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -114,20 +114,6 @@ public class PinTask extends Task {
 			}
 		}
 		return pins;
-	}
-
-	private String downloadImage(String imgUrl) throws IOException {
-		BufferedImage image1 = null;
-		String tmpFile = "tmp.jpg";
-		URL url = new URL(imgUrl);
-		image1 = ImageIO.read(url);
-		File file = null;
-		if (image1 != null) {
-			file = new File(tmpFile);
-			file.createNewFile();
-			ImageIO.write(image1, "jpg", file);
-		}
-		return file.getAbsolutePath();
 	}
 
 	private List<Pin> setUpPins() {

@@ -1,16 +1,13 @@
 package com.age.pinterest.api;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -35,30 +32,34 @@ public class ApiGetFollowers {
 							+ "%2F&data=%7B%22options%22%3A%7B%22username%22%3A%22"
 							+ username
 							+ "%22%2C%22invite_code%22%3Anull%7D%2C%22context%22%3A%7B%7D%2C%22module%22%3A%7B%22name%22%3A%22UserProfileContent%22%2C%22options%22%3A%7B%22tab%22%3A%22followers%22%7D%7D%2C%22render_type%22%3A1%2C%22error_strategy%22%3A0%7D&module_path=App()%3EUserProfilePage(resource%3DUserResource(username%3D"
-							+ username + "))%3EUserInfoBar(tab%3Dfollowers%2C+spinner%3D%5Bobject+Object%5D%2C+resource%3DUserResource(username%3D" + username
-							+ "%2C+invite_code%3Dnull))&_=" + num;
+							+ username
+							+ "))%3EUserInfoBar(tab%3Dfollowers%2C+spinner%3D%5Bobject+Object%5D%2C+resource%3DUserResource(username%3D"
+							+ username + "%2C+invite_code%3Dnull))&_=" + num;
 				} else {
-					url = "https://www.pinterest.com/resource/UserFollowersResource/get/?source_url=%2F" + username
-							+ "%2Ffollowers%2F&data=%7B%22options%22%3A%7B%22username%22%3A%22" + username + "%22%2C%22bookmarks%22%3A%5B%22" + bookmark
-							+ "%22%5D%7D%2C%22context%22%3A%7B%7D%7D&module_path=App()%3EUserProfilePage(resource%3DUserResource(username%3D" + username
-							+ "))%3EUserInfoBar(tab%3Dfollowers%2C+spinner%3D%5Bobject+Object%5D%2C+resource%3DUserResource(username%3D" + username
-							+ "%2C+invite_code%3Dnull))&_=" + num;
+					url = "https://www.pinterest.com/resource/UserFollowersResource/get/?source_url=%2F"
+							+ username
+							+ "%2Ffollowers%2F&data=%7B%22options%22%3A%7B%22username%22%3A%22"
+							+ username
+							+ "%22%2C%22bookmarks%22%3A%5B%22"
+							+ bookmark
+							+ "%22%5D%7D%2C%22context%22%3A%7B%7D%7D&module_path=App()%3EUserProfilePage(resource%3DUserResource(username%3D"
+							+ username
+							+ "))%3EUserInfoBar(tab%3Dfollowers%2C+spinner%3D%5Bobject+Object%5D%2C+resource%3DUserResource(username%3D"
+							+ username + "%2C+invite_code%3Dnull))&_=" + num;
 				}
-				HttpGet httpget = new HttpGet(url);
-				httpget.setHeader("User-Agent", USER_AGENT);
-				httpget.setHeader("X-NEW-APP", "1");
-				httpget.setHeader("Referer", "http://www.pinterest.com/");
-				httpget.setHeader("Accept-Language", "en-gb,en;q=0.5");
-				httpget.setHeader("X-Requested-With", "XMLHttpRequest");
-				httpget.setHeader("X-APP-VERSION", "0cc7472");
-				httpget.setHeader("X-NEW-APP", "1");
-				httpget.setHeader("Cookie", sslCookie + ";");
-				httpget.setHeader("Accept-Encoding", "gzip, deflate");
-				httpget.setHeader("Host", "www.pinterest.com");
 
-				CloseableHttpClient httpclient = HttpClients.createDefault();
-				CloseableHttpResponse response = httpclient.execute(httpget);
-				InputStream instream = response.getEntity().getContent();
+				URL requestUrl = new URL(url);
+				HttpURLConnection cox = (HttpURLConnection) requestUrl.openConnection();
+				CommonHeaders.addCommonHeaders(cox);
+				cox.setRequestMethod("GET");
+				cox.setRequestProperty("Referer", "http://www.pinterest.com/");
+				cox.setRequestProperty("Cookie", sslCookie + ";");
+				cox.setRequestProperty("Accept-Encoding", "json, deflate");
+				cox.setUseCaches(false);
+
+				System.out.println(cox.getResponseMessage());
+
+				InputStream instream = cox.getInputStream();
 				StringWriter writer = new StringWriter();
 
 				IOUtils.copy(instream, writer, "utf-8");

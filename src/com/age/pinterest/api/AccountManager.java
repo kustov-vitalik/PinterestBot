@@ -1,33 +1,14 @@
 package com.age.pinterest.api;
 
-import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringWriter;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.charset.Charset;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
-import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSession;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
-
-import org.apache.commons.io.IOUtils;
 import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -39,7 +20,7 @@ import com.age.data.Pinner;
 import com.age.help.BotPaths;
 import com.age.help.FileUtill;
 import com.age.help.PinUtils;
-import com.age.pinterest.bot.PinBot;
+import com.age.pinterest.config.Pin;
 import com.age.pinterest.config.PinterestAccount;
 import com.age.pinterest.task.FollowTask;
 
@@ -159,17 +140,17 @@ public class AccountManager {
 		return ApiGetFollowed.getFollowed(account.getUser(), -1, followers, account.getSslToken());
 	}
 
-	public void follow(Pinner pinner) throws ClientProtocolException, IOException, JSONException, InterruptedException, NoSuchAlgorithmException,
-			KeyManagementException {
+	public void follow(Pinner pinner) throws ClientProtocolException, IOException, JSONException, InterruptedException,
+			NoSuchAlgorithmException, KeyManagementException {
 		ApiFollow.follow(pinner, sslCookie, sessionCookie);
 	}
 
-	public void unfollow(Pinner pinner) throws KeyManagementException, ClientProtocolException, NoSuchAlgorithmException, IOException, JSONException,
-			InterruptedException {
+	public void unfollow(Pinner pinner) throws KeyManagementException, ClientProtocolException, NoSuchAlgorithmException, IOException,
+			JSONException, InterruptedException {
 		ApiUnfollow.unfollow(account.getUser(), pinner, sslCookie, sessionCookie);
 	}
 
 	public void pin() throws KeyManagementException, NoSuchAlgorithmException, IOException, JSONException {
-		ApiPin.upload(sslCookie, sessionCookie, bCookie);
+		ApiPin.upload(null, null, null, sslCookie, sessionCookie, bCookie);
 	}
 }

@@ -1,14 +1,13 @@
 package com.age.pinterest.api;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.StringWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.json.JSONArray;
@@ -24,7 +23,6 @@ public class ApiGetFollowed {
 		String bookmark = "";
 		while (!bookmark.equals("-end-")) {
 			System.out.println("Target list:  " + resultList.size());
-			CloseableHttpClient httpclient = HttpClients.createDefault();
 			try {
 				String num = Long.toString(System.currentTimeMillis());
 				String url = "";
@@ -42,25 +40,23 @@ public class ApiGetFollowed {
 				} else {
 					url = "https://www.pinterest.com/resource/UserFollowingResource/get/?source_url=%2F" + user
 							+ "%2Ffollowing%2F&data=%7B%22options%22%3A%7B%22username%22%3A%22" + user + "%22%2C%22bookmarks%22%3A%5B%22"
-							+ bookmark + "%3D%3D%22%5D%7D%2C%22context%22%3A%7B%7D%7D&module_path=App(module%3D%5Bobject+Object%5D)&_=" + num;
+							+ bookmark + "%3D%3D%22%5D%7D%2C%22context%22%3A%7B%7D%7D&module_path=App(module%3D%5Bobject+Object%5D)&_="
+							+ num;
 				}
-				HttpGet httpget = new HttpGet(url);
-				httpget.setHeader("User-Agent", USER_AGENT);
-				httpget.setHeader("X-NEW-APP", "1");
-				httpget.setHeader("Referer", "http://www.pinterest.com/" + user + "/following/");
-				httpget.setHeader("Accept-Language", "en-gb,en;q=0.5");
-				httpget.setHeader("X-Requested-With", "XMLHttpRequest");
-				httpget.setHeader("X-APP-VERSION", "0cc7472");
-				httpget.setHeader("X-NEW-APP", "1");
-				httpget.setHeader("Cookie", sslToken + ";");
-				httpget.setHeader("Accept-Encoding", "gzip, deflate");
-				httpget.setHeader("Host", "www.pinterest.com");
-
-				CloseableHttpResponse response = httpclient.execute(httpget);
-				InputStream instream = response.getEntity().getContent();
+				URL requestUrl = new URL(url);
+				HttpURLConnection cox = (HttpURLConnection) requestUrl.openConnection();
+				CommonHeaders.addCommonHeaders(cox);
+				cox.setRequestMethod("GET");
+				cox.setRequestProperty("Referer", "http://www.pinterest.com/" + user + "/following/");
+				cox.setRequestProperty("Cookie", sslToken + ";");
+				cox.setRequestProperty("Accept-Encoding", "json, deflate");
+				
+				
+				System.out.println(cox.getResponseMessage());
 				StringWriter writer = new StringWriter();
 
-				IOUtils.copy(instream, writer, "utf-8");
+				IOUtils.copy(cox.getInputStream(), writer, "utf-8");
+				cox.disconnect();
 				String theString = writer.toString();
 				JSONObject jsonObject = new JSONObject(theString);
 				JSONObject resource = jsonObject.getJSONObject("resource");
@@ -76,7 +72,6 @@ public class ApiGetFollowed {
 							return resultList;
 						}
 						JSONObject root = arr.getJSONObject(i);
-						System.out.print(root.get("username") + "   --   ");
 						int userFollowers = Integer.parseInt(root.getString("follower_count"));
 						System.out.println(userFollowers);
 						if (minFollowers < 0 || userFollowers < minFollowers) {
@@ -93,12 +88,6 @@ public class ApiGetFollowed {
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
-			} finally {
-				try {
-					httpclient.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
 			}
 
 		}
