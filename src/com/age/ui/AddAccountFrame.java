@@ -11,11 +11,15 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
+import org.apache.log4j.Logger;
+
 import com.age.pinterest.bot.PinBot;
 import com.age.pinterest.config.PinterestAccount;
+import com.age.pinterest.task.UnFollowTask;
 
 @SuppressWarnings("serial")
 public class AddAccountFrame extends JFrame implements ActionListener {
+	private static final Logger logger =  Logger.getLogger(AddAccountFrame.class);
 	private static final Dimension mainSize = new Dimension(500, 500);
 	private static final Dimension textSize = new Dimension((int) (mainSize.width * 0.3f), (int) (mainSize.height * 0.04f));
 	private static final Dimension btnSize = new Dimension((int) (mainSize.width * 0.3f), (int) (mainSize.height * 0.05f));
@@ -77,7 +81,7 @@ public class AddAccountFrame extends JFrame implements ActionListener {
 			try {
 				PinBot.addAccount(acc);
 			} catch (IOException e1) {
-				e1.printStackTrace();
+				logger.error("",e1);
 			}
 		}
 	}

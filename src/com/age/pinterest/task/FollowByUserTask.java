@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -17,6 +18,8 @@ import com.age.pinterest.bot.PinBot;
 import com.age.pinterest.config.PinterestAccount;
 
 public class FollowByUserTask extends Task {
+	
+	private static final Logger logger =  Logger.getLogger(FollowByUserTask.class);
 	public static final String PATH_TO_HISTORY_FORMAT = BotPaths.ROOT_DIR + "Users/%s/followed.txt";
 	private static final String USER_URL_FORMAT = "https://www.pinterest.com/%s/";
 	private final String user;
@@ -40,7 +43,7 @@ public class FollowByUserTask extends Task {
 			try {
 				FileUtill.appendToFile("TargetList.txt", p.getUsername());
 			} catch (IOException e) {
-				e.printStackTrace();
+				logger.error("",e);
 			}
 		}
 
@@ -52,8 +55,7 @@ public class FollowByUserTask extends Task {
 						followed = this.follow(targets, driver);
 					}
 				} catch (Exception e) {
-					System.out.println(acc.getUser() + "  Failed to follow");
-					e.printStackTrace();
+					logger.error(acc.getUser() + "  Failed to follow",e);
 				}
 			}
 		}
@@ -61,7 +63,7 @@ public class FollowByUserTask extends Task {
 	}
 
 	private boolean follow(List<String> users, WebDriver driver) throws InterruptedException, IOException {
-		System.out.println("You have  " + users.size() + "  targets.");
+		logger.info("You have  " + users.size() + "  targets.");
 		String userItem = users.get(0);
 		driver.get(userItem);
 		PinUtils.waitForPage(driver);
@@ -70,7 +72,7 @@ public class FollowByUserTask extends Task {
 		boolean result = false;
 		if (btn != null && btn.getText().equals("Follow")) {
 			btn.click();
-			System.out.println("Followed  " + userItem);
+			logger.info("Followed  " + userItem);
 			result = true;
 		}
 		FileUtill.appendToFile(String.format(PATH_TO_HISTORY_FORMAT, this.acc.getUser()), userItem);

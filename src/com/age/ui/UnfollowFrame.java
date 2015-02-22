@@ -13,12 +13,14 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
+import org.apache.log4j.Logger;
 import org.json.JSONException;
 
 import com.age.pinterest.bot.PinBot;
 
 @SuppressWarnings("serial")
 public class UnfollowFrame extends JFrame implements ActionListener {
+	private static final Logger logger =  Logger.getLogger(UnfollowFrame.class);
 	private static final Dimension mainSize = new Dimension(500, 500);
 	private static final Dimension textSize = new Dimension((int) (mainSize.width * 0.3f), (int) (mainSize.height * 0.04f));
 	private static final Dimension btnSize = new Dimension((int) (mainSize.width * 0.9f), (int) (mainSize.height * 0.05f));
@@ -76,7 +78,7 @@ public class UnfollowFrame extends JFrame implements ActionListener {
 			try {
 				bot.addUnfollowTask(username, min, time);
 			} catch (IOException | JSONException | InterruptedException e1) {
-				e1.printStackTrace();
+				logger.error("",e1);
 			}
 		}
 

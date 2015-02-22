@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import org.apache.log4j.Logger;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -15,6 +16,8 @@ import com.age.pinterest.bot.PinBot;
 import com.age.pinterest.config.Pin;
 
 public class PinGenerator {
+	
+	private static final Logger logger =  Logger.getLogger(PinGenerator.class);
 	private final WebDriver driver;
 
 	public PinGenerator() {
@@ -40,7 +43,7 @@ public class PinGenerator {
 			nextPage = "page/" + Integer.toString(i);
 		}
 		for (String href : hrefs) {
-			System.out.println("Now  " + href);
+			logger.info("Now  " + href);
 			try {
 				driver.navigate().to(href);
 				PinUtils.waitForPage(driver);
@@ -56,7 +59,7 @@ public class PinGenerator {
 				pin.setImage(image);
 				pins.add(pin);
 			} catch (Exception e) {
-				System.out.println(e.getMessage());
+				logger.error("",e);
 			}
 		}
 		ObjectMapper mapper = new ObjectMapper();
@@ -71,7 +74,7 @@ public class PinGenerator {
 
 	public void test() {
 		String href = "http://eeryjewelry.com/product/towall-womens-gold-belly-chain-sexy-bikini-body-chain-infinity-belly-chain/";
-		System.out.println("Now  " + href);
+		logger.info("Now  " + href);
 		try {
 			driver.navigate().to(href);
 			PinUtils.waitForPage(driver);
@@ -85,9 +88,9 @@ public class PinGenerator {
 			pin.setDescription(descr);
 			pin.setSource(href);
 			pin.setImage(image);
-			System.out.println(pin);
+			logger.info(pin);
 		} catch (Exception e) {
-			System.out.println(e.getMessage());
+			logger.error("",e);
 		}
 	}
 

@@ -10,19 +10,21 @@ import java.util.List;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.age.data.Pinner;
 
 public class ApiGetFollowed {
+	private static final Logger logger =  Logger.getLogger(ApiGetFollowed.class);
 	private static final String USER_AGENT = "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0";
 
 	public static List<Pinner> getFollowed(String user, int maxListSize, int minFollowers, String sslToken) {
 		List<Pinner> resultList = new ArrayList<Pinner>();
 		String bookmark = "";
 		while (!bookmark.equals("-end-")) {
-			System.out.println("Target list:  " + resultList.size());
+			logger.info("Target list:  " + resultList.size());
 			try {
 				String num = Long.toString(System.currentTimeMillis());
 				String url = "";
@@ -52,7 +54,7 @@ public class ApiGetFollowed {
 				cox.setRequestProperty("Accept-Encoding", "json, deflate");
 				
 				
-				System.out.println(cox.getResponseMessage());
+				logger.info(cox.getResponseMessage());
 				StringWriter writer = new StringWriter();
 
 				IOUtils.copy(cox.getInputStream(), writer, "utf-8");
@@ -73,7 +75,7 @@ public class ApiGetFollowed {
 						}
 						JSONObject root = arr.getJSONObject(i);
 						int userFollowers = Integer.parseInt(root.getString("follower_count"));
-						System.out.println(userFollowers);
+						logger.info(userFollowers);
 						if (minFollowers < 0 || userFollowers < minFollowers) {
 							Pinner pinner = new Pinner();
 							pinner.setFollowers(userFollowers);
@@ -83,11 +85,11 @@ public class ApiGetFollowed {
 							resultList.add(pinner);
 						}
 					} catch (Exception e) {
-						e.printStackTrace();
+						logger.error("",e);
 					}
 				}
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error("",e);
 			}
 
 		}

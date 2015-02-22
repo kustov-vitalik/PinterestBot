@@ -9,6 +9,7 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
+import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -22,6 +23,7 @@ import com.age.pinterest.config.Pin;
 import com.age.pinterest.config.PinterestAccount;
 
 public class PinTask extends Task {
+	private static final Logger logger =  Logger.getLogger(PinTask.class);
 	private static final String BOARDS_URL_FORMAT = "http://www.pinterest.com/%s/%s";
 	private static final String PINS_LOCATION_URL = BotPaths.ROOT_DIR + "/Users/%s/pins";
 	private final long interval;
@@ -50,11 +52,11 @@ public class PinTask extends Task {
 					new File(filePath).delete();
 					pinFiles.remove(0);
 				} catch (Exception e) {
-					System.out.println("Failed to pin  " + e.getMessage());
+					logger.error("Failed to pin  " + e.getMessage());
 				}
 			}
 		}
-		System.out.println("No more pins for " + acc.getUser());
+		logger.info("No more pins for " + acc.getUser());
 		driver.quit();
 	}
 
@@ -62,7 +64,7 @@ public class PinTask extends Task {
 		boolean result = false;
 		try {
 			String pathToFile = pin.getImage();
-			System.out.println("Pinning to board: " + board);
+			logger.info("Pinning to board: " + board);
 
 			driver.navigate().to(String.format(BOARDS_URL_FORMAT, acc.getUser(), board));
 			PinUtils.waitForPage(driver);
@@ -78,7 +80,7 @@ public class PinTask extends Task {
 			if (descr.length() > 500) {
 				descr = descr.substring(0, 499);
 			}
-			System.out.println("Lenght  " + descr.length());
+			logger.info("Lenght  " + descr.length());
 			String descriptionId = "pinFormDescription";
 			PinUtils.waitFor(By.id(descriptionId), driver).sendKeys(descr);
 			String cssPath = "body > div.Module.Modal.absoluteCenter.show > div.modalScroller > div > div > div > div > div > form > div.formFooter > div.formFooterButtons > button.Module.Button.btn.rounded.primary.repinSmall.pinIt";
@@ -98,7 +100,7 @@ public class PinTask extends Task {
 			PinUtils.waitFor(By.xpath(saveBtnXpath), driver).click();
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("",e);
 		}
 		return result;
 	}
@@ -125,7 +127,7 @@ public class PinTask extends Task {
 				pins.add(pin);
 			}
 		} catch (Exception e) {
-			System.out.println("Failed to set up pins.  " + e.getMessage());
+			logger.error("Failed to set up pins.  " + e.getMessage());
 		}
 		return pins;
 	}

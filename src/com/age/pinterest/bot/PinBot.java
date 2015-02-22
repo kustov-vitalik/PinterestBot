@@ -6,12 +6,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.http.client.ClientProtocolException;
+import org.apache.log4j.Logger;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.json.JSONException;
 
 import com.age.help.BotPaths;
+import com.age.pinterest.api.ApiUpload;
 import com.age.pinterest.config.PinterestAccount;
 import com.age.pinterest.task.FollowByUserTask;
 import com.age.pinterest.task.FollowTask;
@@ -22,9 +24,9 @@ import com.age.pinterest.task.Task;
 import com.age.pinterest.task.UnFollowTask;
 
 public class PinBot {
-
+	private static final Logger logger =  Logger.getLogger(PinBot.class);
 	public static void addAccount(PinterestAccount acc) throws JsonGenerationException, JsonMappingException, IOException {
-		System.out.println("Setting up user " + acc.getUser());
+		logger.info("Setting up user " + acc.getUser());
 		String root = BotPaths.ROOT_DIR + "/Users/" + acc.getUser();
 		File rootDir = new File(root);
 		rootDir.mkdirs();
@@ -96,7 +98,7 @@ public class PinBot {
 		try {
 			account = mapper.readValue(new File(pathToUser + "/acc.json"), PinterestAccount.class);
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("",e);
 		}
 		return account;
 	}

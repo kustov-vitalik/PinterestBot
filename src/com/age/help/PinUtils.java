@@ -1,5 +1,6 @@
 package com.age.help;
 
+import org.apache.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
@@ -15,6 +16,8 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import com.age.pinterest.config.PinterestAccount;
 
 public class PinUtils {
+
+	private static final Logger logger =  Logger.getLogger(PinUtils.class);
 	private static final String PATH_TO_CHROME_DRIVER = "chrome\\chromedriver.exe";
 	private static final String PATH_TO_PAHNTOM_DRIVER = "phantomjs\\phantomjs.exe";
 	private static final String LOGIN_URL = "https://pinterest.com/login/";
@@ -57,18 +60,17 @@ public class PinUtils {
 	public static void login(WebDriver driver, PinterestAccount account) {
 		String email = account.getEmail();
 		String password = account.getPassword();
-		System.out.println("Loggin in with user " + email);
-		System.out.println("Password is " + password);
+		logger.info("Loggin in with user " + email);
+		logger.info("Password is " + password);
 		try {
 			driver.get(LOGIN_URL);
 			PinUtils.waitForWithTimeout(By.name("username_or_email"), driver, 1000 * 20).sendKeys(email);
 			PinUtils.waitForWithTimeout(By.name("password"), driver, 1000 * 20).sendKeys(password);
 			PinUtils.waitForWithTimeout(By.xpath("/html/body/div[1]/div[1]/div[1]/div/div/div/form/div[4]/div/button"), driver, 1000 * 20).click();
 		} catch (Exception e) {
-			System.out.println("Failed to login");
-			e.printStackTrace();
+			logger.error("Failed to login",e);
 		}
-		System.out.println("Logged as " + email);
+		logger.info("Logged as " + email);
 	}
 
 	public static void waitForElement(By by, WebDriver driver) {
@@ -83,13 +85,13 @@ public class PinUtils {
 			try {
 				Thread.sleep(500);
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				logger.error("",e);
 			}
 		}
 		try {
 			element = driver.findElement(by);
 		} catch (Exception e) {
-
+			logger.error("waitForWithTimeout exceptio",e);
 		}
 		return element;
 	}
@@ -99,7 +101,7 @@ public class PinUtils {
 			try {
 				Thread.sleep(500);
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				logger.error("",e);
 			}
 		}
 		return driver.findElement(by);

@@ -14,7 +14,11 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+
 public class FileUtill {
+	
+	private static final Logger logger =  Logger.getLogger(FileUtill.class);
 	public static void saveToFile(String destination, String name, String content) throws FileNotFoundException {
 		File root = new File(destination);
 		if (!root.exists() || !root.isDirectory()) {
@@ -40,7 +44,7 @@ public class FileUtill {
 	}
 
 	public static ArrayList<String> getAllFiles(String path) {
-		System.out.println("Getting file list for  " + path);
+		logger.info("Getting file list for  " + path);
 		ArrayList<String> paths = new ArrayList<String>();
 		File rootFile = new File(path);
 		for (File f : rootFile.listFiles()) {

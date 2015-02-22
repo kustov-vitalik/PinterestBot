@@ -2,6 +2,7 @@ package com.age.pinterest.task;
 
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.openqa.selenium.WebDriver;
 
 import com.age.data.Pinner;
@@ -11,6 +12,7 @@ import com.age.pinterest.api.AccountManager;
 import com.age.pinterest.config.PinterestAccount;
 
 public class FollowTask extends Task {
+	private static final Logger logger =  Logger.getLogger(FollowTask.class);
 	public static final String PATH_TO_HISTORY_FORMAT = BotPaths.ROOT_DIR + "/Users/%s/followed.txt";
 
 	private final int size;
@@ -35,8 +37,7 @@ public class FollowTask extends Task {
 					manager.follow(pinner);
 
 				} catch (Exception e) {
-					System.out.println(acc.getUser() + "  Failed to follow");
-					e.printStackTrace();
+					logger.error(acc.getUser() + "  Failed to follow",e);
 				}
 				followList.remove(0);
 			}

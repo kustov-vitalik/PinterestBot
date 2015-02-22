@@ -14,12 +14,14 @@ import java.util.concurrent.Executors;
 
 import javax.imageio.ImageIO;
 
+import org.apache.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 public class ImageScraper {
 	// private final ArrayList<String> images;
+	private static final Logger logger =  Logger.getLogger(ImageScraper.class);
 	private final WebDriver driver;
 	private final String keywords;
 	private final String dowloadLocation;
@@ -40,7 +42,7 @@ public class ImageScraper {
 		String googleSearchFormat = "https://www.google.bg/search?as_st=y&tbm=isch&hl=en&as_q=" + keywords.replace(" ", "+")
 				+ "&as_epq=&as_oq=&as_eq=&cr=&as_sitesearch=&safe=images&tbs=isz:l";
 		driver.get(googleSearchFormat);
-		System.out.println("Scanning for  " + keywords);
+		logger.info("Scanning for  " + keywords);
 		WebElement root = PinUtils.waitFor(By.id("search"), driver);
 		List<WebElement> list = root.findElements(By.cssSelector("*"));
 		for (WebElement e : list) {
@@ -60,13 +62,14 @@ public class ImageScraper {
 				div.click();
 				images.add(driver.getCurrentUrl());
 				if (System.currentTimeMillis() - last > 1000 * 1) {
-					System.out.println((i * 100.0f) / max + "%");
+					logger.info((i * 100.0f) / max + "%");
 					last = System.currentTimeMillis();
 				}
 			} catch (Exception e) {
+				logger.error("",e);
 			}
 		}
-		System.out.println("Downloading");
+		logger.info("Downloading");
 		driver.quit();
 		downloadAll(images);
 
@@ -80,14 +83,14 @@ public class ImageScraper {
 				String imgDestination = this.cutImageUrl(str);
 				pool.submit(new DownloadCallable(imgDestination));
 			} catch (Exception e) {
-				System.out.println("Failed to start download " + e.getMessage());
+				logger.error("Failed to start download " + e.getMessage());
 			}
 		}
 		pool.shutdown();
 		while (!pool.isTerminated()) {
 
 		}
-		System.out.println("Scrape for  " + this.keywords + "  completed");
+		logger.info("Scrape for  " + this.keywords + "  completed");
 	}
 
 	private String cutImageUrl(String url) throws UnsupportedEncodingException {
@@ -124,7 +127,7 @@ public class ImageScraper {
 		public String call() {
 			Random r = new Random();
 			try {
-				System.out.println("Downloading  " + imgDestination);
+				logger.info("Downloading  " + imgDestination);
 				BufferedImage image1 = null;
 				URL url = new URL(imgDestination);
 				image1 = ImageIO.read(url);
@@ -132,10 +135,10 @@ public class ImageScraper {
 					File file = new File(dowloadLocation + "/" + System.currentTimeMillis() + r.nextInt() + ".png");
 					file.createNewFile();
 					ImageIO.write(image1, "png", file);
-					System.out.println("Downloaded " + imgDestination);
+					logger.info("Downloaded " + imgDestination);
 				}
 			} catch (Exception e) {
-				System.out.println("Failed to download:  " + imgDestination + "  " + e.getMessage());
+				logger.error("Failed to download:  " + imgDestination + "  " + e.getMessage());
 			}
 			return "OK";
 		}

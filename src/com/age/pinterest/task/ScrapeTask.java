@@ -2,13 +2,14 @@ package com.age.pinterest.task;
 
 import java.io.IOException;
 
+import org.apache.log4j.Logger;
 import org.openqa.selenium.WebDriver;
 
 import com.age.help.ImageScraper;
 import com.age.help.PinUtils;
 
 public class ScrapeTask extends Task {
-
+	private static final Logger logger =  Logger.getLogger(ScrapeTask.class);
 	private final String keyword;
 	private final String tag;
 
@@ -24,7 +25,7 @@ public class ScrapeTask extends Task {
 		try {
 			scrapper.scrape();
 		} catch (InterruptedException | IOException e) {
-			e.printStackTrace();
+			logger.error("",e);
 		}
 	}
 }

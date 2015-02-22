@@ -19,10 +19,12 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.log4j.Logger;
 import org.json.JSONObject;
 import org.openqa.selenium.Cookie;
 
 public class ApiUpload {
+	private static final Logger logger =  Logger.getLogger(ApiUpload.class);
 	public static String upload(String localImage, Cookie b, Cookie sessionCookie, Cookie sslCookie) {
 		String image_url = "";
 		try {
@@ -73,7 +75,7 @@ public class ApiUpload {
 			}
 
 			cox.connect();
-			System.out.println("Response code:  " + cox.getResponseCode());
+			logger.info("Response code:  " + cox.getResponseCode());
 			StringWriter writer = new StringWriter();
 			IOUtils.copy(cox.getInputStream(), writer, "utf-8");
 			String theString = writer.toString();
@@ -81,7 +83,7 @@ public class ApiUpload {
 			JSONObject jsonObject = new JSONObject(theString);
 			image_url = jsonObject.getString("image_url");
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("",e);
 		}
 		return image_url;
 

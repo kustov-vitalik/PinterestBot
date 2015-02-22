@@ -23,9 +23,11 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.log4j.Logger;
 import org.json.JSONException;
 
 public class ApiLogin {
+	private static final Logger logger =  Logger.getLogger(ApiLogin.class);
 	private static final String USER_AGENT = "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0";
 
 	public static void login() throws IllegalStateException, IOException, JSONException, NoSuchAlgorithmException, KeyManagementException {
@@ -48,8 +50,8 @@ public class ApiLogin {
 				}
 			}
 		}
-		System.out.println(sslToken.getName());
-		System.out.println(sslToken.getValue());
+		logger.info(sslToken.getName());
+		logger.info(sslToken.getValue());
 
 		SSLContext sc = SSLContext.getInstance("SSL");
 		sc.init(null, trustAllCerts, new java.security.SecureRandom());
@@ -88,13 +90,13 @@ public class ApiLogin {
 			wr.write(postData);
 		}
 		cox.connect();
-		System.out.println("Response code:  " + cox.getResponseCode());
+		logger.info("Response code:  " + cox.getResponseCode());
 
 		cox.getInputStream();
 		for (String key : cox.getHeaderFields().keySet()) {
-			System.out.println(key);
+			logger.info(key);
 			if (key != null && key.equals("Set-Cookie")) {
-				System.out.println(cox.getHeaderField(key));
+				logger.info(cox.getHeaderField(key));
 			}
 		}
 		cox.disconnect();

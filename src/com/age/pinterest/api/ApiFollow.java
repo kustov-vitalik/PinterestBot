@@ -17,13 +17,15 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
 import org.apache.http.client.ClientProtocolException;
+import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.openqa.selenium.Cookie;
 
 import com.age.data.Pinner;
+import com.age.help.FileUtill;
 
 public class ApiFollow {
-
+	private static final Logger logger =  Logger.getLogger(ApiFollow.class);
 	static TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
 		public java.security.cert.X509Certificate[] getAcceptedIssuers() {
 			return null;
@@ -41,7 +43,7 @@ public class ApiFollow {
 
 		String username = target.getUsername();
 		String id = target.getId();
-		System.out.println("Following  " + username);
+		logger.info("Following  " + username);
 
 		String cookieList = sslCookie.getName() + "=" + sslCookie.getValue() + "; ";
 		cookieList = cookieList + sessionCookie.getName() + "=" + sessionCookie.getValue() + "; ";
@@ -93,7 +95,7 @@ public class ApiFollow {
 			wr.write(postData);
 		}
 		cox.connect();
-		System.out.println("Response code:  " + cox.getResponseCode());
+		logger.info("Response code:  " + cox.getResponseCode());
 
 		cox.getInputStream();
 		cox.disconnect();

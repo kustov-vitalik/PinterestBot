@@ -17,19 +17,20 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
 import org.apache.http.client.ClientProtocolException;
+import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.openqa.selenium.Cookie;
 
 import com.age.data.Pinner;
 
 public class ApiUnfollow {
-
+	private static final Logger logger =  Logger.getLogger(ApiUnfollow.class);
 	public static void unfollow(String thisUser, Pinner target, Cookie sslCookie, Cookie sessionCookie) throws ClientProtocolException,
 			IOException, JSONException, InterruptedException, NoSuchAlgorithmException, KeyManagementException {
 
 		String username = target.getUsername();
 		String id = target.getId();
-		System.out.println("unfollowing  " + username);
+		logger.info("unfollowing  " + username);
 
 		String cookieList = sslCookie.getName() + "=" + sslCookie.getValue() + "; ";
 		cookieList = cookieList + sessionCookie.getName() + "=" + sessionCookie.getValue() + "; ";
@@ -77,7 +78,7 @@ public class ApiUnfollow {
 			wr.write(postData);
 		}
 		cox.connect();
-		System.out.println("Response code:  " + cox.getResponseCode());
+		logger.info("Response code:  " + cox.getResponseCode());
 
 		cox.getInputStream();
 		cox.disconnect();

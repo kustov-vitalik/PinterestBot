@@ -8,22 +8,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.age.data.Pinner;
 
 public class ApiGetFollowers {
+	private static final Logger logger =  Logger.getLogger(ApiGetFollowers.class);
 	private static final String USER_AGENT = "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0";
 
 	public static List<Pinner> getFollowers(String user, int max, String sslCookie) {
-		System.out.println("Getting followers for  " + user);
+		logger.info("Getting followers for  " + user);
 		ArrayList<Pinner> result = new ArrayList<Pinner>();
 		String username = user;
 		String bookmark = "";
 		while (!bookmark.equals("-end-")) {
 			try {
-				System.out.println(result.size() + "  followers from " + user);
+				logger.info(result.size() + "  followers from " + user);
 				String num = Long.toString(System.currentTimeMillis());
 				String url = "";
 				if (bookmark.isEmpty()) {
@@ -57,7 +59,7 @@ public class ApiGetFollowers {
 				cox.setRequestProperty("Accept-Encoding", "json, deflate");
 				cox.setUseCaches(false);
 
-				System.out.println(cox.getResponseMessage());
+				logger.info(cox.getResponseMessage());
 
 				InputStream instream = cox.getInputStream();
 				StringWriter writer = new StringWriter();
@@ -93,10 +95,10 @@ public class ApiGetFollowers {
 						if (!result.contains(pinner)) {
 							result.add(pinner);
 						}
-						System.out.println("Current size is  " + result.size());
-						System.out.println("Max is  " + max);
+						logger.info("Current size is  " + result.size());
+						logger.info("Max is  " + max);
 						if (max > 0 && result.size() >= max) {
-							System.out.println("Got  prev" + result.size() + "  followers from " + user);
+							logger.info("Got  prev" + result.size() + "  followers from " + user);
 							return result;
 						}
 						JSONObject resource = jsonObject.getJSONObject("resource");
@@ -106,10 +108,10 @@ public class ApiGetFollowers {
 					}
 				}
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error("",e);
 			}
 		}
-		System.out.println("Got last " + result.size() + "  followers from " + user);
+		logger.info("Got last " + result.size() + "  followers from " + user);
 		return result;
 	}
 }

@@ -13,13 +13,14 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
+import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.openqa.selenium.Cookie;
 
 import com.age.pinterest.config.Pin;
 
 public class ApiPin {
-
+	private static final Logger logger =  Logger.getLogger(ApiPin.class);
 	public static void upload(Pin pin, String user, String board, Cookie sslCookie, Cookie sessionCookie, Cookie b)
 			throws NoSuchAlgorithmException, KeyManagementException, IOException, JSONException {
 		String cookieList = b.getName() + "=" + b.getValue() + "; ";
@@ -58,7 +59,7 @@ public class ApiPin {
 		try (DataOutputStream wr = new DataOutputStream(con.getOutputStream())) {
 			wr.write(postData);
 		}
-		System.out.println("Respoinse code: " + con.getResponseCode());
+		logger.info("Respoinse code: " + con.getResponseCode());
 		con.disconnect();
 
 	}

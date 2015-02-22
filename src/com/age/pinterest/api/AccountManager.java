@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.http.client.ClientProtocolException;
+import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,6 +26,7 @@ import com.age.pinterest.config.PinterestAccount;
 import com.age.pinterest.task.FollowTask;
 
 public class AccountManager {
+	private static final Logger logger =  Logger.getLogger(AccountManager.class);
 	private final PinterestAccount account;
 	private final WebDriver driver;
 	Cookie bCookie = null;
@@ -59,10 +61,10 @@ public class AccountManager {
 				if (!history.contains(pnr.getUsername())) {
 					targets.add(pnr);
 				} else {
-					System.out.println(pnr.getUsername() + "  was already followed");
+					logger.info(pnr.getUsername() + "  was already followed");
 				}
 			}
-			System.out.println("You have  " + targets.size() + "  targets");
+			logger.info("You have  " + targets.size() + "  targets");
 			if (targets.size() > size) {
 				break;
 			}
@@ -91,7 +93,7 @@ public class AccountManager {
 
 	private void manageSsl() {
 		String sslToken = account.getSslToken();
-		System.out.println(sslToken);
+		logger.info(sslToken);
 		// TODO Remove when sslToken is passed successfully to the browser
 		sslToken = null;
 		if (sslToken == null || sslToken.isEmpty()) {
@@ -101,7 +103,7 @@ public class AccountManager {
 			try {
 				mapper.writeValue(new File(BotPaths.ROOT_DIR + "/Users/" + account.getUser() + "/acc.json"), account);
 			} catch (IOException e) {
-				e.printStackTrace();
+				logger.error("",e);
 			}
 		}
 	}
@@ -111,8 +113,7 @@ public class AccountManager {
 		try {
 			history = FileUtill.getFileContents(String.format(FollowTask.PATH_TO_HISTORY_FORMAT, account.getUser()));
 		} catch (IOException e) {
-			System.out.println("Failed to get history for  " + account.getUser());
-			e.printStackTrace();
+			logger.error("Failed to get history for  " + account.getUser(),e);
 		}
 		return history;
 	}
@@ -121,17 +122,17 @@ public class AccountManager {
 	static void printKeys(JSONObject obj) {
 		Iterator<String> iter = obj.keys();
 		while (iter.hasNext()) {
-			System.out.print(iter.next() + "   ");
+			logger.info(iter.next() + "   ");
 		}
-		System.out.println();
+		logger.info("   ");
 	}
 
 	static void printJsonArray(JSONArray arr) {
 		for (int i = 0; i < arr.length(); i++) {
 			try {
-				System.out.println(arr.get(i));
+				logger.info(arr.get(i));
 			} catch (JSONException e) {
-				e.printStackTrace();
+				logger.error("",e);
 			}
 		}
 	}
