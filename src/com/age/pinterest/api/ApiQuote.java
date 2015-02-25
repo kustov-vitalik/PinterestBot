@@ -1,45 +1,36 @@
-package com.age.help;
+package com.age.pinterest.api;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Attribute;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 
-public class DescriptionGenerator {
+public class ApiQuote {
 
-	private static final Logger logger = Logger.getLogger(DescriptionGenerator.class);
-
-	public List<String> getQuotes(String keyword, int size) throws FileNotFoundException, UnsupportedEncodingException,
-			InterruptedException {
-		logger.info("Generating quotes for " + keyword);
+	public static List<String> quotes() throws IOException {
+		String keyword = "dogs";
 		ArrayList<String> allQuotes = new ArrayList<String>();
-		try {
-			for (int i = 1; i <= 10; i++) {
-				allQuotes.addAll(getQuotesOnPage(keyword, i));
-			}
-		} catch (Exception e) {
-			logger.error("Failed when collecting quotes", e);
+		for (int i = 1; i <= 10; i++) {
+			allQuotes.addAll(getQuotesOnPage(keyword, i));
+		}
+		for (String q : allQuotes) {
+			System.out.println(q);
 		}
 		return allQuotes;
+
 	}
 
-
-	private List<String> getQuotesOnPage(String word, int page) throws IOException {
+	private static List<String> getQuotesOnPage(String word, int page) throws IOException {
 		ArrayList<String> quotes = new ArrayList<String>();
 		String url = "http://www.brainyquote.com/search_results.html?q=" + word + "&pg=" + Integer.toString(page);
 		URL requestUrl = new URL(url);
@@ -71,5 +62,4 @@ public class DescriptionGenerator {
 		}
 		return quotes;
 	}
-
 }
