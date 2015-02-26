@@ -81,7 +81,7 @@ public class UnfollowFrame extends JFrame implements ActionListener {
 			time *= 1000;
 			int min = Integer.parseInt(minFollowers.getText());
 			try {
-			bot.addUnfollowTask(username, min, time);
+				bot.addUnfollowTask(username, min, time);
 			} catch (IOException | JSONException | InterruptedException e1) {
 				logger.error("Failed to start unfollow task", e1);
 			}
