@@ -1,10 +1,12 @@
 package com.age.ui;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.util.Enumeration;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -13,14 +15,16 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
+import org.apache.log4j.Appender;
 import org.apache.log4j.Logger;
 import org.json.JSONException;
 
 import com.age.pinterest.bot.PinBot;
+import com.age.pinterest.task.Task;
 
 @SuppressWarnings("serial")
 public class UnfollowFrame extends JFrame implements ActionListener {
-	private static final Logger logger =  Logger.getLogger(UnfollowFrame.class);
+	private static final Logger logger = Logger.getLogger(UnfollowFrame.class);
 	private static final Dimension mainSize = new Dimension(500, 500);
 	private static final Dimension textSize = new Dimension((int) (mainSize.width * 0.3f), (int) (mainSize.height * 0.04f));
 	private static final Dimension btnSize = new Dimension((int) (mainSize.width * 0.9f), (int) (mainSize.height * 0.05f));
@@ -65,6 +69,7 @@ public class UnfollowFrame extends JFrame implements ActionListener {
 		this.setVisible(true);
 		this.setLocationRelativeTo(null);
 		this.pack();
+		this.setResizable(false);
 	}
 
 	@Override
@@ -76,10 +81,11 @@ public class UnfollowFrame extends JFrame implements ActionListener {
 			time *= 1000;
 			int min = Integer.parseInt(minFollowers.getText());
 			try {
-				bot.addUnfollowTask(username, min, time);
+			bot.addUnfollowTask(username, min, time);
 			} catch (IOException | JSONException | InterruptedException e1) {
-				logger.error("",e1);
+				logger.error("Failed to start unfollow task", e1);
 			}
+
 		}
 
 	}

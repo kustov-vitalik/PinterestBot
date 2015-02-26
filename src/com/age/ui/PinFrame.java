@@ -65,6 +65,7 @@ public class PinFrame extends JFrame implements ActionListener {
 		this.setVisible(true);
 		this.setLocationRelativeTo(null);
 		this.pack();
+		this.setResizable(false);
 	}
 
 	@Override
@@ -80,6 +81,7 @@ public class PinFrame extends JFrame implements ActionListener {
 			} catch (IOException | InterruptedException e) {
 				logger.error("",e);
 			}
+			this.dispose();
 		}
 
 	}

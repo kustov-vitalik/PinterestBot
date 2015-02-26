@@ -29,7 +29,7 @@ public class GenerateBasicPinsTask extends Task {
 			logger.info("Generating pins for " + tag);
 			List<String> imagePaths = FileUtill.getAllFiles(BotPaths.IMAGES_DIR + tag);
 			DescriptionGenerator generator = new DescriptionGenerator();
-			List<String> quotes = generator.getQuotes(tag, imagePaths.size());
+			List<String> quotes = generator.getQuotes(tag);
 			logger.info("Will generate " + imagePaths.size() + " pins");
 			Iterator<String> imageIter = imagePaths.iterator();
 			Iterator<String> quoteIter = quotes.iterator();
@@ -56,5 +56,10 @@ public class GenerateBasicPinsTask extends Task {
 		} catch (Exception e) {
 			logger.error("Failed to generate pins " + e.getMessage());
 		}
+	}
+
+	@Override
+	public Logger getLog() {
+		return logger;
 	}
 }

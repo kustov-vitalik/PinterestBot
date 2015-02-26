@@ -1,13 +1,9 @@
 package com.age.pinterest.task;
 
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.imageio.ImageIO;
 
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -18,7 +14,6 @@ import org.openqa.selenium.WebElement;
 import com.age.help.BotPaths;
 import com.age.help.FileUtill;
 import com.age.help.PinUtils;
-import com.age.pinterest.api.AccountManager;
 import com.age.pinterest.config.Pin;
 import com.age.pinterest.config.PinterestAccount;
 
@@ -130,6 +125,11 @@ public class PinTask extends Task {
 			logger.error("Failed to set up pins.  " + e.getMessage());
 		}
 		return pins;
+	}
+
+	@Override
+	public Logger getLog() {
+		return logger;
 	}
 
 }

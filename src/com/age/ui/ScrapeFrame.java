@@ -23,6 +23,7 @@ public class ScrapeFrame extends JFrame implements ActionListener {
 	private final JButton start;
 	private final JTextArea tag;
 	private final JTextArea keyword;
+	private final JTextArea count;
 
 	public ScrapeFrame() {
 		this.setTitle("Scrape");
@@ -43,6 +44,13 @@ public class ScrapeFrame extends JFrame implements ActionListener {
 		keyword.setToolTipText("keyword");
 		panel.add(keyword);
 
+		count = new JTextArea();
+		count.setSize(textSize);
+		count.setPreferredSize(textSize);
+		count.setText("count");
+		count.setToolTipText("count");
+		panel.add(count);
+
 		start = new JButton();
 		start.setText("start");
 		start.setSize(btnSize);
@@ -61,8 +69,9 @@ public class ScrapeFrame extends JFrame implements ActionListener {
 		if (a.getActionCommand().equals("start")) {
 			String tagTxt = tag.getText();
 			String keyowrdTxt = keyword.getText();
-			PinBot bot=new PinBot();
-			bot.addScrapeTask(keyowrdTxt, tagTxt);
+			int size = Integer.parseInt(count.getText());
+			PinBot bot = new PinBot();
+			bot.addScrapeTask(keyowrdTxt, tagTxt, size);
 		}
 
 	}

@@ -2,22 +2,13 @@ package com.age.pinterest.bot;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 
-import org.apache.http.client.utils.URIBuilder;
+import org.apache.log4j.PropertyConfigurator;
 import org.json.JSONException;
-import org.openqa.selenium.WebDriver;
 
 import com.age.help.DescriptionGenerator;
-import com.age.help.ImageScraper;
-import com.age.help.PinUtils;
-import com.age.pinterest.api.AccountManager;
-import com.age.pinterest.api.ApiLogin;
-import com.age.pinterest.api.ApiQuote;
-import com.age.pinterest.config.PinterestAccount;
 
 public class App {
 	private static final String COCO = "globalamericase";
@@ -29,47 +20,9 @@ public class App {
 
 	public static void main(String[] args) throws InterruptedException, IOException, JSONException, KeyManagementException,
 			NoSuchAlgorithmException, URISyntaxException {
-		ApiQuote.quotes();
-		// PinBot bot = new PinBot();
-		// bot.addPinTask(COCO, COCO_BOARD, 1000 * 60 * 50);
-		// bot.addPinTask(LINDA, LINDA_BOARD, 1000 * 60 * 50);
-
-		// WebDriver driver = PinUtils.getChrome();
-		// ImageScraper srapper = new ImageScraper(driver, "cool", "cool");
-		// srapper.scan();
-		// WebDriver driver = PinUtils.getPhantomDriver();
-//		PinterestAccount acc = new PinterestAccount();
-//		acc.setEmail("globalamericaselfdefensejohn@gmail.com");
-//		acc.setPassword("Geni0us!");
-//		acc.setUser("globalamericase");
-//		AccountManager manager = new AccountManager(acc, PinUtils.getChrome());
-//		System.setProperty("http.proxyHost", "127.0.0.1");
-//		System.setProperty("https.proxyHost", "127.0.0.1");
-//		System.setProperty("http.proxyPort", "8888");
-//		System.setProperty("https.proxyPort", "8888");
-//		manager.getFollowers(COCO, 100);
-		// String text =
-		// "http%3A%2F%2Fs3.amazonaws.com%2Fmedia.pinterest.com%2Fpreviews%2FyWS37vsQ.png";
-		// String encoded = URLEncoder.encode(text, "UTF-8");
-		// System.out.println(encoded);
-		// String decoded = URLDecoder.decode(text, "UTF-8");
-		// System.out.println(decoded);
-		// System.out.println(URLEncoder.encode(decoded, "UTF-8"));
-
-		// ApiLogin.login();
-		// manager.follow();
-		// PinBot bot = new PinBot(driver, COCO);
-		// bot.addPinTask(COCO_BOARD, 1000 * 60 * 40);
-		// bot.start();
-		// PinGenerator gen = new PinGenerator();
-		// gen.generatePin("bracelets");
-		// gen.generatePin("bellychains");
-		// gen.generatePin("bangles");
-		// gen.generatePin("Anklets");
-		// gen.generatePin("amulets");
-		// gen.generatePin("pendants");
-		// gen.generatePin("rings");
-		// gen.generatePin("earrings");
-
+		String log4jConfPath = "prop/log4j.properties";
+		PropertyConfigurator.configure(log4jConfPath);
+		DescriptionGenerator gen=new DescriptionGenerator();
+		gen.getQuotes("honey");
 	}
 }

@@ -24,7 +24,8 @@ import com.age.pinterest.task.Task;
 import com.age.pinterest.task.UnFollowTask;
 
 public class PinBot {
-	private static final Logger logger =  Logger.getLogger(PinBot.class);
+	private static final Logger logger = Logger.getLogger(PinBot.class);
+
 	public static void addAccount(PinterestAccount acc) throws JsonGenerationException, JsonMappingException, IOException {
 		logger.info("Setting up user " + acc.getUser());
 		String root = BotPaths.ROOT_DIR + "/Users/" + acc.getUser();
@@ -46,9 +47,9 @@ public class PinBot {
 		this.startNewTask(new PinTask(account, board, interval));
 	}
 
-	public void addUnfollowTask(String user, int minFollower, long interval) throws IOException, JSONException, InterruptedException {
+	public Task addUnfollowTask(String user, int minFollower, long interval) throws IOException, JSONException, InterruptedException {
 		PinterestAccount account = this.getAccount(user);
-		this.startNewTask(new UnFollowTask(account, minFollower, interval));
+		return this.startNewTask(new UnFollowTask(account, minFollower, interval));
 	}
 
 	public void addFollowByUserTaks(String user, String targetUser, long interval) {
@@ -56,8 +57,8 @@ public class PinBot {
 		this.startNewTask(new FollowByUserTask(account, targetUser, interval));
 	}
 
-	public void addScrapeTask(String keyword, String tag) {
-		this.startNewTask(new ScrapeTask(keyword, tag));
+	public void addScrapeTask(String keyword, String tag, int count) {
+		this.startNewTask(new ScrapeTask(keyword, tag, count));
 	}
 
 	public void addGenerateBasicPinsTask(String tag, String source) {
@@ -86,9 +87,10 @@ public class PinBot {
 		return fileNames;
 	}
 
-	private void startNewTask(Task task) {
+	private Task startNewTask(Task task) {
 		Thread thread = new Thread(task);
 		thread.start();
+		return task;
 	}
 
 	private PinterestAccount getAccount(String username) {
@@ -98,7 +100,7 @@ public class PinBot {
 		try {
 			account = mapper.readValue(new File(pathToUser + "/acc.json"), PinterestAccount.class);
 		} catch (IOException e) {
-			logger.error("",e);
+			logger.error("", e);
 		}
 		return account;
 	}

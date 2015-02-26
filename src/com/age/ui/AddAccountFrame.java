@@ -68,6 +68,7 @@ public class AddAccountFrame extends JFrame implements ActionListener {
 		this.setSize(mainSize);
 		this.setLocationRelativeTo(null);
 		this.pack();
+		this.setResizable(false);
 
 	}
 
@@ -83,6 +84,7 @@ public class AddAccountFrame extends JFrame implements ActionListener {
 			} catch (IOException e1) {
 				logger.error("",e1);
 			}
+			this.dispose();
 		}
 	}
 }

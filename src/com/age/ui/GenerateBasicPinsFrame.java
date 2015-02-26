@@ -57,6 +57,7 @@ public class GenerateBasicPinsFrame extends JFrame implements ActionListener {
 		this.setVisible(true);
 		this.setLocationRelativeTo(null);
 		this.pack();
+		this.setResizable(false);
 	}
 
 	@Override
@@ -66,6 +67,7 @@ public class GenerateBasicPinsFrame extends JFrame implements ActionListener {
 			String tag = (String) tags.getSelectedItem();
 			String sourceText = source.getText();
 			bot.addGenerateBasicPinsTask(tag, sourceText);
+			this.dispose();
 		}
 
 	}

@@ -20,7 +20,7 @@ import com.age.pinterest.bot.PinBot;
 
 @SuppressWarnings("serial")
 public class FollowFrame extends JFrame implements ActionListener {
-	private static final Logger logger =  Logger.getLogger(FollowFrame.class);
+	private static final Logger logger = Logger.getLogger(FollowFrame.class);
 	private static final Dimension mainSize = new Dimension(500, 500);
 	private static final Dimension textSize = new Dimension((int) (mainSize.width * 0.3f), (int) (mainSize.height * 0.04f));
 	private static final Dimension btnSize = new Dimension((int) (mainSize.width * 0.9f), (int) (mainSize.height * 0.05f));
@@ -65,6 +65,7 @@ public class FollowFrame extends JFrame implements ActionListener {
 		this.setVisible(true);
 		this.setLocationRelativeTo(null);
 		this.pack();
+		this.setResizable(false);
 	}
 
 	@Override
@@ -78,8 +79,9 @@ public class FollowFrame extends JFrame implements ActionListener {
 			try {
 				bot.addFollowTask(username, count, time);
 			} catch (IOException | JSONException e1) {
-				logger.error("",e1);
+				logger.error("", e1);
 			}
+			this.dispose();
 		}
 
 	}

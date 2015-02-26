@@ -14,12 +14,11 @@ import com.age.help.BotPaths;
 import com.age.help.FileUtill;
 import com.age.help.PinUtils;
 import com.age.pinterest.api.AccountManager;
-import com.age.pinterest.bot.PinBot;
 import com.age.pinterest.config.PinterestAccount;
 
 public class FollowByUserTask extends Task {
-	
-	private static final Logger logger =  Logger.getLogger(FollowByUserTask.class);
+
+	private static final Logger logger = Logger.getLogger(FollowByUserTask.class);
 	public static final String PATH_TO_HISTORY_FORMAT = BotPaths.ROOT_DIR + "Users/%s/followed.txt";
 	private static final String USER_URL_FORMAT = "https://www.pinterest.com/%s/";
 	private final String user;
@@ -43,7 +42,7 @@ public class FollowByUserTask extends Task {
 			try {
 				FileUtill.appendToFile("TargetList.txt", p.getUsername());
 			} catch (IOException e) {
-				logger.error("",e);
+				logger.error("", e);
 			}
 		}
 
@@ -55,7 +54,7 @@ public class FollowByUserTask extends Task {
 						followed = this.follow(targets, driver);
 					}
 				} catch (Exception e) {
-					logger.error(acc.getUser() + "  Failed to follow",e);
+					logger.error(acc.getUser() + "  Failed to follow", e);
 				}
 			}
 		}
@@ -78,5 +77,10 @@ public class FollowByUserTask extends Task {
 		FileUtill.appendToFile(String.format(PATH_TO_HISTORY_FORMAT, this.acc.getUser()), userItem);
 		users.remove(0);
 		return result;
+	}
+
+	@Override
+	public Logger getLog() {
+		return logger;
 	}
 }

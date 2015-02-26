@@ -16,16 +16,12 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Attribute;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 
 public class DescriptionGenerator {
 
 	private static final Logger logger = Logger.getLogger(DescriptionGenerator.class);
 
-	public List<String> getQuotes(String keyword, int size) throws FileNotFoundException, UnsupportedEncodingException,
-			InterruptedException {
+	public List<String> getQuotes(String keyword) throws FileNotFoundException, UnsupportedEncodingException, InterruptedException {
 		logger.info("Generating quotes for " + keyword);
 		ArrayList<String> allQuotes = new ArrayList<String>();
 		try {
@@ -37,7 +33,6 @@ public class DescriptionGenerator {
 		}
 		return allQuotes;
 	}
-
 
 	private List<String> getQuotesOnPage(String word, int page) throws IOException {
 		ArrayList<String> quotes = new ArrayList<String>();

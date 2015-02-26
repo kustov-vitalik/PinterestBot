@@ -3,7 +3,10 @@ package com.age.help;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,65 +17,96 @@ import java.util.concurrent.Executors;
 
 import javax.imageio.ImageIO;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 
 public class ImageScraper {
-	// private final ArrayList<String> images;
-	private static final Logger logger =  Logger.getLogger(ImageScraper.class);
-	private final WebDriver driver;
-	private final String keywords;
+	private static final Logger logger = Logger.getLogger(ImageScraper.class);
 	private final String dowloadLocation;
 
-	public ImageScraper(WebDriver driver, String keywords, String tag) {
-		this.driver = driver;
-		this.keywords = keywords;
+	public ImageScraper(String tag) {
 		this.dowloadLocation = BotPaths.IMAGES_DIR + tag;
-		// images = new ArrayList<String>();
 	}
 
 	public String getDownloadLocation() {
 		return this.dowloadLocation;
 	}
 
-	public void scrape() throws InterruptedException, IOException {
+	public void scrape(String keywords, int size) throws InterruptedException, IOException {
 		ArrayList<String> images = new ArrayList<String>();
-		String googleSearchFormat = "https://www.google.bg/search?as_st=y&tbm=isch&hl=en&as_q=" + keywords.replace(" ", "+")
-				+ "&as_epq=&as_oq=&as_eq=&cr=&as_sitesearch=&safe=images&tbs=isz:l";
-		driver.get(googleSearchFormat);
-		logger.info("Scanning for  " + keywords);
-		WebElement root = PinUtils.waitFor(By.id("search"), driver);
-		List<WebElement> list = root.findElements(By.cssSelector("*"));
-		for (WebElement e : list) {
-			Thread.sleep(400);
-			if (e.getTagName().toLowerCase().contains("img")) {
-				e.click();
-				break;
-			}
+		logger.info("Scrapping for  " + keywords);
+		for (int i = 0; images.size() < size; i++) {
+			images.addAll(scrapeIndex(keywords, i));
+			logger.info("Found  " + images.size() + " images.   Remaining  " + (size - images.size()));
 		}
-		PinUtils.waitForPage(driver);
-		long last = System.currentTimeMillis();
-		int max = 500;
-		for (int i = 0; i < max; i++) {
-			try {
-				WebElement btn = PinUtils.waitFor(By.id("irc_ra"), driver);
-				WebElement div = btn.findElement(By.tagName("div"));
-				div.click();
-				images.add(driver.getCurrentUrl());
-				if (System.currentTimeMillis() - last > 1000 * 1) {
-					logger.info((i * 100.0f) / max + "%");
-					last = System.currentTimeMillis();
-				}
-			} catch (Exception e) {
-				logger.error("",e);
-			}
-		}
-		logger.info("Downloading");
-		driver.quit();
 		downloadAll(images);
+	}
 
+	private List<String> scrapeIndex(String keywords, int index) throws IOException {
+		ArrayList<String> results = new ArrayList<String>();
+		String googleSearchFormat = "https://www.google.bg/search?as_st=y&tbm=isch&hl=en&as_q=" + keywords.replace(" ", "+")
+				+ "&as_epq=&as_oq=&as_eq=&cr=&as_sitesearch=&safe=images&tbs=isz:l&ijn=" + Integer.toString(index);
+		URL requestUrl = new URL(googleSearchFormat);
+		HttpURLConnection cox = (HttpURLConnection) requestUrl.openConnection();
+		cox.setRequestProperty("Cache-Control", "max-age=0");
+		cox.setRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
+		cox.setRequestProperty("Accept-Encoding", "text, deflate, sdch");
+		cox.setRequestProperty("Accept-Language", "en-US,en;q=0.8,bg;q=0.6");
+		cox.setRequestProperty("User-Agent",
+				"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/40.0.2214.115 Safari/537.36");
+		cox.setRequestProperty("Host", "www.brainyquote.com");
+		InputStream instream = cox.getInputStream();
+		StringWriter writer = new StringWriter();
+
+		IOUtils.copy(instream, writer, "utf-8");
+		String theString = writer.toString();
+		Document doc = Jsoup.parse(theString);
+		for (Element e : doc.getAllElements()) {
+			if (e.nodeName().equals("a")) {
+				if (check(e.attr("href"))) {
+					String imgUrl = extractImg(e.attr("href"));
+					if (!imgUrl.isEmpty()) {
+						results.add(extractImg(imgUrl));
+					}
+				}
+			}
+		}
+		return results;
+	}
+
+	private static boolean check(String href) {
+		if (href.contains("imgurl")) {
+			return true;
+		}
+		return false;
+	}
+
+	private String extractImg(String url) throws UnsupportedEncodingException {
+		String imgUrl = url;
+		imgUrl = imgUrl.toLowerCase();
+		imgUrl = imgUrl.replace("http://www.google.bg/imgres?imgurl=", "");
+		String imgType = "";
+		if (imgUrl.contains("jpg")) {
+			imgType = "jpg";
+		} else if (imgUrl.contains("png")) {
+			imgType = "png";
+		} else if (imgUrl.contains("jpeg")) {
+			imgType = "jpeg";
+		} else if (imgUrl.contains("gif")) {
+			imgType = "gif";
+		}
+		if (imgType.isEmpty()) {
+			logger.info("empty for   " + imgUrl);
+			return "";
+		}
+		imgUrl = imgUrl.substring(0, imgUrl.indexOf(imgType) + imgType.length());
+		imgUrl = java.net.URLDecoder.decode(imgUrl, "UTF-8");
+		imgUrl = java.net.URLDecoder.decode(imgUrl, "UTF-8");
+		imgUrl = java.net.URLDecoder.decode(imgUrl, "UTF-8");
+		return imgUrl;
 	}
 
 	private void downloadAll(List<String> images) throws IOException {
@@ -90,7 +124,7 @@ public class ImageScraper {
 		while (!pool.isTerminated()) {
 
 		}
-		logger.info("Scrape for  " + this.keywords + "  completed");
+		logger.info("Scrape completed");
 	}
 
 	private String cutImageUrl(String url) throws UnsupportedEncodingException {
@@ -127,7 +161,6 @@ public class ImageScraper {
 		public String call() {
 			Random r = new Random();
 			try {
-				logger.info("Downloading  " + imgDestination);
 				BufferedImage image1 = null;
 				URL url = new URL(imgDestination);
 				image1 = ImageIO.read(url);
