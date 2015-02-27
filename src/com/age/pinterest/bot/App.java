@@ -9,6 +9,7 @@ import org.apache.log4j.PropertyConfigurator;
 import org.json.JSONException;
 
 import com.age.help.DescriptionGenerator;
+import com.age.pinterest.api.ApiLogin;
 
 public class App {
 	private static final String COCO = "globalamericase";
@@ -22,7 +23,6 @@ public class App {
 			NoSuchAlgorithmException, URISyntaxException {
 		String log4jConfPath = "prop/log4j.properties";
 		PropertyConfigurator.configure(log4jConfPath);
-		DescriptionGenerator gen=new DescriptionGenerator();
-		gen.getQuotes("honey");
+		ApiLogin.login();
 	}
 }
