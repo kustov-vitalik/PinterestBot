@@ -8,10 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -20,7 +16,6 @@ import com.age.data.Pinner;
 
 public class ApiGetPinners {
 	private static final Logger logger =  Logger.getLogger(ApiGetPinners.class);
-	private static final String USER_AGENT = "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0";
 
 	public static List<Pinner> getPinnersByKeyword(String username, int size, String keyword, String sslToken) {
 		logger.info("Collection users related to  " + keyword);

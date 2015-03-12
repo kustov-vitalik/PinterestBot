@@ -16,7 +16,6 @@ import com.age.data.Pinner;
 
 public class ApiGetFollowers {
 	private static final Logger logger =  Logger.getLogger(ApiGetFollowers.class);
-	private static final String USER_AGENT = "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0";
 
 	public static List<Pinner> getFollowers(String user, int max, String sslCookie) {
 		logger.info("Getting followers for  " + user);

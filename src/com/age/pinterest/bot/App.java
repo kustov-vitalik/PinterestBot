@@ -23,6 +23,6 @@ public class App {
 			NoSuchAlgorithmException, URISyntaxException {
 		String log4jConfPath = "prop/log4j.properties";
 		PropertyConfigurator.configure(log4jConfPath);
-		ApiLogin.login();
+//		ApiLogin.login();
 	}
 }

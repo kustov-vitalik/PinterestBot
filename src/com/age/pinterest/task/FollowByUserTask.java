@@ -33,8 +33,7 @@ public class FollowByUserTask extends Task {
 
 	@Override
 	public void run() {
-		WebDriver driver = PinUtils.getChrome();
-		AccountManager manager = new AccountManager(acc, driver);
+		AccountManager manager = new AccountManager(acc);
 		List<Pinner> followers = manager.getFollowers(user, 1500);
 		ArrayList<String> targets = new ArrayList<String>();
 		for (Pinner p : followers) {
@@ -51,14 +50,13 @@ public class FollowByUserTask extends Task {
 				try {
 					boolean followed = false;
 					while (!followed) {
-						followed = this.follow(targets, driver);
+						followed = this.follow(targets, null);
 					}
 				} catch (Exception e) {
 					logger.error(acc.getUser() + "  Failed to follow", e);
 				}
 			}
 		}
-		driver.quit();
 	}
 
 	private boolean follow(List<String> users, WebDriver driver) throws InterruptedException, IOException {

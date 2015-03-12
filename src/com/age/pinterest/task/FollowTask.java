@@ -27,8 +27,7 @@ public class FollowTask extends Task {
 
 	@Override
 	public void run() {
-		WebDriver driver = PinUtils.getChrome();
-		AccountManager manager = new AccountManager(acc, driver);
+		AccountManager manager = new AccountManager(acc);
 		List<Pinner> followList = manager.getFollowList(size);
 		while (!followList.isEmpty()) {
 			if (this.intervalPassed(interval)) {
@@ -42,7 +41,6 @@ public class FollowTask extends Task {
 				followList.remove(0);
 			}
 		}
-		driver.quit();
 	}
 
 	@Override

@@ -15,27 +15,23 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.openqa.selenium.Cookie;
-import org.openqa.selenium.WebDriver;
 
 import com.age.data.Pinner;
 import com.age.help.BotPaths;
+import com.age.help.CookieList;
 import com.age.help.FileUtill;
-import com.age.help.PinUtils;
-import com.age.pinterest.config.Pin;
 import com.age.pinterest.config.PinterestAccount;
 import com.age.pinterest.task.FollowTask;
 
 public class AccountManager {
-	private static final Logger logger =  Logger.getLogger(AccountManager.class);
+	private static final Logger logger = Logger.getLogger(AccountManager.class);
 	private final PinterestAccount account;
-	private final WebDriver driver;
 	Cookie bCookie = null;
 	Cookie sslCookie = null;
 	Cookie sessionCookie = null;
 
-	public AccountManager(PinterestAccount account, WebDriver driver) {
+	public AccountManager(PinterestAccount account) {
 		this.account = account;
-		this.driver = driver;
 		manageSsl();
 	}
 
@@ -74,20 +70,17 @@ public class AccountManager {
 	}
 
 	private String getSslToken() {
-		PinUtils.login(driver, account);
-		String sslToken = "";
-		for (Cookie cookie : driver.manage().getCookies()) {
-			if (cookie.getName().equals("csrftoken")) {
-				sslToken = sslToken + cookie.getName() + "=" + cookie.getValue() + "; ";
-			} else if (cookie.getName().equals("_pinterest_sess")) {
-				sslToken = sslToken + cookie.getName() + "=" + cookie.getValue() + "; ";
-			}
-
+		CookieList cList = null;
+		try {
+			cList = ApiLogin.login(account.getUser(), account.getPassword());
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-		bCookie = driver.manage().getCookieNamed("_b");
-		sslCookie = driver.manage().getCookieNamed("csrftoken");
-		sessionCookie = driver.manage().getCookieNamed("_pinterest_sess");
-		driver.quit();
+		bCookie = cList.getBCookie();
+		sslCookie = cList.getSslCookie();
+		sessionCookie = cList.getSessionCookie();
+		String sslToken = sslCookie.getName() + "=" + sslCookie.getValue() + "; ";
+		sslToken = sslToken + sessionCookie.getName() + "=" + sessionCookie.getValue() + "; ";
 		return sslToken;
 	}
 
@@ -103,7 +96,7 @@ public class AccountManager {
 			try {
 				mapper.writeValue(new File(BotPaths.ROOT_DIR + "/Users/" + account.getUser() + "/acc.json"), account);
 			} catch (IOException e) {
-				logger.error("",e);
+				logger.error("", e);
 			}
 		}
 	}
@@ -113,7 +106,7 @@ public class AccountManager {
 		try {
 			history = FileUtill.getFileContents(String.format(FollowTask.PATH_TO_HISTORY_FORMAT, account.getUser()));
 		} catch (IOException e) {
-			logger.error("Failed to get history for  " + account.getUser(),e);
+			logger.error("Failed to get history for  " + account.getUser(), e);
 		}
 		return history;
 	}
@@ -132,7 +125,7 @@ public class AccountManager {
 			try {
 				logger.info(arr.get(i));
 			} catch (JSONException e) {
-				logger.error("",e);
+				logger.error("", e);
 			}
 		}
 	}

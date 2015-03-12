@@ -24,8 +24,7 @@ public class UnFollowTask extends Task {
 
 	@Override
 	public void run() {
-		WebDriver driver = PinUtils.getChrome();
-		AccountManager manager = new AccountManager(acc, driver);
+		AccountManager manager = new AccountManager(acc);
 		List<Pinner> trashPinners = manager.getUnfollowList(minFollowers);
 		while (!trashPinners.isEmpty()) {
 			if (this.intervalPassed(interval)) {
@@ -38,7 +37,6 @@ public class UnFollowTask extends Task {
 				}
 			}
 		}
-		driver.quit();
 	}
 
 	@Override
