@@ -21,17 +21,17 @@ import javax.net.ssl.X509TrustManager;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
-import org.openqa.selenium.Cookie;
+
+import com.age.data.CookieList;
 
 public class ApiUpload {
-	private static final Logger logger =  Logger.getLogger(ApiUpload.class);
-	public static String upload(String localImage, Cookie b, Cookie sessionCookie, Cookie sslCookie) {
+	private static final Logger logger = Logger.getLogger(ApiUpload.class);
+
+	static String upload(String localImage, CookieList cookies) {
 		String image_url = "";
 		try {
-			String cookieList = b.getName() + "=" + b.getValue() + "; ";
+			String cookieList = cookies.toString();
 			cookieList = cookieList + "_pinterest_pfob=disabled; ";
-			cookieList = cookieList + sessionCookie.getName() + "=" + sessionCookie.getValue() + "; ";
-			cookieList = cookieList + sslCookie.getName() + "=" + sslCookie.getValue() + "; ";
 			String imgUrl = localImage;
 			File imageFile = new File(imgUrl);
 
@@ -60,7 +60,7 @@ public class ApiUpload {
 			cox.setRequestProperty("Accept", "application/json");
 			cox.setRequestProperty("Content-Length", Integer.toString(postDataLength));
 			cox.setRequestProperty("Cookie", cookieList);
-			cox.setRequestProperty("X-CSRFToken", sslCookie.getValue());
+			cox.setRequestProperty("X-CSRFToken", cookies.getSslCookie().getValue());
 			cox.setRequestProperty("X-File-Name", "g.png");
 			cox.setRequestProperty("Referer", "https://www.pinterest.com/");
 			cox.setRequestProperty("Origin", "https://www.pinterest.com/");
@@ -83,7 +83,7 @@ public class ApiUpload {
 			JSONObject jsonObject = new JSONObject(theString);
 			image_url = jsonObject.getString("image_url");
 		} catch (Exception e) {
-			logger.error("",e);
+			logger.error("", e);
 		}
 		return image_url;
 

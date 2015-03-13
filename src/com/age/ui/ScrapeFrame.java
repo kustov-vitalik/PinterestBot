@@ -72,6 +72,7 @@ public class ScrapeFrame extends JFrame implements ActionListener {
 			int size = Integer.parseInt(count.getText());
 			PinBot bot = new PinBot();
 			bot.addScrapeTask(keyowrdTxt, tagTxt, size);
+			this.dispose();
 		}
 
 	}

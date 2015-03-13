@@ -5,11 +5,10 @@ import java.net.URISyntaxException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 
-import org.apache.log4j.PropertyConfigurator;
 import org.json.JSONException;
 
-import com.age.help.DescriptionGenerator;
-import com.age.pinterest.api.ApiLogin;
+import com.age.data.PinterestAccount;
+import com.age.help.AccountManager;
 
 public class App {
 	private static final String COCO = "globalamericase";
@@ -21,8 +20,10 @@ public class App {
 
 	public static void main(String[] args) throws InterruptedException, IOException, JSONException, KeyManagementException,
 			NoSuchAlgorithmException, URISyntaxException {
-		String log4jConfPath = "prop/log4j.properties";
-		PropertyConfigurator.configure(log4jConfPath);
-//		ApiLogin.login();
+		PinterestAccount acc = new PinterestAccount();
+		acc.setEmail("globalamericaselfdefensejohn@gmail.com");
+		acc.setUser("globalamericase");
+		acc.setPassword("Geni0us!");
+		new AccountManager(acc);
 	}
 }

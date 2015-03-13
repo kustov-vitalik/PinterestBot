@@ -12,12 +12,13 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.age.data.CookieList;
 import com.age.data.Pinner;
 
 public class ApiGetFollowers {
-	private static final Logger logger =  Logger.getLogger(ApiGetFollowers.class);
+	private static final Logger logger = Logger.getLogger(ApiGetFollowers.class);
 
-	public static List<Pinner> getFollowers(String user, int max, String sslCookie) {
+	static List<Pinner> getFollowers(String user, int max, CookieList cookies) {
 		logger.info("Getting followers for  " + user);
 		ArrayList<Pinner> result = new ArrayList<Pinner>();
 		String username = user;
@@ -54,7 +55,7 @@ public class ApiGetFollowers {
 				CommonHeaders.addCommonHeaders(cox);
 				cox.setRequestMethod("GET");
 				cox.setRequestProperty("Referer", "http://www.pinterest.com/");
-				cox.setRequestProperty("Cookie", sslCookie + ";");
+				cox.setRequestProperty("Cookie", cookies.getSslCookie().toString());
 				cox.setRequestProperty("Accept-Encoding", "json, deflate");
 				cox.setUseCaches(false);
 
@@ -107,7 +108,7 @@ public class ApiGetFollowers {
 					}
 				}
 			} catch (Exception e) {
-				logger.error("",e);
+				logger.error("", e);
 			}
 		}
 		logger.info("Got last " + result.size() + "  followers from " + user);

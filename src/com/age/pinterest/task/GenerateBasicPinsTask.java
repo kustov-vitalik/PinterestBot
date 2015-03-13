@@ -8,10 +8,10 @@ import java.util.Random;
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
 
+import com.age.data.Pin;
 import com.age.help.BotPaths;
 import com.age.help.DescriptionGenerator;
 import com.age.help.FileUtill;
-import com.age.pinterest.config.Pin;
 
 public class GenerateBasicPinsTask extends Task {
 	private static final Logger logger =  Logger.getLogger(GenerateBasicPinsTask.class);

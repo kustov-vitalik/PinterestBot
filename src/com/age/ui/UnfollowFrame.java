@@ -85,6 +85,7 @@ public class UnfollowFrame extends JFrame implements ActionListener {
 			} catch (IOException | JSONException | InterruptedException e1) {
 				logger.error("Failed to start unfollow task", e1);
 			}
+			this.dispose();
 
 		}
 

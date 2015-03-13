@@ -1,6 +1,5 @@
 package com.age.pinterest.api;
 
-import java.io.IOException;
 import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -8,19 +7,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.age.data.CookieList;
 import com.age.data.Pinner;
 
 public class ApiGetFollowed {
-	private static final Logger logger =  Logger.getLogger(ApiGetFollowed.class);
-	private static final String USER_AGENT = "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0";
+	private static final Logger logger = Logger.getLogger(ApiGetFollowed.class);
 
-	public static List<Pinner> getFollowed(String user, int maxListSize, int minFollowers, String sslToken) {
+	static List<Pinner> getFollowed(String user, int maxListSize, int minFollowers, CookieList cookies) {
 		List<Pinner> resultList = new ArrayList<Pinner>();
 		String bookmark = "";
 		while (!bookmark.equals("-end-")) {
@@ -50,10 +47,9 @@ public class ApiGetFollowed {
 				CommonHeaders.addCommonHeaders(cox);
 				cox.setRequestMethod("GET");
 				cox.setRequestProperty("Referer", "http://www.pinterest.com/" + user + "/following/");
-				cox.setRequestProperty("Cookie", sslToken + ";");
+				cox.setRequestProperty("Cookie", cookies.getSslCookie().toString());
 				cox.setRequestProperty("Accept-Encoding", "json, deflate");
-				
-				
+
 				logger.info(cox.getResponseMessage());
 				StringWriter writer = new StringWriter();
 
@@ -85,11 +81,11 @@ public class ApiGetFollowed {
 							resultList.add(pinner);
 						}
 					} catch (Exception e) {
-						logger.error("",e);
+						logger.error("", e);
 					}
 				}
 			} catch (Exception e) {
-				logger.error("",e);
+				logger.error("", e);
 			}
 
 		}

@@ -15,11 +15,12 @@ import javax.swing.JTextArea;
 
 import org.apache.log4j.Logger;
 
+import com.age.help.AccountManager;
 import com.age.pinterest.bot.PinBot;
 
 @SuppressWarnings("serial")
 public class PinFrame extends JFrame implements ActionListener {
-	private static final Logger logger =  Logger.getLogger(PinFrame.class);
+	private static final Logger logger = Logger.getLogger(PinFrame.class);
 	private static final Dimension mainSize = new Dimension(500, 500);
 	private static final Dimension textSize = new Dimension((int) (mainSize.width * 0.3f), (int) (mainSize.height * 0.04f));
 	private static final Dimension btnSize = new Dimension((int) (mainSize.width * 0.9f), (int) (mainSize.height * 0.05f));
@@ -28,12 +29,14 @@ public class PinFrame extends JFrame implements ActionListener {
 	private final JButton start;
 	private final JTextArea interval;
 	private final JTextArea board;
+	PinBot bot = new PinBot();
 
 	public PinFrame() {
 		this.setTitle("Pin");
 		JPanel panel = new JPanel();
 		panel.setLayout(new FlowLayout());
 		users = new JComboBox<String>();
+
 		List<String> usersItems = PinBot.listAccount();
 		for (String s : usersItems) {
 			users.addItem(s);
@@ -70,16 +73,17 @@ public class PinFrame extends JFrame implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent a) {
+		System.out.println(a);
+		System.out.println(a.getActionCommand());
 		if (a.getActionCommand().equals("start")) {
-			PinBot bot = new PinBot();
 			String user = (String) this.users.getSelectedItem();
 			String boardStr = board.getText();
 			long time = Long.parseLong(interval.getText());
-			time *= 1000 * 60;
+			time *= 60;
 			try {
-				bot.addPinTask(user, boardStr, time);
+				bot.addPinTask(user, null, time);
 			} catch (IOException | InterruptedException e) {
-				logger.error("",e);
+				logger.error("", e);
 			}
 			this.dispose();
 		}

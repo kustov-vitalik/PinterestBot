@@ -12,8 +12,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
+import com.age.data.Pin;
 import com.age.pinterest.bot.PinBot;
-import com.age.pinterest.config.Pin;
 
 public class PinGenerator {
 	

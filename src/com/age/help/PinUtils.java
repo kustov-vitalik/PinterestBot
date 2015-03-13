@@ -13,13 +13,12 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import com.age.pinterest.config.PinterestAccount;
+import com.age.data.PinterestAccount;
 
 public class PinUtils {
 
-	private static final Logger logger =  Logger.getLogger(PinUtils.class);
+	private static final Logger logger = Logger.getLogger(PinUtils.class);
 	private static final String PATH_TO_CHROME_DRIVER = "chrome\\chromedriver.exe";
-	private static final String PATH_TO_PAHNTOM_DRIVER = "phantomjs\\phantomjs.exe";
 	private static final String LOGIN_URL = "https://pinterest.com/login/";
 
 	public static ChromeDriver getChrome() {
@@ -48,15 +47,6 @@ public class PinUtils {
 		return driver;
 	}
 
-	// public static PhantomJSDriver getPhantomDriver() {
-	// System.setProperty("http.proxyHost", "162.222.178.194");
-	// System.setProperty("http.proxyPort", "80");
-	// DesiredCapabilities caps = new DesiredCapabilities();
-	// caps.setCapability(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY,
-	// PATH_TO_PAHNTOM_DRIVER);
-	// return new PhantomJSDriver(caps);
-	// }
-
 	public static void login(WebDriver driver, PinterestAccount account) {
 		String email = account.getEmail();
 		String password = account.getPassword();
@@ -66,9 +56,10 @@ public class PinUtils {
 			driver.get(LOGIN_URL);
 			PinUtils.waitForWithTimeout(By.name("username_or_email"), driver, 1000 * 20).sendKeys(email);
 			PinUtils.waitForWithTimeout(By.name("password"), driver, 1000 * 20).sendKeys(password);
-			PinUtils.waitForWithTimeout(By.xpath("/html/body/div[1]/div[1]/div[1]/div/div/div/form/div[4]/div/button"), driver, 1000 * 20).click();
+			PinUtils.waitForWithTimeout(By.xpath("/html/body/div[1]/div[1]/div[1]/div/div/div/form/div[4]/div/button"), driver, 1000 * 20)
+					.click();
 		} catch (Exception e) {
-			logger.error("Failed to login",e);
+			logger.error("Failed to login", e);
 		}
 		logger.info("Logged as " + email);
 	}
@@ -85,13 +76,13 @@ public class PinUtils {
 			try {
 				Thread.sleep(500);
 			} catch (InterruptedException e) {
-				logger.error("",e);
+				logger.error("", e);
 			}
 		}
 		try {
 			element = driver.findElement(by);
 		} catch (Exception e) {
-			logger.error("waitForWithTimeout exceptio",e);
+			logger.error("waitForWithTimeout exceptio", e);
 		}
 		return element;
 	}
@@ -101,7 +92,7 @@ public class PinUtils {
 			try {
 				Thread.sleep(500);
 			} catch (InterruptedException e) {
-				logger.error("",e);
+				logger.error("", e);
 			}
 		}
 		return driver.findElement(by);

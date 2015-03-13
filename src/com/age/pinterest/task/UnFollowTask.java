@@ -6,9 +6,9 @@ import org.apache.log4j.Logger;
 import org.openqa.selenium.WebDriver;
 
 import com.age.data.Pinner;
+import com.age.data.PinterestAccount;
+import com.age.help.AccountManager;
 import com.age.help.PinUtils;
-import com.age.pinterest.api.AccountManager;
-import com.age.pinterest.config.PinterestAccount;
 
 public class UnFollowTask extends Task {
 	private static final Logger logger = Logger.getLogger(UnFollowTask.class);
