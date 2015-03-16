@@ -7,9 +7,6 @@ import java.security.NoSuchAlgorithmException;
 
 import org.json.JSONException;
 
-import com.age.data.PinterestAccount;
-import com.age.help.AccountManager;
-
 public class App {
 	private static final String COCO = "globalamericase";
 	private static final String LINDA = "linda1234willia";
@@ -20,10 +17,5 @@ public class App {
 
 	public static void main(String[] args) throws InterruptedException, IOException, JSONException, KeyManagementException,
 			NoSuchAlgorithmException, URISyntaxException {
-		PinterestAccount acc = new PinterestAccount();
-		acc.setEmail("globalamericaselfdefensejohn@gmail.com");
-		acc.setUser("globalamericase");
-		acc.setPassword("Geni0us!");
-		new AccountManager(acc);
 	}
 }

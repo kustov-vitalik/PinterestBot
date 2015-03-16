@@ -12,7 +12,6 @@ import javax.swing.WindowConstants;
 
 import org.apache.log4j.PropertyConfigurator;
 
-import com.age.help.AccountManager;
 import com.age.ui.AddAccountFrame;
 import com.age.ui.FollowByKeywordFrame;
 import com.age.ui.FollowFrame;

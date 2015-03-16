@@ -9,15 +9,15 @@ import org.codehaus.jackson.map.ObjectMapper;
 import com.age.data.Board;
 import com.age.data.Pin;
 import com.age.data.PinterestAccount;
-import com.age.help.AccountManager;
 import com.age.help.BotPaths;
 import com.age.help.FileUtill;
+import com.age.pinterest.api.PinterestApi;
 
 public class PinTask extends Task {
 	private static final Logger logger = Logger.getLogger(PinTask.class);
 	private static final String PINS_LOCATION_URL = BotPaths.ROOT_DIR + "/Users/%s/pins";
 	private final long interval;
-	private  Board board;
+	private Board board;
 	private final PinterestAccount acc;
 
 	public PinTask(PinterestAccount acc, Board board, long interval) {
@@ -29,9 +29,8 @@ public class PinTask extends Task {
 
 	@Override
 	public void run() {
-		AccountManager manager = new AccountManager(acc);
-		board = manager.getBords().get(0);
-		System.out.println("Here");
+		PinterestApi api = new PinterestApi(acc);
+		board = api.getBoards().get(0);
 		ObjectMapper mapper = new ObjectMapper();
 		ArrayList<String> pinFiles = FileUtill.getAllFiles(String.format(PINS_LOCATION_URL, acc.getUser()));
 		while (!pinFiles.isEmpty()) {
@@ -39,7 +38,7 @@ public class PinTask extends Task {
 				try {
 					String filePath = pinFiles.get(0);
 					Pin pin = mapper.readValue(new File(filePath), Pin.class);
-					manager.pin(pin, board);
+					api.pin(pin, board);
 					new File(filePath).delete();
 					pinFiles.remove(0);
 				} catch (Exception e) {

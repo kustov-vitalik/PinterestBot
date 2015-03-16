@@ -3,12 +3,10 @@ package com.age.pinterest.task;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.openqa.selenium.WebDriver;
 
 import com.age.data.Pinner;
 import com.age.data.PinterestAccount;
-import com.age.help.AccountManager;
-import com.age.help.PinUtils;
+import com.age.pinterest.api.PinterestApi;
 
 public class UnFollowTask extends Task {
 	private static final Logger logger = Logger.getLogger(UnFollowTask.class);
@@ -24,13 +22,13 @@ public class UnFollowTask extends Task {
 
 	@Override
 	public void run() {
-		AccountManager manager = new AccountManager(acc);
-		List<Pinner> trashPinners = manager.getUnfollowList(minFollowers);
+		PinterestApi api = new PinterestApi(acc);
+		List<Pinner> trashPinners = api.getUnfollowList(minFollowers);
 		while (!trashPinners.isEmpty()) {
 			if (this.intervalPassed(interval)) {
 				try {
 					Pinner pinner = trashPinners.get(0);
-					manager.unfollow(pinner);
+					api.unfollow(pinner);
 					trashPinners.remove(0);
 				} catch (Exception e) {
 					logger.error("", e);

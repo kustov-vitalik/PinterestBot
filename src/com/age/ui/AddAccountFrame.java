@@ -75,7 +75,7 @@ public class AddAccountFrame extends JFrame implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("Add account")) {
-			PinterestAccount acc = new PinterestAccount();
+			PinterestAccount acc = new PinterestAccount(email.getText(),pass.getText(),user.getText());
 			acc.setEmail(email.getText());
 			acc.setPassword(pass.getText());
 			acc.setUser(user.getText());

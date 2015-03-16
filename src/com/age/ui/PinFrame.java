@@ -15,7 +15,6 @@ import javax.swing.JTextArea;
 
 import org.apache.log4j.Logger;
 
-import com.age.help.AccountManager;
 import com.age.pinterest.bot.PinBot;
 
 @SuppressWarnings("serial")
