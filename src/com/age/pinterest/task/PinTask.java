@@ -12,9 +12,9 @@ import com.age.data.PinterestAccount;
 import com.age.help.BotPaths;
 import com.age.help.FileUtill;
 import com.age.pinterest.api.PinterestApi;
+import com.age.ui.LogFrame;
 
 public class PinTask extends Task {
-	private static final Logger logger = Logger.getLogger(PinTask.class);
 	private static final String PINS_LOCATION_URL = BotPaths.ROOT_DIR + "/Users/%s/pins";
 	private final long interval;
 	private Board board;
@@ -42,17 +42,11 @@ public class PinTask extends Task {
 					new File(filePath).delete();
 					pinFiles.remove(0);
 				} catch (Exception e) {
-					logger.error("Failed to pin  " + e.getMessage());
+					LogFrame.log("Failed to pin  " + e.getMessage());
 				}
 			}
 		}
-		logger.info("No more pins for " + acc.getUser());
-	}
-
-	@Override
-	public Logger getLog() {
-		// TODO Auto-generated method stub
-		return null;
+		LogFrame.log("No more pins for " + acc.getUser());
 	}
 
 }

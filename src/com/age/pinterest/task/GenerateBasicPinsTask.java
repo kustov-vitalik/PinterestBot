@@ -5,16 +5,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
-import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import com.age.data.Pin;
 import com.age.help.BotPaths;
 import com.age.help.DescriptionGenerator;
 import com.age.help.FileUtill;
+import com.age.ui.LogFrame;
 
 public class GenerateBasicPinsTask extends Task {
-	private static final Logger logger =  Logger.getLogger(GenerateBasicPinsTask.class);
 	private final String tag;
 	private final String source;
 
@@ -26,11 +25,11 @@ public class GenerateBasicPinsTask extends Task {
 	@Override
 	public void run() {
 		try {
-			logger.info("Generating pins for " + tag);
-			List<String> imagePaths = FileUtill.getAllFiles(BotPaths.IMAGES_DIR + tag);
+			LogFrame.log("Generating pins for " + tag);
+			List<String> imagePaths = FileUtill.getAllFiles(BotPaths.IMAGES_ROOT + tag);
 			DescriptionGenerator generator = new DescriptionGenerator();
 			List<String> quotes = generator.getQuotes(tag);
-			logger.info("Will generate " + imagePaths.size() + " pins");
+			LogFrame.log("Will generate " + imagePaths.size() + " pins");
 			Iterator<String> imageIter = imagePaths.iterator();
 			Iterator<String> quoteIter = quotes.iterator();
 			ObjectMapper mapper = new ObjectMapper();
@@ -51,15 +50,11 @@ public class GenerateBasicPinsTask extends Task {
 				File jsonFile = new File(pathDirFile, r.nextInt() + ".json");
 				mapper.writeValue(jsonFile, pin);
 			}
-			logger.info("Done generating pins for  " + tag);
+			LogFrame.log("Done generating pins for  " + tag);
 
 		} catch (Exception e) {
-			logger.error("Failed to generate pins " + e.getMessage());
+			LogFrame.log("Failed to generate pins " + e.getMessage());
 		}
 	}
 
-	@Override
-	public Logger getLog() {
-		return logger;
-	}
 }

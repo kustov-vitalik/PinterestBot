@@ -5,6 +5,9 @@ public class PinterestAccount {
 	private String password;
 	private String user;
 
+	public PinterestAccount() {
+	}
+
 	public PinterestAccount(String email, String password, String user) {
 		this.email = email;
 		this.password = password;

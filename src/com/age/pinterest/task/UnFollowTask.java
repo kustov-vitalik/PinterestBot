@@ -7,9 +7,9 @@ import org.apache.log4j.Logger;
 import com.age.data.Pinner;
 import com.age.data.PinterestAccount;
 import com.age.pinterest.api.PinterestApi;
+import com.age.ui.LogFrame;
 
 public class UnFollowTask extends Task {
-	private static final Logger logger = Logger.getLogger(UnFollowTask.class);
 	private final long interval;
 	private final PinterestAccount acc;
 	private final int minFollowers;
@@ -31,15 +31,10 @@ public class UnFollowTask extends Task {
 					api.unfollow(pinner);
 					trashPinners.remove(0);
 				} catch (Exception e) {
-					logger.error("", e);
+					LogFrame.log("Failed to unfollow  " + e.getMessage());
 				}
 			}
 		}
-	}
-
-	@Override
-	public Logger getLog() {
-		return logger;
 	}
 
 }

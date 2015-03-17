@@ -9,6 +9,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import com.age.data.PinterestAccount;
+import com.age.data.UserConfig;
+import com.age.pinterest.bot.PinBot;
 
 @SuppressWarnings("serial")
 public class UserPanel extends JPanel implements ActionListener {
@@ -18,12 +20,14 @@ public class UserPanel extends JPanel implements ActionListener {
 	private final JButton pin;
 	private final JButton configure;
 	private final PinterestAccount acc;
+	private final PinBot bot;
 
-	public UserPanel(PinterestAccount acc, int width, int height) {
+	public UserPanel(PinBot bot, PinterestAccount acc, int width, int height) {
+		this.bot = bot;
 		this.acc = acc;
 		Dimension dim = new Dimension(width, height);
 		this.setSize(dim);
-		Dimension btnDim = new Dimension((int) dim.getWidth() / 6, (int) (dim.getHeight() * 0.5f));
+		Dimension btnDim = new Dimension((int) dim.getWidth() / 7, (int) (dim.getHeight() * 0.5f));
 		user = new JLabel();
 		user.setText(acc.getUser());
 		user.setSize(btnDim);
@@ -62,18 +66,19 @@ public class UserPanel extends JPanel implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if (e.getActionCommand().equals(follow.getText())) {
-			System.out.println(user.getText() + "  follow");
-
-		} else if (e.getActionCommand().equals(unfollow.getText())) {
-			System.out.println(user.getText() + "  unfollow");
-
-		} else if (e.getActionCommand().equals(pin.getText())) {
-			System.out.println(user.getText() + "  pin");
-
-		} else if (e.getActionCommand().equals(configure.getText())) {
-			System.out.println(user.getText() + "  configure");
-			new ConfigurePanel(acc, 300, 400);
+		try {
+			UserConfig cfg = PinBot.getUserConfig(acc.getUser());
+			if (e.getActionCommand().equals(follow.getText())) {
+				bot.addFollowTask(acc.getUser(), cfg.getFollowCount(), cfg.getFollowTime());
+			} else if (e.getActionCommand().equals(unfollow.getText())) {
+				bot.addUnfollowTask(acc.getUser(), cfg.getMinFollowers(), cfg.getUnfollowTime());
+			} else if (e.getActionCommand().equals(pin.getText())) {
+				bot.addPinTask(acc.getUser(), cfg.getPinBoard(), cfg.getPinTime());
+			} else if (e.getActionCommand().equals(configure.getText())) {
+				new ConfigurePanel(acc, 300, 400);
+			}
+		} catch (Exception exp) {
+			exp.printStackTrace();
 		}
 	}
 }

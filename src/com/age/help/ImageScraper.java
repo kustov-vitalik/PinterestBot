@@ -23,12 +23,13 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
+import com.age.ui.LogFrame;
+
 public class ImageScraper {
-	private static final Logger logger = Logger.getLogger(ImageScraper.class);
 	private final String dowloadLocation;
 
 	public ImageScraper(String tag) {
-		this.dowloadLocation = BotPaths.IMAGES_DIR + tag;
+		this.dowloadLocation = BotPaths.IMAGES_ROOT + tag;
 	}
 
 	public String getDownloadLocation() {
@@ -37,10 +38,15 @@ public class ImageScraper {
 
 	public void scrape(String keywords, int size) throws InterruptedException, IOException {
 		ArrayList<String> images = new ArrayList<String>();
-		logger.info("Scrapping for  " + keywords);
+		LogFrame.log("Scrapping for  " + keywords);
 		for (int i = 0; images.size() < size; i++) {
+			List<String> newImages = scrapeIndex(keywords, i);
+			if (newImages.isEmpty()) {
+				LogFrame.log("No more images for " + keywords + "  got " + images.size());
+				break;
+			}
 			images.addAll(scrapeIndex(keywords, i));
-			logger.info("Found  " + images.size() + " images.   Remaining  " + (size - images.size()));
+			LogFrame.log("Found  " + images.size() + " images.   Remaining  " + (size - images.size()));
 		}
 		downloadAll(images);
 	}
@@ -57,9 +63,10 @@ public class ImageScraper {
 		cox.setRequestProperty("Accept-Language", "en-US,en;q=0.8,bg;q=0.6");
 		cox.setRequestProperty("User-Agent",
 				"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/40.0.2214.115 Safari/537.36");
-		cox.setRequestProperty("Host", "www.brainyquote.com");
 		InputStream instream = cox.getInputStream();
+		System.out.println(cox.getResponseCode());
 		StringWriter writer = new StringWriter();
+		System.out.println(googleSearchFormat);
 
 		IOUtils.copy(instream, writer, "utf-8");
 		String theString = writer.toString();
@@ -99,7 +106,7 @@ public class ImageScraper {
 			imgType = "gif";
 		}
 		if (imgType.isEmpty()) {
-			logger.info("empty for   " + imgUrl);
+			LogFrame.log("empty for   " + imgUrl);
 			return "";
 		}
 		imgUrl = imgUrl.substring(0, imgUrl.indexOf(imgType) + imgType.length());
@@ -117,14 +124,14 @@ public class ImageScraper {
 				String imgDestination = this.cutImageUrl(str);
 				pool.submit(new DownloadCallable(imgDestination));
 			} catch (Exception e) {
-				logger.error("Failed to start download " + e.getMessage());
+				LogFrame.log("Failed to start download " + e.getMessage());
 			}
 		}
 		pool.shutdown();
 		while (!pool.isTerminated()) {
 
 		}
-		logger.info("Scrape completed");
+		LogFrame.log("Scrape completed");
 	}
 
 	private String cutImageUrl(String url) throws UnsupportedEncodingException {
@@ -168,10 +175,10 @@ public class ImageScraper {
 					File file = new File(dowloadLocation + "/" + System.currentTimeMillis() + r.nextInt() + ".png");
 					file.createNewFile();
 					ImageIO.write(image1, "png", file);
-					logger.info("Downloaded " + imgDestination);
+					LogFrame.log("Downloaded " + imgDestination);
 				}
 			} catch (Exception e) {
-				logger.error("Failed to download:  " + imgDestination + "  " + e.getMessage());
+				LogFrame.log("Failed to download:  " + imgDestination + "  " + e.getMessage());
 			}
 			return "OK";
 		}

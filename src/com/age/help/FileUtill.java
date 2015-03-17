@@ -16,9 +16,10 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 
+import com.age.ui.LogFrame;
+
 public class FileUtill {
 	
-	private static final Logger logger =  Logger.getLogger(FileUtill.class);
 	public static void saveToFile(String destination, String name, String content) throws FileNotFoundException {
 		File root = new File(destination);
 		if (!root.exists() || !root.isDirectory()) {
@@ -44,7 +45,7 @@ public class FileUtill {
 	}
 
 	public static ArrayList<String> getAllFiles(String path) {
-		logger.info("Getting file list for  " + path);
+		LogFrame.log("Getting file list for  " + path);
 		ArrayList<String> paths = new ArrayList<String>();
 		File rootFile = new File(path);
 		for (File f : rootFile.listFiles()) {

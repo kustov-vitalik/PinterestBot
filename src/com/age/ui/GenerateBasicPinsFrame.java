@@ -33,7 +33,7 @@ public class GenerateBasicPinsFrame extends JFrame implements ActionListener {
 		JPanel panel = new JPanel();
 		panel.setLayout(new FlowLayout());
 		tags = new JComboBox<String>();
-		File imageDir = new File(BotPaths.IMAGES_DIR);
+		File imageDir = new File(BotPaths.IMAGES_ROOT);
 		logger.info(imageDir.getAbsolutePath());
 		for (File f : imageDir.listFiles()) {
 			tags.addItem(f.getName());

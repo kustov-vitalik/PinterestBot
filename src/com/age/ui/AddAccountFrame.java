@@ -15,7 +15,6 @@ import org.apache.log4j.Logger;
 
 import com.age.data.PinterestAccount;
 import com.age.pinterest.bot.PinBot;
-import com.age.pinterest.task.UnFollowTask;
 
 @SuppressWarnings("serial")
 public class AddAccountFrame extends JFrame implements ActionListener {

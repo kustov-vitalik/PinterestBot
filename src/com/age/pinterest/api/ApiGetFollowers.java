@@ -8,24 +8,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.age.data.CookieList;
 import com.age.data.Pinner;
+import com.age.ui.LogFrame;
 
 public class ApiGetFollowers {
-	private static final Logger logger = Logger.getLogger(ApiGetFollowers.class);
 
 	static List<Pinner> getFollowers(String user, int max, CookieList cookies) {
-		logger.info("Getting followers for  " + user);
+		LogFrame.log("Getting followers for  " + user);
 		ArrayList<Pinner> result = new ArrayList<Pinner>();
 		String username = user;
 		String bookmark = "";
+		LogFrame.log("Getting followers from: " + username);
 		while (!bookmark.equals("-end-")) {
 			try {
-				logger.info(result.size() + "  followers from " + user);
 				String num = Long.toString(System.currentTimeMillis());
 				String url = "";
 				if (bookmark.isEmpty()) {
@@ -59,7 +58,6 @@ public class ApiGetFollowers {
 				cox.setRequestProperty("Accept-Encoding", "json, deflate");
 				cox.setUseCaches(false);
 
-				logger.info(cox.getResponseMessage());
 
 				InputStream instream = cox.getInputStream();
 				StringWriter writer = new StringWriter();
@@ -95,10 +93,8 @@ public class ApiGetFollowers {
 						if (!result.contains(pinner)) {
 							result.add(pinner);
 						}
-						logger.info("Current size is  " + result.size());
-						logger.info("Max is  " + max);
 						if (max > 0 && result.size() >= max) {
-							logger.info("Got  prev" + result.size() + "  followers from " + user);
+							LogFrame.log("Got  prev" + result.size() + "  followers from " + user);
 							return result;
 						}
 						JSONObject resource = jsonObject.getJSONObject("resource");
@@ -108,10 +104,10 @@ public class ApiGetFollowers {
 					}
 				}
 			} catch (Exception e) {
-				logger.error("", e);
+				LogFrame.log(e.getMessage());
 			}
 		}
-		logger.info("Got last " + result.size() + "  followers from " + user);
+		LogFrame.log("Got last " + result.size() + "  followers from " + user);
 		return result;
 	}
 }

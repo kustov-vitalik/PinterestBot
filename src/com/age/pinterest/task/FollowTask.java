@@ -2,15 +2,13 @@ package com.age.pinterest.task;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
-
 import com.age.data.Pinner;
 import com.age.data.PinterestAccount;
 import com.age.help.BotPaths;
 import com.age.pinterest.api.PinterestApi;
+import com.age.ui.LogFrame;
 
 public class FollowTask extends Task {
-	private static final Logger logger = Logger.getLogger(FollowTask.class);
 	public static final String PATH_TO_HISTORY_FORMAT = BotPaths.ROOT_DIR + "/Users/%s/followed.txt";
 
 	private final int size;
@@ -25,6 +23,8 @@ public class FollowTask extends Task {
 
 	@Override
 	public void run() {
+		LogFrame.log("Starting follow task for " + acc.getUser() + " will follow " + size + " users and interval is  " + interval
+				+ " seconds");
 		PinterestApi api = new PinterestApi(acc);
 		List<Pinner> followList = api.getFollowList(size);
 		while (!followList.isEmpty()) {
@@ -32,17 +32,12 @@ public class FollowTask extends Task {
 				try {
 					Pinner pinner = followList.get(0);
 					api.follow(pinner);
-
 				} catch (Exception e) {
-					logger.error(acc.getUser() + "  Failed to follow", e);
+					LogFrame.log(acc.getUser() + "  Failed to follow" + e.getMessage());
 				}
 				followList.remove(0);
 			}
 		}
 	}
 
-	@Override
-	public Logger getLog() {
-		return logger;
-	}
 }

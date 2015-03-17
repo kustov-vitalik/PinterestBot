@@ -13,5 +13,4 @@ public abstract class Task implements Runnable {
 		return false;
 	}
 
-	public abstract Logger getLog();
 }

@@ -13,19 +13,17 @@ import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
-import org.apache.log4j.Logger;
-
 import com.age.data.CookieList;
 import com.age.data.Pinner;
+import com.age.ui.LogFrame;
 
 public class ApiUnfollow {
-	private static final Logger logger = Logger.getLogger(ApiUnfollow.class);
 
 	static void unfollow(String thisUser, Pinner target, CookieList cookies) {
 
 		String username = target.getUsername();
 		String id = target.getId();
-		logger.info("unfollowing  " + username);
+		LogFrame.log("unfollowing  " + username);
 
 		String cookieList = cookies.getSslCookie() + " ";
 		cookieList = cookieList + cookies.getSessionCookie();
@@ -74,7 +72,7 @@ public class ApiUnfollow {
 				wr.write(postData);
 			}
 			cox.connect();
-			logger.info("Response code:  " + cox.getResponseCode());
+			LogFrame.log("Response code:  " + cox.getResponseCode());
 
 			cox.getInputStream();
 			cox.disconnect();

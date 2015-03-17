@@ -15,9 +15,9 @@ import org.apache.log4j.Logger;
 import com.age.data.Board;
 import com.age.data.CookieList;
 import com.age.data.Pin;
+import com.age.ui.LogFrame;
 
 public class ApiPin {
-	private static final Logger logger = Logger.getLogger(ApiPin.class);
 
 	static void pin(Pin pin, String user, Board board, CookieList cookies) {
 		String cookieList = cookies.toString();
@@ -54,7 +54,7 @@ public class ApiPin {
 			try (DataOutputStream wr = new DataOutputStream(con.getOutputStream())) {
 				wr.write(postData);
 			}
-			logger.info("Respoinse code: " + con.getResponseCode());
+			LogFrame.log("Respoinse code: " + con.getResponseCode());
 			con.disconnect();
 		} catch (Exception e) {
 			e.printStackTrace();

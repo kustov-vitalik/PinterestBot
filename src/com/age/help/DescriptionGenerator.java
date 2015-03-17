@@ -11,25 +11,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Attribute;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
+import com.age.ui.LogFrame;
+
 public class DescriptionGenerator {
 
-	private static final Logger logger = Logger.getLogger(DescriptionGenerator.class);
-
 	public List<String> getQuotes(String keyword) throws FileNotFoundException, UnsupportedEncodingException, InterruptedException {
-		logger.info("Generating quotes for " + keyword);
+		LogFrame.log("Generating quotes for " + keyword);
 		ArrayList<String> allQuotes = new ArrayList<String>();
 		try {
 			for (int i = 1; i <= 10; i++) {
 				allQuotes.addAll(getQuotesOnPage(keyword, i));
 			}
 		} catch (Exception e) {
-			logger.error("Failed when collecting quotes", e);
+			LogFrame.log("Failed when collecting quotes  " + e.getMessage());
 		}
 		return allQuotes;
 	}
