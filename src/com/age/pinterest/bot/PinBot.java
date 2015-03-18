@@ -15,8 +15,11 @@ import org.json.JSONException;
 
 import com.age.data.Board;
 import com.age.data.PinterestAccount;
+import com.age.data.User;
 import com.age.data.UserConfig;
 import com.age.help.BotPaths;
+import com.age.help.FileUtill;
+import com.age.pinterest.api.PinterestApi;
 import com.age.pinterest.task.FollowTask;
 import com.age.pinterest.task.GenerateBasicPinsTask;
 import com.age.pinterest.task.PinTask;
@@ -87,9 +90,11 @@ public class PinBot {
 		rootDir.mkdirs();
 		File pinDir = new File(rootDir, "pins");
 		pinDir.mkdir();
+		PinterestApi api = new PinterestApi(acc);
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.writeValue(new File(rootDir, "acc.json"), acc);
 		mapper.writeValue(new File(rootDir, "config.json"), new UserConfig());
+		mapper.writeValue(new File(rootDir, "user.json"), api.getManagedUser());
 	}
 
 	public static List<PinterestAccount> listAccount() {
@@ -108,6 +113,15 @@ public class PinBot {
 			fileNames.add(account);
 		}
 		return fileNames;
+	}
+
+	public static void listUsers() throws IOException {
+		File rootDir = new File(BotPaths.USER_ROOT);
+		for (File f : rootDir.listFiles()) {
+			File user = new File(f, "user.json");
+			System.out.println(FileUtill.getFileListContents(user.getAbsolutePath()));
+		}
+
 	}
 
 	public static UserConfig getUserConfig(String user) throws JsonParseException, JsonMappingException, IOException {

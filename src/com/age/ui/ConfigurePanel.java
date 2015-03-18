@@ -19,6 +19,7 @@ import com.age.data.Board;
 import com.age.data.PinterestAccount;
 import com.age.data.UserConfig;
 import com.age.help.BotPaths;
+import com.age.pinterest.api.PinterestApi;
 
 @SuppressWarnings("serial")
 public class ConfigurePanel extends JFrame implements ActionListener {
@@ -43,6 +44,7 @@ public class ConfigurePanel extends JFrame implements ActionListener {
 
 	public ConfigurePanel(PinterestAccount account, int width, int height) {
 		this.account = account;
+		PinterestApi api = new PinterestApi(account);
 		JPanel panel = new JPanel();
 		int w = (int) (width / 1.3f);
 		int h = height / 15;

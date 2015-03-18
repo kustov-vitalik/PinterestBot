@@ -16,8 +16,6 @@ public class LogFrame {
 		JFrame frame = new JFrame();
 		frame.setTitle("Scrape");
 		console = new JTextArea();
-		// console.setSize(dim);
-		// console.setPreferredSize(dim);
 		console.setText("");
 		console.setToolTipText("console");
 		console.setBackground(Color.BLACK);
