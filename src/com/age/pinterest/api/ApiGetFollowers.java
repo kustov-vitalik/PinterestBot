@@ -13,16 +13,16 @@ import org.json.JSONObject;
 
 import com.age.data.CookieList;
 import com.age.data.Pinner;
-import com.age.ui.LogFrame;
+import com.age.ui.Log;
 
 public class ApiGetFollowers {
 
 	static List<Pinner> getFollowers(String user, int max, CookieList cookies) {
-		LogFrame.log("Getting followers for  " + user);
+		Log.log("Getting followers for  " + user);
 		ArrayList<Pinner> result = new ArrayList<Pinner>();
 		String username = user;
 		String bookmark = "";
-		LogFrame.log("Getting followers from: " + username);
+		Log.log("Getting followers from: " + username);
 		while (!bookmark.equals("-end-")) {
 			try {
 				String num = Long.toString(System.currentTimeMillis());
@@ -94,7 +94,7 @@ public class ApiGetFollowers {
 							result.add(pinner);
 						}
 						if (max > 0 && result.size() >= max) {
-							LogFrame.log("Got  prev" + result.size() + "  followers from " + user);
+							Log.log("Got  prev" + result.size() + "  followers from " + user);
 							return result;
 						}
 						JSONObject resource = jsonObject.getJSONObject("resource");
@@ -104,10 +104,10 @@ public class ApiGetFollowers {
 					}
 				}
 			} catch (Exception e) {
-				LogFrame.log(e.getMessage());
+				Log.log(e.getMessage());
 			}
 		}
-		LogFrame.log("Got last " + result.size() + "  followers from " + user);
+		Log.log("Got last " + result.size() + "  followers from " + user);
 		return result;
 	}
 }

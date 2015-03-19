@@ -3,7 +3,6 @@ package com.age.pinterest.task;
 import java.io.File;
 import java.util.ArrayList;
 
-import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import com.age.data.Board;
@@ -12,7 +11,7 @@ import com.age.data.PinterestAccount;
 import com.age.help.BotPaths;
 import com.age.help.FileUtill;
 import com.age.pinterest.api.PinterestApi;
-import com.age.ui.LogFrame;
+import com.age.ui.Log;
 
 public class PinTask extends Task {
 	private static final String PINS_LOCATION_URL = BotPaths.ROOT_DIR + "/Users/%s/pins";
@@ -30,23 +29,22 @@ public class PinTask extends Task {
 	@Override
 	public void run() {
 		PinterestApi api = new PinterestApi(acc);
-		board = api.getBoards().get(0);
 		ObjectMapper mapper = new ObjectMapper();
 		ArrayList<String> pinFiles = FileUtill.getAllFiles(String.format(PINS_LOCATION_URL, acc.getUser()));
-		while (!pinFiles.isEmpty()) {
-			if (this.intervalPassed(interval)) {
-				try {
-					String filePath = pinFiles.get(0);
-					Pin pin = mapper.readValue(new File(filePath), Pin.class);
-					api.pin(pin, board);
-					new File(filePath).delete();
-					pinFiles.remove(0);
-				} catch (Exception e) {
-					LogFrame.log("Failed to pin  " + e.getMessage());
-				}
+		System.out.println("Pinning to " + board.getName());
+		System.out.println("Interval " + interval);
+		do {
+			try {
+				String filePath = pinFiles.get(0);
+				Pin pin = mapper.readValue(new File(filePath), Pin.class);
+				api.pin(pin, board);
+				new File(filePath).delete();
+				pinFiles.remove(0);
+			} catch (Exception e) {
+				Log.log("Failed to pin  " + e.getMessage());
 			}
-		}
-		LogFrame.log("No more pins for " + acc.getUser());
+		} while (!pinFiles.isEmpty() && this.intervalPassed(interval));
+		Log.log("No more pins for " + acc.getUser());
 	}
 
 }

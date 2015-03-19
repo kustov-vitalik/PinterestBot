@@ -14,7 +14,7 @@ import org.openqa.selenium.WebElement;
 
 import com.age.data.Pin;
 import com.age.pinterest.bot.PinBot;
-import com.age.ui.LogFrame;
+import com.age.ui.Log;
 
 public class PinGenerator {
 
@@ -43,7 +43,7 @@ public class PinGenerator {
 			nextPage = "page/" + Integer.toString(i);
 		}
 		for (String href : hrefs) {
-			LogFrame.log("Now  " + href);
+			Log.log("Now  " + href);
 			try {
 				driver.navigate().to(href);
 				PinUtils.waitForPage(driver);
@@ -59,7 +59,7 @@ public class PinGenerator {
 				pin.setImage(image);
 				pins.add(pin);
 			} catch (Exception e) {
-				LogFrame.log(e.getMessage());
+				Log.log(e.getMessage());
 			}
 		}
 		ObjectMapper mapper = new ObjectMapper();
@@ -74,7 +74,7 @@ public class PinGenerator {
 
 	public void test() {
 		String href = "http://eeryjewelry.com/product/towall-womens-gold-belly-chain-sexy-bikini-body-chain-infinity-belly-chain/";
-		LogFrame.log("Now  " + href);
+		Log.log("Now  " + href);
 		try {
 			driver.navigate().to(href);
 			PinUtils.waitForPage(driver);
@@ -88,9 +88,9 @@ public class PinGenerator {
 			pin.setDescription(descr);
 			pin.setSource(href);
 			pin.setImage(image);
-			LogFrame.log(pin.toString());
+			Log.log(pin.toString());
 		} catch (Exception e) {
-			LogFrame.log(e.getMessage());
+			Log.log(e.getMessage());
 		}
 	}
 

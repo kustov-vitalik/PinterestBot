@@ -5,6 +5,8 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -19,7 +21,7 @@ import com.age.data.Board;
 import com.age.data.PinterestAccount;
 import com.age.data.UserConfig;
 import com.age.help.BotPaths;
-import com.age.pinterest.api.PinterestApi;
+import com.age.pinterest.bot.PinBot;
 
 @SuppressWarnings("serial")
 public class ConfigurePanel extends JFrame implements ActionListener {
@@ -37,6 +39,7 @@ public class ConfigurePanel extends JFrame implements ActionListener {
 	private final JLabel pinLabel;
 	private final JTextArea pinTimeArea;
 	private final JComboBox<Board> boardsCombo;
+	private final JLabel boardLabel;
 
 	private final JButton subbmit;
 
@@ -44,7 +47,12 @@ public class ConfigurePanel extends JFrame implements ActionListener {
 
 	public ConfigurePanel(PinterestAccount account, int width, int height) {
 		this.account = account;
-		PinterestApi api = new PinterestApi(account);
+		UserConfig cfg = null;
+		try {
+			cfg = PinBot.getUserConfig(account.getUser());
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
 		JPanel panel = new JPanel();
 		int w = (int) (width / 1.3f);
 		int h = height / 15;
@@ -54,11 +62,11 @@ public class ConfigurePanel extends JFrame implements ActionListener {
 		unfollowLabel.setPreferredSize(dim);
 
 		unfollowTimeArea = new JTextArea();
-		unfollowTimeArea.setText("11");
+		unfollowTimeArea.setText(Long.toString(TimeUnit.MILLISECONDS.toSeconds(cfg.getUnfollowTime())));
 		unfollowTimeArea.setPreferredSize(dim);
 
 		minFollowersArea = new JTextArea();
-		minFollowersArea.setText("5000");
+		minFollowersArea.setText(Integer.toString(cfg.getMinFollowers()));
 		minFollowersArea.setPreferredSize(dim);
 
 		panel.add(unfollowLabel);
@@ -70,11 +78,11 @@ public class ConfigurePanel extends JFrame implements ActionListener {
 		followLabel.setPreferredSize(dim);
 
 		followTimeArea = new JTextArea();
-		followTimeArea.setText("11");
+		followTimeArea.setText(Long.toString(TimeUnit.MILLISECONDS.toSeconds(cfg.getFollowTime())));
 		followTimeArea.setPreferredSize(dim);
 
 		followCountArea = new JTextArea();
-		followCountArea.setText("5000");
+		followCountArea.setText(Integer.toString(cfg.getFollowCount()));
 		followCountArea.setPreferredSize(dim);
 
 		panel.add(followLabel);
@@ -86,16 +94,27 @@ public class ConfigurePanel extends JFrame implements ActionListener {
 		pinLabel.setPreferredSize(dim);
 
 		pinTimeArea = new JTextArea();
-		pinTimeArea.setText("60");
+		pinTimeArea.setText(Long.toString(TimeUnit.MILLISECONDS.toMinutes(cfg.getPinTime())));
 		pinTimeArea.setPreferredSize(dim);
 
 		boardsCombo = new JComboBox<Board>();
 		boardsCombo.setPreferredSize(dim);
+		try {
+			for (Board b : PinBot.getUser(account.getUser()).getBoards()) {
+				boardsCombo.addItem(b);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		boardLabel = new JLabel();
+		boardLabel.setText(cfg.getPinBoard().toString());
+		boardLabel.setPreferredSize(dim);
 
 		panel.add(pinLabel);
 		panel.add(pinTimeArea);
 		panel.add(boardsCombo);
-
+		panel.add(boardLabel);
 		subbmit = new JButton();
 		subbmit.addActionListener(this);
 		subbmit.setText("subbmit");

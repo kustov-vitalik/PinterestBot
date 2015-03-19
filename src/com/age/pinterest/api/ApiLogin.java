@@ -11,7 +11,7 @@ import org.apache.commons.io.IOUtils;
 import com.age.data.Cookie;
 import com.age.data.CookieList;
 import com.age.data.PinterestAccount;
-import com.age.ui.LogFrame;
+import com.age.ui.Log;
 
 public class ApiLogin {
 
@@ -19,15 +19,15 @@ public class ApiLogin {
 		String username = account.getEmail();
 		String password = account.getPassword();
 		String url = "https://www.pinterest.com/login/";
-		LogFrame.log("Logging in with user " + account.getEmail());
-		LogFrame.log("Password is  " + account.getPassword());
+		Log.log("Logging in with user " + account.getEmail());
+		Log.log("Password is  " + account.getPassword());
 		try {
 			URL requestUrl = new URL(url);
 			HttpURLConnection cox = (HttpURLConnection) requestUrl.openConnection();
 			cox.setRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
 			cox.setRequestProperty("Accept-Encoding", "gzip");
 			cox.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.3; WOW64; rv:35.0) Gecko/20100101 Firefox/35.0");
-			LogFrame.log(cox.getResponseMessage());
+			Log.log(cox.getResponseMessage());
 			String headerName = null;
 			String sslHeader = "";
 			String sessionHeader = "";
@@ -91,7 +91,7 @@ public class ApiLogin {
 				}
 			}
 			cox.connect();
-			LogFrame.log("Response code:  " + cox.getResponseCode());
+			Log.log("Response code from login is   " + cox.getResponseCode());
 			StringWriter writer = new StringWriter();
 
 			IOUtils.copy(cox.getInputStream(), writer, "utf-8");

@@ -16,7 +16,7 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 
-import com.age.ui.LogFrame;
+import com.age.ui.Log;
 
 public class FileUtill {
 	
@@ -45,7 +45,7 @@ public class FileUtill {
 	}
 
 	public static ArrayList<String> getAllFiles(String path) {
-		LogFrame.log("Getting file list for  " + path);
+		Log.log("Getting file list for  " + path);
 		ArrayList<String> paths = new ArrayList<String>();
 		File rootFile = new File(path);
 		for (File f : rootFile.listFiles()) {

@@ -15,7 +15,7 @@ import javax.net.ssl.X509TrustManager;
 
 import com.age.data.CookieList;
 import com.age.data.Pinner;
-import com.age.ui.LogFrame;
+import com.age.ui.Log;
 
 public class ApiFollow {
 	static TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
@@ -34,7 +34,7 @@ public class ApiFollow {
 
 		String username = target.getUsername();
 		String id = target.getId();
-		LogFrame.log("Following  " + username);
+		Log.log("Following  " + username);
 		try {
 			String cookieList = cookies.getSslCookie() + " ";
 			cookieList = cookieList + cookies.getSessionCookie();
@@ -83,7 +83,7 @@ public class ApiFollow {
 				wr.write(postData);
 			}
 			cox.connect();
-			LogFrame.log("Response code:  " + cox.getResponseCode());
+			Log.log("Response code from follow  " + cox.getResponseCode());
 
 			cox.getInputStream();
 			cox.disconnect();

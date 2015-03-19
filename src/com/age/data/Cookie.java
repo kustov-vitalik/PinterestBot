@@ -5,6 +5,9 @@ public class Cookie {
 	private String name;
 	private String value;
 
+	Cookie() {
+	}
+
 	public Cookie(String name, String value) {
 		this.name = name;
 		this.value = value;

@@ -2,10 +2,8 @@ package com.age.pinterest.task;
 
 import java.io.IOException;
 
-import org.apache.log4j.Logger;
-
 import com.age.help.ImageScraper;
-import com.age.ui.LogFrame;
+import com.age.ui.Log;
 
 public class ScrapeTask extends Task {
 	private final String keyword;
@@ -24,7 +22,7 @@ public class ScrapeTask extends Task {
 		try {
 			scrapper.scrape(keyword, count);
 		} catch (InterruptedException | IOException e) {
-			LogFrame.log("Image scrape task failed.  " +e.getMessage());
+			Log.log("Image scrape task failed.  " +e.getMessage());
 		}
 	}
 

@@ -15,7 +15,7 @@ import javax.net.ssl.X509TrustManager;
 
 import com.age.data.CookieList;
 import com.age.data.Pinner;
-import com.age.ui.LogFrame;
+import com.age.ui.Log;
 
 public class ApiUnfollow {
 
@@ -23,7 +23,6 @@ public class ApiUnfollow {
 
 		String username = target.getUsername();
 		String id = target.getId();
-		LogFrame.log("unfollowing  " + username);
 
 		String cookieList = cookies.getSslCookie() + " ";
 		cookieList = cookieList + cookies.getSessionCookie();
@@ -72,7 +71,7 @@ public class ApiUnfollow {
 				wr.write(postData);
 			}
 			cox.connect();
-			LogFrame.log("Response code:  " + cox.getResponseCode());
+			Log.log(thisUser + "  unfollowed  " + username);
 
 			cox.getInputStream();
 			cox.disconnect();

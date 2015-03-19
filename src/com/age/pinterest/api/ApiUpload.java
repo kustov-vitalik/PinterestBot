@@ -23,7 +23,7 @@ import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
 import com.age.data.CookieList;
-import com.age.ui.LogFrame;
+import com.age.ui.Log;
 
 public class ApiUpload {
 
@@ -75,7 +75,7 @@ public class ApiUpload {
 			}
 
 			cox.connect();
-			LogFrame.log("Response code:  " + cox.getResponseCode());
+			Log.log("Response code form upload  " + cox.getResponseCode());
 			StringWriter writer = new StringWriter();
 			IOUtils.copy(cox.getInputStream(), writer, "utf-8");
 			String theString = writer.toString();
@@ -83,7 +83,7 @@ public class ApiUpload {
 			JSONObject jsonObject = new JSONObject(theString);
 			image_url = jsonObject.getString("image_url");
 		} catch (Exception e) {
-			LogFrame.log(e.getMessage());
+			Log.log(e.getMessage());
 		}
 		return image_url;
 

@@ -11,12 +11,12 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.age.data.Board;
-import com.age.ui.LogFrame;
+import com.age.ui.Log;
 
 public class ApiGetBoards {
 	static List<Board> getBoards(String username) {
 		List<Board> boards = new ArrayList<Board>();
-		LogFrame.log("Getting boards for user " + username);
+		Log.log("Getting boards for user " + username);
 		try {
 			String url = "https://www.pinterest.com/resource/UserResource/get/?source_url=%2F"
 					+ username

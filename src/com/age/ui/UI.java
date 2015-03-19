@@ -83,7 +83,7 @@ public class UI implements ActionListener {
 
 	public static void main(String[] args) {
 		PinBot.setUpDirTree();
-		LogFrame.setUpLog();
+		Log.setUpLog();
 		new UI(new PinBot());
 	}
 }

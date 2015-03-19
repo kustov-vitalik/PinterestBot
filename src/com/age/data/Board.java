@@ -4,6 +4,9 @@ public class Board {
 	private String id;
 	private String name;
 
+	Board() {
+	}
+
 	public Board(String name, String id) {
 		this.name = name;
 		this.id = id;
@@ -29,5 +32,5 @@ public class Board {
 	public String toString() {
 		return this.name;
 	}
-	
+
 }

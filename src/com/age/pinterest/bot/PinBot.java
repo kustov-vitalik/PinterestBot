@@ -26,7 +26,7 @@ import com.age.pinterest.task.PinTask;
 import com.age.pinterest.task.ScrapeTask;
 import com.age.pinterest.task.Task;
 import com.age.pinterest.task.UnFollowTask;
-import com.age.ui.LogFrame;
+import com.age.ui.Log;
 
 public class PinBot {
 
@@ -66,7 +66,7 @@ public class PinBot {
 		try {
 			account = mapper.readValue(new File(pathToUser + "/acc.json"), PinterestAccount.class);
 		} catch (IOException e) {
-			LogFrame.log("Failed to read account " + e.getMessage());
+			Log.log("Failed to read account " + e.getMessage());
 		}
 		return account;
 	}
@@ -84,7 +84,7 @@ public class PinBot {
 	}
 
 	public static void addAccount(PinterestAccount acc) throws JsonGenerationException, JsonMappingException, IOException {
-		LogFrame.log("Setting up user " + acc.getUser());
+		Log.log("Setting up user " + acc.getUser());
 		String root = BotPaths.USER_ROOT + acc.getUser();
 		File rootDir = new File(root);
 		rootDir.mkdirs();
@@ -122,6 +122,13 @@ public class PinBot {
 			System.out.println(FileUtill.getFileListContents(user.getAbsolutePath()));
 		}
 
+	}
+
+	public static User getUser(String user) throws JsonParseException, JsonMappingException, IOException {
+		ObjectMapper mapper = new ObjectMapper();
+		File usersRoot = new File(BotPaths.USER_ROOT);
+		File userFile = new File(usersRoot, user + "/user.json");
+		return mapper.readValue(userFile, User.class);
 	}
 
 	public static UserConfig getUserConfig(String user) throws JsonParseException, JsonMappingException, IOException {

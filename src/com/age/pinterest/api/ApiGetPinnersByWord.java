@@ -8,18 +8,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.age.data.CookieList;
 import com.age.data.Pinner;
-import com.age.ui.LogFrame;
+import com.age.ui.Log;
 
 public class ApiGetPinnersByWord {
 
 	static List<Pinner> getPinnersByKeyword(String username, int size, String keyword, CookieList cookies) {
-		LogFrame.log("Collection users related to  " + keyword);
+		Log.log("Collection users related to  " + keyword);
 		ArrayList<Pinner> followList = new ArrayList<Pinner>();
 		String url = "https://www.pinterest.com/search/boards/?q=" + keyword;
 		try {
@@ -31,7 +30,7 @@ public class ApiGetPinnersByWord {
 			cox.setRequestProperty("X-Requested-With", "XMLHttpRequest");
 			cox.setRequestProperty("Cookie", cookies.getSslCookie().toString());
 			cox.setRequestProperty("Accept-Encoding", "json, deflate");
-			LogFrame.log(cox.getResponseMessage());
+			Log.log(cox.getResponseMessage());
 
 			InputStream instream = cox.getInputStream();
 			StringWriter writer = new StringWriter();
@@ -43,7 +42,7 @@ public class ApiGetPinnersByWord {
 			JSONObject tree = mod.getJSONObject("tree");
 			JSONObject data = tree.getJSONObject("data");
 			JSONArray results = data.getJSONArray("results");
-			LogFrame.log("Found " + results.length() + "  users");
+			Log.log("Found " + results.length() + "  users");
 			for (int i = 1; i < results.length(); i++) {
 				if (followList.size() > size) {
 					break;
@@ -56,11 +55,11 @@ public class ApiGetPinnersByWord {
 				for (Pinner p : pinners) {
 					followList.add(p);
 				}
-				LogFrame.log("Follow list is:  " + followList.size());
+				Log.log("Follow list is:  " + followList.size());
 			}
 			return followList;
 		} catch (Exception e) {
-			LogFrame.log("Account manager failed to get follow list. It will probably return empty list.  " + e.getMessage());
+			Log.log("Account manager failed to get follow list. It will probably return empty list.  " + e.getMessage());
 		}
 		return new ArrayList<Pinner>();
 	}

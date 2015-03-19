@@ -1,6 +1,5 @@
 package com.age.pinterest.task;
 
-import org.apache.log4j.Logger;
 
 public abstract class Task implements Runnable {
 	private long lastTimeOut = System.currentTimeMillis();

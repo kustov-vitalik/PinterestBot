@@ -10,12 +10,10 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
-import org.apache.log4j.Logger;
-
 import com.age.data.Board;
 import com.age.data.CookieList;
 import com.age.data.Pin;
-import com.age.ui.LogFrame;
+import com.age.ui.Log;
 
 public class ApiPin {
 
@@ -26,7 +24,7 @@ public class ApiPin {
 		String username = user;
 		String boardId = board.getId();
 		String boardName = board.getName();
-
+		Log.log("Pinning with user " + user + " to board " + boardName);
 		String description = pin.getDescription();
 		try {
 			description = URLEncoder.encode(description, "UTF-8");
@@ -54,7 +52,7 @@ public class ApiPin {
 			try (DataOutputStream wr = new DataOutputStream(con.getOutputStream())) {
 				wr.write(postData);
 			}
-			LogFrame.log("Respoinse code: " + con.getResponseCode());
+			Log.log("Response code from pin " + con.getResponseCode());
 			con.disconnect();
 		} catch (Exception e) {
 			e.printStackTrace();

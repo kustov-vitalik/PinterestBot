@@ -12,15 +12,18 @@ import org.json.JSONObject;
 
 import com.age.data.CookieList;
 import com.age.data.Pinner;
-import com.age.ui.LogFrame;
+import com.age.ui.Log;
 
 public class ApiGetFollowed {
 
 	static List<Pinner> getFollowed(String user, int maxListSize, int minFollowers, CookieList cookies) {
 		List<Pinner> resultList = new ArrayList<Pinner>();
 		String bookmark = "";
+		Log.log("Getting unfollow list for  " + user);
 		while (!bookmark.equals("-end-")) {
-			LogFrame.log("Target list:  " + resultList.size());
+			if (resultList.size() % 10 == 0 && !resultList.isEmpty()) {
+				Log.log("unfollow list size is " + resultList.size());
+			}
 			try {
 				String num = Long.toString(System.currentTimeMillis());
 				String url = "";
@@ -49,7 +52,6 @@ public class ApiGetFollowed {
 				cox.setRequestProperty("Cookie", cookies.getSslCookie().toString());
 				cox.setRequestProperty("Accept-Encoding", "json, deflate");
 
-				LogFrame.log(cox.getResponseMessage());
 				StringWriter writer = new StringWriter();
 
 				IOUtils.copy(cox.getInputStream(), writer, "utf-8");
@@ -79,11 +81,11 @@ public class ApiGetFollowed {
 							resultList.add(pinner);
 						}
 					} catch (Exception e) {
-						LogFrame.log(e.getMessage());
+						Log.log(e.getMessage());
 					}
 				}
 			} catch (Exception e) {
-				LogFrame.log(e.getMessage());
+				Log.log(e.getMessage());
 			}
 
 		}

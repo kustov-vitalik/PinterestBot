@@ -9,7 +9,7 @@ import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import com.age.ui.LogFrame;
+import com.age.ui.Log;
 
 public class PinUtils {
 
@@ -35,13 +35,13 @@ public class PinUtils {
 			try {
 				Thread.sleep(500);
 			} catch (InterruptedException e) {
-				LogFrame.log(e.getMessage());
+				Log.log(e.getMessage());
 			}
 		}
 		try {
 			element = driver.findElement(by);
 		} catch (Exception e) {
-			LogFrame.log("waitForWithTimeout exceptio " + e.getMessage());
+			Log.log("waitForWithTimeout exceptio " + e.getMessage());
 		}
 		return element;
 	}
@@ -51,7 +51,7 @@ public class PinUtils {
 			try {
 				Thread.sleep(500);
 			} catch (InterruptedException e) {
-				LogFrame.log(e.getMessage());
+				Log.log(e.getMessage());
 			}
 		}
 		return driver.findElement(by);
