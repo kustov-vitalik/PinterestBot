@@ -10,11 +10,11 @@ import javax.swing.JTextArea;
 
 public class Log {
 	private static JTextArea console;
-	private static JFrame frame;
 
 	public static void setUpLog() {
 		Dimension dim = new Dimension(400, 600);
-		frame = new JFrame();
+		System.out.println("Set log");
+		JFrame frame = new JFrame();
 		frame.setTitle("Log");
 		console = new JTextArea();
 		console.setText("");

@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyListener;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -18,9 +19,8 @@ public class UsersDashboard extends JFrame implements ActionListener {
 	private static final int width = 500;
 	private static final int height = 200;
 
-
-	public UsersDashboard(PinBot bot) {
-		mainFrame = new JFrame("Pinterest bot");
+	public UsersDashboard(PinBot bot, KeyListener keyListener) {
+		mainFrame = new JFrame("User board");
 		mainFrame.setLayout(null);
 		mainFrame.setResizable(false);
 
@@ -44,6 +44,8 @@ public class UsersDashboard extends JFrame implements ActionListener {
 		mainFrame.setContentPane(contentPane);
 		mainFrame.setLocationRelativeTo(null);
 		mainFrame.setVisible(true);
+		mainFrame.setFocusable(true);
+		mainFrame.addKeyListener(keyListener);
 		mainFrame.pack();
 	}
 
