@@ -4,17 +4,17 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 
-import org.apache.log4j.PropertyConfigurator;
-
 import com.age.pinterest.bot.PinBot;
 
-public class UI implements ActionListener {
+public class UI implements ActionListener, KeyListener {
 	private static final Dimension mainSize = new Dimension(300, 300);
 	private static final Dimension btnSize = new Dimension((int) (mainSize.width * 0.9f), (int) (mainSize.height * 0.1f));
 
@@ -64,16 +64,19 @@ public class UI implements ActionListener {
 		mainFrame.setLocationRelativeTo(null);
 		mainFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		mainFrame.setVisible(true);
+		mainFrame.setFocusable(true);
+		mainFrame.addKeyListener(this);
 		mainFrame.pack();
 
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		System.out.println(e.getActionCommand());
 		if (e.getActionCommand().equals(addAccBtn.getText())) {
 			new AddAccountFrame();
 		} else if (e.getActionCommand().equals(scrapeButton.getText())) {
-			new ScrapeFrame();
+			new ScrapeFrame(bot);
 		} else if (e.getActionCommand().equals(genBasicPinsButton.getText())) {
 			new GenerateBasicPinsFrame();
 		} else if (e.getActionCommand().equals(dashboard.getText())) {
@@ -85,5 +88,20 @@ public class UI implements ActionListener {
 		PinBot.setUpDirTree();
 		Log.setUpLog();
 		new UI(new PinBot());
+	}
+
+	@Override
+	public void keyPressed(KeyEvent k) {
+		if (k.getKeyChar() == 'k') {
+			Log.setUpLog();
+		}
+	}
+
+	@Override
+	public void keyReleased(KeyEvent k) {
+	}
+
+	@Override
+	public void keyTyped(KeyEvent k) {
 	}
 }

@@ -106,6 +106,9 @@ public class ConfigurePanel extends JFrame implements ActionListener {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		if (cfg.getPinBoard() == null) {
+			cfg.setPinBoard(boardsCombo.getItemAt(0));
+		}
 
 		boardLabel = new JLabel();
 		boardLabel.setText(cfg.getPinBoard().toString());

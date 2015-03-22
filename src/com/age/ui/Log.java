@@ -10,20 +10,23 @@ import javax.swing.JTextArea;
 
 public class Log {
 	private static JTextArea console;
+	private static JFrame frame;
 
 	public static void setUpLog() {
 		Dimension dim = new Dimension(400, 600);
-		JFrame frame = new JFrame();
-		frame.setTitle("Scrape");
+		frame = new JFrame();
+		frame.setTitle("Log");
 		console = new JTextArea();
 		console.setText("");
 		console.setToolTipText("console");
 		console.setBackground(Color.BLACK);
 		console.setCaretColor(Color.YELLOW);
+		console.setEditable(false);
 		Font font = new Font("Verdana", Font.BOLD, 15);
 		console.setFont(font);
 		console.setForeground(Color.GREEN);
-		JScrollPane scroll = new JScrollPane(console, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		JScrollPane scroll = new JScrollPane(console, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		scroll.setSize(dim);
 		frame.setSize(dim);
 		frame.setPreferredSize(dim);

@@ -7,15 +7,11 @@ import java.security.NoSuchAlgorithmException;
 
 import org.json.JSONException;
 
-public class App {
-	private static final String COCO = "globalamericase";
-	private static final String LINDA = "linda1234willia";
-	private static final String STACEY = "stacey123gray";
-	private static final String COCO_BOARD = "dreamy-jewelry";
-	private static final String LINDA_BOARD = "jewelry";
-	private static final String STACEY_BOARD = "jewelry-that-i-would-like-to-wear";
+import com.age.pinterest.task.TaskType;
 
-	public static void main(String[] args) throws InterruptedException, IOException, JSONException, KeyManagementException,
-			NoSuchAlgorithmException, URISyntaxException {
+public class App {
+	public static void main(String[] args) throws InterruptedException, IOException, JSONException,
+			KeyManagementException, NoSuchAlgorithmException, URISyntaxException {
+		System.out.println(TaskType.FOLLOW);
 	}
 }

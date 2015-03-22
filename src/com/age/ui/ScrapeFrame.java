@@ -10,8 +10,6 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
-import org.apache.log4j.Logger;
-
 import com.age.pinterest.bot.PinBot;
 
 @SuppressWarnings("serial")
@@ -24,8 +22,10 @@ public class ScrapeFrame extends JFrame implements ActionListener {
 	private final JTextArea tag;
 	private final JTextArea keyword;
 	private final JTextArea count;
+	private final PinBot bot;
 
-	public ScrapeFrame() {
+	public ScrapeFrame(PinBot bot) {
+		this.bot = bot;
 		this.setTitle("Scrape");
 		JPanel panel = new JPanel();
 		panel.setLayout(new FlowLayout());
@@ -70,7 +70,6 @@ public class ScrapeFrame extends JFrame implements ActionListener {
 			String tagTxt = tag.getText();
 			String keyowrdTxt = keyword.getText();
 			int size = Integer.parseInt(count.getText());
-			PinBot bot = new PinBot();
 			bot.addScrapeTask(keyowrdTxt, tagTxt, size);
 			this.dispose();
 		}

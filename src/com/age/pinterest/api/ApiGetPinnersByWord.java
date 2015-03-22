@@ -50,8 +50,7 @@ public class ApiGetPinnersByWord {
 				JSONObject user = results.getJSONObject(i);
 				JSONObject owner = user.getJSONObject("owner");
 				String usr = owner.getString("username");
-				// TODO FIX!! null
-				List<Pinner> pinners = ApiGetFollowers.getFollowers(usr, size - followList.size(), null);
+				List<Pinner> pinners = ApiGetFollowers.getFollowers(usr, size - followList.size(), cookies);
 				for (Pinner p : pinners) {
 					followList.add(p);
 				}

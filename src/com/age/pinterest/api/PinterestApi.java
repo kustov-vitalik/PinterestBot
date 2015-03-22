@@ -17,6 +17,10 @@ public class PinterestApi {
 		this.user = setUpUser(account);
 	}
 
+	public PinterestApi(User user) {
+		this.user = user;
+	}
+
 	public void follow(Pinner target) {
 		ApiFollow.follow(target, user.getCookies());
 	}
@@ -52,6 +56,10 @@ public class PinterestApi {
 	public List<Pinner> getFollowList(int minListSize) {
 		String thisUser = user.getAccount().getUser();
 		List<Pinner> userFollowers = this.getFollowers(thisUser, WAVE_FOLLOW_USERS_NUM);
+		if (userFollowers.size() < WAVE_FOLLOW_USERS_NUM) {
+			userFollowers.addAll(ApiGetPinnersByWord.getPinnersByKeyword(user.getAccount().getUser(), WAVE_FOLLOW_USERS_NUM,
+					"fashion", user.getCookies()));
+		}
 		ArrayList<Pinner> targets = new ArrayList<Pinner>();
 		for (Pinner p : userFollowers) {
 			int remaining = minListSize - targets.size();

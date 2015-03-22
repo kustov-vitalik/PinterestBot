@@ -22,8 +22,13 @@ public class ScrapeTask extends Task {
 		try {
 			scrapper.scrape(keyword, count);
 		} catch (InterruptedException | IOException e) {
-			Log.log("Image scrape task failed.  " +e.getMessage());
+			Log.log("Image scrape task failed.  " + e.getMessage());
 		}
+	}
+
+	@Override
+	public TaskType getType() {
+		return TaskType.SCRAPE;
 	}
 
 }

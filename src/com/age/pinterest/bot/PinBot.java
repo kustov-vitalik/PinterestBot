@@ -3,10 +3,10 @@ package com.age.pinterest.bot;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.http.client.ClientProtocolException;
-import org.apache.log4j.Logger;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
@@ -25,24 +25,27 @@ import com.age.pinterest.task.GenerateBasicPinsTask;
 import com.age.pinterest.task.PinTask;
 import com.age.pinterest.task.ScrapeTask;
 import com.age.pinterest.task.Task;
+import com.age.pinterest.task.TaskType;
 import com.age.pinterest.task.UnFollowTask;
 import com.age.ui.Log;
 
 public class PinBot {
+	ArrayList<Thread> tasks = new ArrayList<Thread>();
 
 	public void addFollowTask(String user, int count, long interval) throws ClientProtocolException, IOException, JSONException {
-		PinterestAccount account = this.getAccount(user);
-		this.startNewTask(new FollowTask(account, count, interval));
+		User userData = getUser(user);
+		this.startNewTask(new FollowTask(userData, count, interval));
 	}
 
 	public void addPinTask(String user, Board board, long interval) throws IOException, InterruptedException {
-		PinterestAccount account = this.getAccount(user);
-		this.startNewTask(new PinTask(account, board, interval));
+		User userData = getUser(user);
+		this.startNewTask(new PinTask(userData, board, interval));
 	}
 
-	public Task addUnfollowTask(String user, int minFollower, long interval) throws IOException, JSONException, InterruptedException {
-		PinterestAccount account = this.getAccount(user);
-		return this.startNewTask(new UnFollowTask(account, minFollower, interval));
+	public void addUnfollowTask(String user, int minFollower, long interval) throws IOException, JSONException,
+			InterruptedException {
+		User userData = getUser(user);
+		this.startNewTask(new UnFollowTask(userData, minFollower, interval));
 	}
 
 	public void addScrapeTask(String keyword, String tag, int count) {
@@ -53,22 +56,37 @@ public class PinBot {
 		this.startNewTask(new GenerateBasicPinsTask(tag, source));
 	}
 
-	private Task startNewTask(Task task) {
-		Thread thread = new Thread(task);
-		thread.start();
-		return task;
+	public Thread getTask(TaskType type) {
+		for (Thread t : tasks) {
+			if (t.getName().equals(type.toString())) {
+				return t;
+			}
+		}
+		return null;
 	}
 
-	private PinterestAccount getAccount(String username) {
-		ObjectMapper mapper = new ObjectMapper();
-		PinterestAccount account = null;
-		String pathToUser = BotPaths.ROOT_DIR + "/Users/" + username;
-		try {
-			account = mapper.readValue(new File(pathToUser + "/acc.json"), PinterestAccount.class);
-		} catch (IOException e) {
-			Log.log("Failed to read account " + e.getMessage());
+	public void terminateTask(TaskType task) {
+		System.out.println("Interupting");
+		removeTask(task);
+	}
+
+	@SuppressWarnings("deprecation")
+	private void removeTask(TaskType type) {
+		Iterator<Thread> iter = tasks.iterator();
+		while (iter.hasNext()) {
+			Thread thread = iter.next();
+			if (thread.getName().equals(type.toString())) {
+				thread.stop();
+				iter.remove();
+			}
 		}
-		return account;
+	}
+
+	private void startNewTask(Task task) {
+		Thread thread = new Thread(task);
+		thread.setName(task.getType().toString());
+		thread.start();
+		tasks.add(thread);
 	}
 
 	public static void setUpDirTree() {

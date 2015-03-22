@@ -57,4 +57,9 @@ public class GenerateBasicPinsTask extends Task {
 		}
 	}
 
+	@Override
+	public TaskType getType() {
+		return TaskType.GENERATE;
+	}
+
 }

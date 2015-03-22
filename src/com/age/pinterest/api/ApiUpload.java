@@ -19,7 +19,6 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
 import com.age.data.CookieList;
