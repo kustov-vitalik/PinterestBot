@@ -2,7 +2,6 @@ package com.age.pinterest.task;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.concurrent.TimeUnit;
 
 import org.codehaus.jackson.map.ObjectMapper;
 
@@ -32,8 +31,6 @@ public class PinTask extends Task {
 		ObjectMapper mapper = new ObjectMapper();
 		PinterestApi api = new PinterestApi(user);
 		ArrayList<String> pinFiles = FileUtill.getAllFiles(String.format(PINS_LOCATION_URL, user.getAccount().getUser()));
-		System.out.println("Pinning to " + board.getName());
-		System.out.println("Interval " + interval);
 		do {
 			if (this.intervalPassed(interval)) {
 				try {
@@ -43,7 +40,7 @@ public class PinTask extends Task {
 					new File(filePath).delete();
 					pinFiles.remove(0);
 					Log.log("Remaining pins " + pinFiles.size());
-					Log.log("Pin interval is " + TimeUnit.MINUTES.toMinutes(interval) + " minutes");
+					Log.log("Pin interval is " + interval);
 				} catch (Exception e) {
 					Log.log("Failed to pin  " + e.getMessage());
 				}

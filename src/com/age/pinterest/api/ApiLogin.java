@@ -46,10 +46,9 @@ public class ApiLogin {
 
 			String cookieList = sslHeader + "; " + sessionHeader;
 			String sslValue = sslHeader.substring(sslHeader.indexOf("=") + 1);
-			username = "globalamericaselfdefensejohn";
 			String urlParam = "source_url=%2flogin%2f&data=%7b%22options%22%3a%7b%22username_or_email%22%3a%22"
 					+ username
-					+ "%40gmail.com%22%2c%22password%22%3a%22"
+					+ "%22%2c%22password%22%3a%22"
 					+ password
 					+ "%22%7d%2c%22context%22%3a%7b%7d%7d&module_path=App()%3eLoginPage()%3eLogin()%3eButton(class_name%3dprimary%2c+text%3dLog+in%2c+type%3dsubmit%2c+size%3dlarge)";
 			url = "https://www.pinterest.com/resource/UserSessionResource/create/";
