@@ -8,6 +8,7 @@ import com.age.data.Pin;
 import com.age.data.Pinner;
 import com.age.data.PinterestAccount;
 import com.age.data.User;
+import com.age.ui.Log;
 
 public class PinterestApi {
 	private static final int WAVE_FOLLOW_USERS_NUM = 100;
@@ -54,11 +55,13 @@ public class PinterestApi {
 	}
 
 	public List<Pinner> getFollowList(int minListSize) {
+		Log.log("Will get " + minListSize);
 		String thisUser = user.getAccount().getUser();
 		List<Pinner> userFollowers = this.getFollowers(thisUser, WAVE_FOLLOW_USERS_NUM);
-		if (userFollowers.size() < WAVE_FOLLOW_USERS_NUM) {
-			userFollowers.addAll(ApiGetPinnersByWord.getPinnersByKeyword(user.getAccount().getUser(), WAVE_FOLLOW_USERS_NUM,
-					"fashion", user.getCookies()));
+		while (userFollowers.size() <= WAVE_FOLLOW_USERS_NUM) {
+			List<Pinner> extraPinners = ApiGetPinnersByWord.getPinnersByKeyword(user.getAccount().getUser(), WAVE_FOLLOW_USERS_NUM,
+					"fashion", user.getCookies());
+			userFollowers.addAll(extraPinners);
 		}
 		ArrayList<Pinner> targets = new ArrayList<Pinner>();
 		for (Pinner p : userFollowers) {

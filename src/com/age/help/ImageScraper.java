@@ -54,7 +54,7 @@ public class ImageScraper {
 	private List<String> scrapeIndex(String keywords, int index) throws IOException {
 		ArrayList<String> results = new ArrayList<String>();
 		String googleSearchFormat = "https://www.google.bg/search?as_st=y&tbm=isch&hl=en&as_q=" + keywords.replace(" ", "+")
-				+ "&as_epq=&as_oq=&as_eq=&cr=&as_sitesearch=&safe=images&tbs=isz:l&ijn=" + Integer.toString(index);
+				+ "&as_epq=&as_oq=&as_eq=&cr=&as_sitesearch=&safe=images&tbs=isz:m&ijn=" + Integer.toString(index);
 		URL requestUrl = new URL(googleSearchFormat);
 		HttpURLConnection cox = (HttpURLConnection) requestUrl.openConnection();
 		cox.setRequestProperty("Cache-Control", "max-age=0");

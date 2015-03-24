@@ -27,6 +27,7 @@ import com.age.ui.Log;
 public class ApiUpload {
 
 	static String upload(String localImage, CookieList cookies) {
+		Log.log("Uploading image");
 		String image_url = "";
 		try {
 			String cookieList = cookies.toString();

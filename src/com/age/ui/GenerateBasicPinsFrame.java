@@ -19,7 +19,6 @@ import com.age.pinterest.bot.PinBot;
 
 @SuppressWarnings("serial")
 public class GenerateBasicPinsFrame extends JFrame implements ActionListener {
-	private static final Logger logger =  Logger.getLogger(GenerateBasicPinsFrame.class);
 	private static final Dimension mainSize = new Dimension(500, 500);
 	private static final Dimension textSize = new Dimension((int) (mainSize.width * 0.3f), (int) (mainSize.height * 0.04f));
 	private static final Dimension btnSize = new Dimension((int) (mainSize.width * 0.9f), (int) (mainSize.height * 0.05f));
@@ -34,7 +33,6 @@ public class GenerateBasicPinsFrame extends JFrame implements ActionListener {
 		panel.setLayout(new FlowLayout());
 		tags = new JComboBox<String>();
 		File imageDir = new File(BotPaths.IMAGES_ROOT);
-		logger.info(imageDir.getAbsolutePath());
 		for (File f : imageDir.listFiles()) {
 			tags.addItem(f.getName());
 		}

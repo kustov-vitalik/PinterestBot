@@ -21,6 +21,7 @@ public class ApiGetPinnersByWord {
 		Log.log("Collection users related to  " + keyword);
 		ArrayList<Pinner> followList = new ArrayList<Pinner>();
 		String url = "https://www.pinterest.com/search/boards/?q=" + keyword;
+
 		try {
 			URL requestUrl = new URL(url);
 			HttpURLConnection cox = (HttpURLConnection) requestUrl.openConnection();
