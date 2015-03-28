@@ -56,11 +56,10 @@ public class ApiGetPinnersByWord {
 				}
 				Log.log("Follow list is:  " + followList.size());
 			}
-			return followList;
 		} catch (Exception e) {
 			Log.log("Account manager failed to get follow list. It will probably return empty list.  " + e.getMessage());
 		}
-		return new ArrayList<Pinner>();
+		return followList;
 	}
 
 }

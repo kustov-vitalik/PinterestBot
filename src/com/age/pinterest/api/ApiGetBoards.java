@@ -18,12 +18,7 @@ public class ApiGetBoards {
 		List<Board> boards = new ArrayList<Board>();
 		Log.log("Getting boards for user " + username);
 		try {
-			String url = "https://www.pinterest.com/resource/UserResource/get/?source_url=%2F"
-					+ username
-					+ "%2F&data=%7B%22options%22%3A%7B%22username%22%3A%22"
-					+ username
-					+ "%22%2C%22invite_code%22%3Anull%7D%2C%22context%22%3A%7B%7D%2C%22module%22%3A%7B%22name%22%3A%22UserProfileContent%22%2C%22options%22%3A%7B%22tab%22%3A%22boards%22%7D%7D%2C%22render_type%22%3A1%2C%22error_strategy%22%3A0%7D&_=1426178220430";
-			URL requestUrl = new URL(url);
+			URL requestUrl = new URL(UrlProvider.getBoards(username));
 			HttpURLConnection cox = (HttpURLConnection) requestUrl.openConnection();
 			CommonHeaders.addCommonHeaders(cox);
 			cox.setRequestMethod("GET");

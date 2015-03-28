@@ -25,28 +25,11 @@ public class ApiGetFollowers {
 		Log.log("Getting followers from: " + username);
 		while (!bookmark.equals("-end-")) {
 			try {
-				String num = Long.toString(System.currentTimeMillis());
 				String url = "";
 				if (bookmark.isEmpty()) {
-					url = "https://www.pinterest.com/resource/UserResource/get/?source_url=%2F"
-							+ username
-							+ "%2F&data=%7B%22options%22%3A%7B%22username%22%3A%22"
-							+ username
-							+ "%22%2C%22invite_code%22%3Anull%7D%2C%22context%22%3A%7B%7D%2C%22module%22%3A%7B%22name%22%3A%22UserProfileContent%22%2C%22options%22%3A%7B%22tab%22%3A%22followers%22%7D%7D%2C%22render_type%22%3A1%2C%22error_strategy%22%3A0%7D&module_path=App()%3EUserProfilePage(resource%3DUserResource(username%3D"
-							+ username
-							+ "))%3EUserInfoBar(tab%3Dfollowers%2C+spinner%3D%5Bobject+Object%5D%2C+resource%3DUserResource(username%3D"
-							+ username + "%2C+invite_code%3Dnull))&_=" + num;
+					url = UrlProvider.getFollowersPre(username);
 				} else {
-					url = "https://www.pinterest.com/resource/UserFollowersResource/get/?source_url=%2F"
-							+ username
-							+ "%2Ffollowers%2F&data=%7B%22options%22%3A%7B%22username%22%3A%22"
-							+ username
-							+ "%22%2C%22bookmarks%22%3A%5B%22"
-							+ bookmark
-							+ "%22%5D%7D%2C%22context%22%3A%7B%7D%7D&module_path=App()%3EUserProfilePage(resource%3DUserResource(username%3D"
-							+ username
-							+ "))%3EUserInfoBar(tab%3Dfollowers%2C+spinner%3D%5Bobject+Object%5D%2C+resource%3DUserResource(username%3D"
-							+ username + "%2C+invite_code%3Dnull))&_=" + num;
+					url = UrlProvider.getFollowersPost(username, bookmark);
 				}
 
 				URL requestUrl = new URL(url);
@@ -57,7 +40,6 @@ public class ApiGetFollowers {
 				cox.setRequestProperty("Cookie", cookies.getSslCookie().toString());
 				cox.setRequestProperty("Accept-Encoding", "json, deflate");
 				cox.setUseCaches(false);
-
 
 				InputStream instream = cox.getInputStream();
 				StringWriter writer = new StringWriter();
