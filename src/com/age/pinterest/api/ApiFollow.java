@@ -4,31 +4,12 @@ import java.io.DataOutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.Charset;
-import java.security.cert.X509Certificate;
-
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSession;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
 
 import com.age.data.CookieList;
 import com.age.data.Pinner;
 import com.age.ui.Log;
 
 public class ApiFollow {
-	static TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
-		public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-			return null;
-		}
-
-		public void checkClientTrusted(X509Certificate[] certs, String authType) {
-		}
-
-		public void checkServerTrusted(X509Certificate[] certs, String authType) {
-		}
-	} };
 
 	static void follow(Pinner target, CookieList cookies) {
 
@@ -38,31 +19,7 @@ public class ApiFollow {
 		try {
 			String cookieList = cookies.getSslCookie() + " ";
 			cookieList = cookieList + cookies.getSessionCookie();
-			SSLContext sc = SSLContext.getInstance("SSL");
-			sc.init(null, trustAllCerts, new java.security.SecureRandom());
-			HostnameVerifier allHostsValid = new HostnameVerifier() {
-				public boolean verify(String hostname, SSLSession session) {
-					return true;
-				}
-			};
-			HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);
-			HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
-			String urlParameters = "source_url=/"
-					+ username
-					+ "/&data={\"options\":{\"user_id\":\""
-					+ id
-					+ "\"},\"context\":{}}&module_path=App()>UserProfilePage(resource=UserResource(username="
-					+ username
-					+ "))>UserProfileContent(resource=UserResource(username="
-					+ username
-					+ "))>Grid(resource=UserFollowingResource(username="
-					+ username
-					+ "))>GridItems(resource=UserFollowingResource(username="
-					+ username
-					+ "))>User(resource=UserResource(username="
-					+ username
-					+ "))>UserFollowButton(followed=false, class_name=gridItem, unfollow_text=Unfollow, follow_ga_category=user_follow, unfollow_ga_category=user_unfollow, disabled=false, is_me=false, follow_class=default, log_element_type=62, text=Follow, user_id="
-					+ id + ", follow_text=Follow, color=default)";
+			String urlParameters = UrlProvider.getFollow(username, id);
 			byte[] postData = urlParameters.getBytes(Charset.forName("UTF-8"));
 			int postDataLength = postData.length;
 			String request = "https://www.pinterest.com/resource/UserFollowResource/create/";

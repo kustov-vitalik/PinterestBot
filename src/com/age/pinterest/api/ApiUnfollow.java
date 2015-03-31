@@ -4,14 +4,6 @@ import java.io.DataOutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.Charset;
-import java.security.cert.X509Certificate;
-
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSession;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
 
 import com.age.data.CookieList;
 import com.age.data.Pinner;
@@ -27,31 +19,7 @@ public class ApiUnfollow {
 		String cookieList = cookies.getSslCookie() + " ";
 		cookieList = cookieList + cookies.getSessionCookie();
 		try {
-			SSLContext sc = SSLContext.getInstance("SSL");
-			sc.init(null, trustAllCerts, new java.security.SecureRandom());
-			HostnameVerifier allHostsValid = new HostnameVerifier() {
-				public boolean verify(String hostname, SSLSession session) {
-					return true;
-				}
-			};
-			HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);
-			HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
-			String urlParam = "source_url=/"
-					+ thisUser
-					+ "/following/&data={\"options\":{\"user_id\":\""
-					+ id
-					+ "\"},\"context\":{}}&module_path=App()>UserProfilePage(resource=UserResource(username="
-					+ thisUser
-					+ "))>UserProfileContent(resource=UserResource(username="
-					+ thisUser
-					+ "))>Grid(resource=UserFollowingResource(username="
-					+ thisUser
-					+ "))>GridItems(resource=UserFollowingResource(username="
-					+ thisUser
-					+ "))>User(resource=UserResource(username="
-					+ username
-					+ "))>UserFollowButton(followed=true, class_name=gridItem, unfollow_text=Unfollow, follow_ga_category=user_follow, unfollow_ga_category=user_unfollow, disabled=false, is_me=false, follow_class=default, log_element_type=62, text=Unfollow, user_id="
-					+ id + ", follow_text=Follow, color=dim)";
+			String urlParam = UrlProvider.getUnfollow(thisUser, username, id);
 			byte[] postData = urlParam.getBytes(Charset.forName("UTF-8"));
 			int postDataLength = postData.length;
 			String request = "https://www.pinterest.com/resource/UserFollowResource/delete/";
@@ -80,16 +48,4 @@ public class ApiUnfollow {
 		}
 
 	}
-
-	static TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
-		public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-			return null;
-		}
-
-		public void checkClientTrusted(X509Certificate[] certs, String authType) {
-		}
-
-		public void checkServerTrusted(X509Certificate[] certs, String authType) {
-		}
-	} };
 }
