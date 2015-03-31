@@ -86,7 +86,6 @@ public class ApiLogin {
 						}
 
 					}
-					System.out.println(cox.getHeaderField(i));
 				}
 			}
 			cox.connect();

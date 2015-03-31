@@ -43,11 +43,16 @@ public class PinterestApi {
 	}
 
 	public void pin(Pin pin, Board board) {
-		ApiPin.pin(pin, user.getAccount().getUser(), board, user.getCookies());
+		String pinId = ApiPin.pin(pin, user.getAccount().getUser(), board, user.getCookies());
+		editPin(board, pinId, pin.getDescription(), pin.getSource());
 	}
 
 	public void unfollow(Pinner target) {
 		ApiUnfollow.unfollow(user.getAccount().getUser(), target, user.getCookies());
+	}
+
+	public void editPin(Board board, String pinId, String description, String link) {
+		ApiEditPin.edit(user.getAccount().getUser(), board, pinId, description, link, user.getCookies());
 	}
 
 	public User getManagedUser() {
