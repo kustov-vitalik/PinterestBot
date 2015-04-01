@@ -42,8 +42,7 @@ public class PinBot {
 		this.startNewTask(new PinTask(userData, board, interval));
 	}
 
-	public void addUnfollowTask(String user, int minFollower, long interval) throws IOException, JSONException,
-			InterruptedException {
+	public void addUnfollowTask(String user, int minFollower, long interval) throws IOException, JSONException, InterruptedException {
 		User userData = getUser(user);
 		this.startNewTask(new UnFollowTask(userData, minFollower, interval));
 	}
@@ -142,11 +141,16 @@ public class PinBot {
 
 	}
 
-	public static User getUser(String user) throws JsonParseException, JsonMappingException, IOException {
-		ObjectMapper mapper = new ObjectMapper();
-		File usersRoot = new File(BotPaths.USER_ROOT);
-		File userFile = new File(usersRoot, user + "/user.json");
-		return mapper.readValue(userFile, User.class);
+	public static User getUser(String username) {
+		try {
+			ObjectMapper mapper = new ObjectMapper();
+			File usersRoot = new File(BotPaths.USER_ROOT);
+			File userFile = new File(usersRoot, username + "/user.json");
+			return mapper.readValue(userFile, User.class);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return new User();
 	}
 
 	public static UserConfig getUserConfig(String user) throws JsonParseException, JsonMappingException, IOException {

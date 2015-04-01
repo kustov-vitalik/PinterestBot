@@ -7,6 +7,25 @@ public class Pinner {
 	private int pins;
 	private String fullName;
 
+	/**
+	 * @param username
+	 * @param followers
+	 * @param id
+	 * @param pins
+	 * @param fullName
+	 */
+	public Pinner(String username, int followers, String id, int pins, String fullName) {
+		this.username = username;
+		this.followers = followers;
+		this.id = id;
+		this.pins = pins;
+		this.fullName = fullName;
+	}
+
+	public Pinner() {
+
+	}
+
 	public String getUsername() {
 		return this.username;
 	}
@@ -49,7 +68,8 @@ public class Pinner {
 
 	@Override
 	public String toString() {
-		return "User: " + this.fullName + "  followers:" + this.followers + "  pins:" + this.pins + "  username:" + this.username + "  ID:" + this.id;
+		return "User: " + this.fullName + "  followers:" + this.followers + "  pins:" + this.pins + "  username:" + this.username + "  ID:"
+				+ this.id;
 	}
 
 	@Override

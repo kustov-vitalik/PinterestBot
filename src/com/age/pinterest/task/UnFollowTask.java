@@ -21,7 +21,7 @@ public class UnFollowTask extends Task {
 	@Override
 	public void run() {
 		PinterestApi api = new PinterestApi(user);
-		List<Pinner> trashPinners = api.getUnfollowList(minFollowers);
+		List<Pinner> trashPinners = api.getFollowed(user.getAccount().getUser(), -1, minFollowers);
 		do {
 			if (this.intervalPassed(interval)) {
 				try {

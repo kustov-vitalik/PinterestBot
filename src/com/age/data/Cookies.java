@@ -1,6 +1,6 @@
 package com.age.data;
 
-public class CookieList {
+public class Cookies {
 	private Cookie bCookie;
 	private Cookie sslCookie;
 	private Cookie sessionCookie;

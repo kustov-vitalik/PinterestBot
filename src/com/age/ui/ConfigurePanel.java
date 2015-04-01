@@ -99,12 +99,8 @@ public class ConfigurePanel extends JFrame implements ActionListener {
 
 		boardsCombo = new JComboBox<Board>();
 		boardsCombo.setPreferredSize(dim);
-		try {
-			for (Board b : PinBot.getUser(account.getUser()).getBoards()) {
-				boardsCombo.addItem(b);
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
+		for (Board b : PinBot.getUser(account.getUser()).getBoards()) {
+			boardsCombo.addItem(b);
 		}
 		if (cfg.getPinBoard() == null) {
 			cfg.setPinBoard(boardsCombo.getItemAt(0));

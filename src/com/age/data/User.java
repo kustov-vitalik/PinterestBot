@@ -3,15 +3,18 @@ package com.age.data;
 import java.util.List;
 
 public class User {
-	private CookieList cookies;
+	private Cookies cookies;
 	private PinterestAccount account;
 	private List<Board> boards;
 
-	public void setCookies(CookieList cookies) {
+	public User() {
+	}
+
+	public void setCookies(Cookies cookies) {
 		this.cookies = cookies;
 	}
 
-	public CookieList getCookies() {
+	public Cookies getCookies() {
 		return this.cookies;
 	}
 

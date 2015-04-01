@@ -25,8 +25,7 @@ public class Log {
 		Font font = new Font("Verdana", Font.BOLD, 15);
 		console.setFont(font);
 		console.setForeground(Color.GREEN);
-		JScrollPane scroll = new JScrollPane(console, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		JScrollPane scroll = new JScrollPane(console, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		scroll.setSize(dim);
 		frame.setSize(dim);
 		frame.setPreferredSize(dim);
@@ -40,6 +39,7 @@ public class Log {
 		console.append(text + "\n");
 		int len = console.getDocument().getLength();
 		console.setCaretPosition(len);
+		System.out.println(text);
 	}
 
 }

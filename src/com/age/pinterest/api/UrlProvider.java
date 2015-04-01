@@ -1,6 +1,9 @@
 package com.age.pinterest.api;
 
 public class UrlProvider {
+	/**
+	 * @param username
+	 */
 	public static String getBoards(String username) {
 		return "https://www.pinterest.com/resource/UserResource/get/?source_url=%2F"
 				+ username
@@ -9,6 +12,10 @@ public class UrlProvider {
 				+ "%22%2C%22invite_code%22%3Anull%7D%2C%22context%22%3A%7B%7D%2C%22module%22%3A%7B%22name%22%3A%22UserProfileContent%22%2C%22options%22%3A%7B%22tab%22%3A%22boards%22%7D%7D%2C%22render_type%22%3A1%2C%22error_strategy%22%3A0%7D&_=1426178220430";
 	}
 
+	/**
+	 * @param username
+	 * @param id
+	 */
 	public static String getFollow(String username, String id) {
 		return "source_url=/"
 				+ username
@@ -28,6 +35,9 @@ public class UrlProvider {
 				+ id + ", follow_text=Follow, color=default)";
 	}
 
+	/**
+	 * @param username
+	 */
 	public static String getFollowedPre(String username) {
 		return "https://www.pinterest.com/resource/UserFollowingResource/get/?source_url=%2F"
 				+ username
@@ -42,6 +52,10 @@ public class UrlProvider {
 
 	}
 
+	/**
+	 * @param username
+	 * @param bookmark
+	 */
 	public static String getFollowedPost(String username, String bookmark) {
 		return "https://www.pinterest.com/resource/UserFollowingResource/get/?source_url=%2F" + username
 				+ "%2Ffollowing%2F&data=%7B%22options%22%3A%7B%22username%22%3A%22" + username + "%22%2C%22bookmarks%22%3A%5B%22"
@@ -49,50 +63,53 @@ public class UrlProvider {
 				+ Long.toString(System.currentTimeMillis());
 	}
 
+	/**
+	 * @param username
+	 * @return
+	 */
 	public static String getFollowersPre(String username) {
 		return "https://www.pinterest.com/resource/UserResource/get/?source_url=%2F"
 				+ username
 				+ "%2F&data=%7B%22options%22%3A%7B%22username%22%3A%22"
 				+ username
 				+ "%22%2C%22invite_code%22%3Anull%7D%2C%22context%22%3A%7B%7D%2C%22module%22%3A%7B%22name%22%3A%22UserProfileContent%22%2C%22options%22%3A%7B%22tab%22%3A%22followers%22%7D%7D%2C%22render_type%22%3A1%2C%22error_strategy%22%3A0%7D&module_path=App()%3EUserProfilePage(resource%3DUserResource(username%3D"
-				+ username
-				+ "))%3EUserInfoBar(tab%3Dfollowers%2C+spinner%3D%5Bobject+Object%5D%2C+resource%3DUserResource(username%3D"
+				+ username + "))%3EUserInfoBar(tab%3Dfollowers%2C+spinner%3D%5Bobject+Object%5D%2C+resource%3DUserResource(username%3D"
 				+ username + "%2C+invite_code%3Dnull))&_=" + Long.toString(System.currentTimeMillis());
 	}
 
+	/**
+	 * @param username
+	 * @param bookmark
+	 */
 	public static String getFollowersPost(String username, String bookmark) {
 		return "https://www.pinterest.com/resource/UserFollowersResource/get/?source_url=%2F" + username
 				+ "%2Ffollowers%2F&data=%7B%22options%22%3A%7B%22username%22%3A%22" + username + "%22%2C%22bookmarks%22%3A%5B%22"
 				+ bookmark
 				+ "%22%5D%7D%2C%22context%22%3A%7B%7D%7D&module_path=App()%3EUserProfilePage(resource%3DUserResource(username%3D"
-				+ username
-				+ "))%3EUserInfoBar(tab%3Dfollowers%2C+spinner%3D%5Bobject+Object%5D%2C+resource%3DUserResource(username%3D"
+				+ username + "))%3EUserInfoBar(tab%3Dfollowers%2C+spinner%3D%5Bobject+Object%5D%2C+resource%3DUserResource(username%3D"
 				+ username + "%2C+invite_code%3Dnull))&_=" + Long.toString(System.currentTimeMillis());
 	}
 
-	public static String getLogin(String email, String password) {
-		return "source_url=%2flogin%2f&data=%7b%22options%22%3a%7b%22username_or_email%22%3a%22"
-				+ email
-				+ "%22%2c%22password%22%3a%22"
-				+ password
-				+ "%22%7d%2c%22context%22%3a%7b%7d%7d&module_path=App()%3eLoginPage()%3eLogin()%3eButton(class_name%3dprimary%2c+text%3dLog+in%2c+type%3dsubmit%2c+size%3dlarge)";
-	}
-
+	/**
+	 * @param username
+	 * @param boardName
+	 * @param description
+	 * @param boardId
+	 * @param imageUrl
+	 */
 	public static String getPin(String username, String boardName, String description, String boardId, String imageUrl) {
-		return "https://www.pinterest.com/source_url=%2F"
-				+ username
-				+ "%2F"
-				+ boardName
-				+ "%2F&data=%7B%22options%22%3A%7B%22board_id%22%3A%22"
-				+ boardId
-				+ "%22%2C%22description%22%3A%22"
-				+ description
-				+ "%22%2C%22link%22%3A%22%22%2C%22image_url%22%3A%22"
-				+ imageUrl
+		return "https://www.pinterest.com/source_url=%2F" + username + "%2F" + boardName
+				+ "%2F&data=%7B%22options%22%3A%7B%22board_id%22%3A%22" + boardId + "%22%2C%22description%22%3A%22" + description
+				+ "%22%2C%22link%22%3A%22%22%2C%22image_url%22%3A%22" + imageUrl
 				+ "%22%2C%22method%22%3A%22uploaded%22%7D%2C%22context%22%3A%7B%7D%7D&module_path=PinUploader(default_board_id%3D"
 				+ boardId + ")%23Modal(module%3DPinCreate())";
 	}
 
+	/**
+	 * @param thisUser
+	 * @param username
+	 * @param id
+	 */
 	public static String getUnfollow(String thisUser, String username, String id) {
 		return "source_url=/"
 				+ thisUser
@@ -110,5 +127,58 @@ public class UrlProvider {
 				+ username
 				+ "))>UserFollowButton(followed=true, class_name=gridItem, unfollow_text=Unfollow, follow_ga_category=user_follow, unfollow_ga_category=user_unfollow, disabled=false, is_me=false, follow_class=default, log_element_type=62, text=Unfollow, user_id="
 				+ id + ", follow_text=Follow, color=dim)";
+	}
+
+	/**
+	 * @param username
+	 * @param boardName
+	 * @param boardId
+	 * @param description
+	 * @param link
+	 * @param pinId
+	 */
+	public static String getEditPin(String username, String boardName, String boardId, String description, String link, String pinId) {
+		return "source_url=%2F"
+				+ username
+				+ "%2F"
+				+ boardName
+				+ "%2F&data=%7B%22options%22%3A%7B%22board_id%22%3A%22"
+				+ boardId
+				+ "%22%2C%22description%22%3A%22"
+				+ description
+				+ "%22%2C%22link%22%3A%22"
+				+ link
+				+ "%22%2C%22place%22%3A0%2C%22id%22%3A%22"
+				+ pinId
+				+ "%22%7D%2C%22context%22%3A%7B%7D%7D&module_path=App()%3EBoardPage(resource%3DBoardResource(username%3D"
+				+ username
+				+ "%2C+slug%3D"
+				+ boardName
+				+ "))%3EGrid(resource%3DBoardFeedResource(board_id%3D"
+				+ boardId
+				+ "%2C+board_url%3D%2F"
+				+ pinId
+				+ "%2F"
+				+ boardName
+				+ "%2F%2C+board_layout%3Ddefault%2C+prepend%3Dtrue%2C+page_size%3Dnull%2C+access%3Dwrite%2Cdelete))%3EGridItems(resource%3DBoardFeedResource(board_id%3D"
+				+ boardId
+				+ "%2C+board_url%3D%2F"
+				+ pinId
+				+ "%2F"
+				+ boardName
+				+ "%2F%2C+board_layout%3Ddefault%2C+prepend%3Dtrue%2C+page_size%3Dnull%2C+access%3Dwrite%2Cdelete))%3EPin(resource%3DPinResource(id%3D"
+				+ pinId + "))%3EShowModalButton(module%3DPinEdit)%23Modal(module%3DPinEdit(resource%3DPinResource(id%3D" + pinId + ")))";
+	}
+
+	/**
+	 * @param email
+	 * @param password
+	 */
+	public static String getLogin(String email, String password) {
+		return "source_url=%2flogin%2f&data=%7b%22options%22%3a%7b%22username_or_email%22%3a%22"
+				+ email
+				+ "%22%2c%22password%22%3a%22"
+				+ password
+				+ "%22%7d%2c%22context%22%3a%7b%7d%7d&module_path=App()%3eLoginPage()%3eLogin()%3eButton(class_name%3dprimary%2c+text%3dLog+in%2c+type%3dsubmit%2c+size%3dlarge)";
 	}
 }

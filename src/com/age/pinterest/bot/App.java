@@ -8,6 +8,7 @@ import java.security.NoSuchAlgorithmException;
 
 import org.json.JSONException;
 
+import com.age.pinterest.api.PinterestApi;
 import com.age.pinterest.api.UrlProvider;
 import com.age.pinterest.task.TaskType;
 
