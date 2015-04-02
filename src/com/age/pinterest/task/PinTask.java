@@ -3,6 +3,7 @@ package com.age.pinterest.task;
 import java.io.File;
 import java.util.ArrayList;
 
+import org.apache.commons.lang3.Validate;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import com.age.data.Board;
@@ -20,6 +21,7 @@ public class PinTask extends Task {
 	private final User user;
 
 	public PinTask(User user, Board board, long interval) {
+		Validate.notNull(board, "Null board in Pin task");
 		this.interval = interval;
 		this.board = board;
 		this.user = user;

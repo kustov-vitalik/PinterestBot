@@ -12,8 +12,6 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
-import org.apache.log4j.Logger;
-
 import com.age.help.BotPaths;
 import com.age.pinterest.bot.PinBot;
 

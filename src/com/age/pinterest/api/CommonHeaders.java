@@ -10,7 +10,7 @@ public class CommonHeaders {
 	static void addCommonHeaders(HttpURLConnection cox, Cookies cookies) {
 		addCommonHeaders(cox);
 		cox.setRequestProperty("Cookie", cookies.toString());
-		cox.setRequestProperty("X-CSRFToken", cookies.getSslCookie().getValue());
+//		cox.setRequestProperty("X-CSRFToken", cookies.getSslCookie().getValue());
 	}
 
 	static void addCommonHeaders(HttpURLConnection cox) {
@@ -24,7 +24,7 @@ public class CommonHeaders {
 		cox.setRequestProperty("Accept", "application/json, text/javascript, */*; q=0.01");
 		cox.setRequestProperty("Accept-Language", "en-gb,en;q=0.5");
 		cox.setRequestProperty("X-APP-VERSION", "8718db9");
-		cox.setRequestProperty("Host", "www.pinterest.com");
+//		cox.setRequestProperty("Host", "www.pinterest.com");
 		cox.setUseCaches(false);
 	}
 

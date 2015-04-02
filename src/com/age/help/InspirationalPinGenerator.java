@@ -1,32 +1,62 @@
 package com.age.help;
 
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
+
+import javax.imageio.ImageIO;
 
 import org.apache.commons.io.IOUtils;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
-public class InspirationalPinGenerator {
-	public static void main(String[] args) throws MalformedURLException, IOException {
-		// night-out-and-cocktail
-		List<String> items = getItems("night-out-and-cocktail");
-		for (String url : items) {
-			System.out.println("Location " + url);
-			System.out.println("Image " + getUrlForItem(url));
-		}
+import com.age.data.Pin;
 
+public class InspirationalPinGenerator {
+	public static void main(String[] args) throws MalformedURLException, IOException, InterruptedException {
+		List<String> categories = Arrays.asList("casual", "wear-to-work", "special-occasion", "night-out-and-cocktail");
+
+		DescriptionGenerator generator = new DescriptionGenerator();
+		List<String> quotes = generator.getQuotes("dress");
+		Iterator<String> iter = quotes.iterator();
+
+		ObjectMapper mapper = new ObjectMapper();
+		File root = new File("D:/pin");
+		root.mkdirs();
+		for (String category : categories) {
+			List<String> items = getItems(category);
+			int i = items.size();
+			for (String url : items) {
+				if (!iter.hasNext()) {
+					iter = quotes.iterator();
+				}
+				System.out.println("Remaining for " + category + "  " + i);
+				File subDir = new File(root, category);
+				subDir.mkdirs();
+				String imgUrl = getImageUrlForItem(url);
+				Pin pin = new Pin();
+				pin.setSource(url);
+				pin.setImage(downloadUrl(imgUrl, subDir));
+				pin.setDescription(iter.next());
+				mapper.writeValue(new File(subDir, Long.toHexString(System.currentTimeMillis()) + ".json"), pin);
+				i--;
+			}
+		}
 	}
 
-	private static String getUrlForItem(String itemUrl) throws IOException {
+	private static String getImageUrlForItem(String itemUrl) throws IOException {
 		HttpURLConnection con = (HttpURLConnection) new URL(itemUrl).openConnection();
 		con.setRequestMethod("GET");
 		con.connect();
@@ -79,5 +109,20 @@ public class InspirationalPinGenerator {
 				}
 			}
 		}
+	}
+
+	private static String downloadUrl(String urlParam, File root) throws IOException {
+		Random r = new Random();
+		BufferedImage image1 = null;
+		URL url = new URL(urlParam);
+		File file = null;
+		image1 = ImageIO.read(url);
+		if (image1 != null) {
+			file = new File(root, System.currentTimeMillis() + r.nextInt() + ".png");
+			file.createNewFile();
+			ImageIO.write(image1, "png", file);
+			System.out.println("Downloaded " + urlParam);
+		}
+		return file.getAbsolutePath();
 	}
 }

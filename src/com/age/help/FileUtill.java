@@ -36,7 +36,6 @@ public class FileUtill {
 	}
 
 	public static void appendToFile(String file, String content) throws IOException {
-
 		FileWriter fw = new FileWriter(file, true);
 		fw.write(content + "\n");
 		fw.close();

@@ -44,7 +44,7 @@ public class PinterestApi {
 
 	public PinterestApi(PinterestAccount account) {
 		Validate.notNull(account);
-		this.user=PinBot.getUser(account.getUser());
+		this.user = PinBot.getUser(account.getUser());
 		this.user = setUpUser(account);
 
 	}
@@ -288,6 +288,7 @@ public class PinterestApi {
 		String pinId = "";
 		String image_url = this.upload(pin.getImage());
 		String username = user.getAccount().getUser();
+		System.out.println("here");
 		String boardId = board.getId();
 		String boardName = board.getName();
 		Log.log("Pinning with user " + username + " to board " + boardName);
@@ -311,6 +312,7 @@ public class PinterestApi {
 			StringWriter writer = new StringWriter();
 			IOUtils.copy(con.getInputStream(), writer, "utf-8");
 			String theString = writer.toString();
+			System.out.println(theString);
 			JSONObject root = new JSONObject(theString);
 			JSONObject res = root.getJSONObject("resource_response");
 			JSONObject data = res.getJSONObject("data");
@@ -349,7 +351,8 @@ public class PinterestApi {
 	}
 
 	public void editPin(Board board, String pinId, String description, String link) {
-		String urlParams = UrlProvider.getEditPin(user.getAccount().getUser(), board.getName(), board.getId(), description, link, pinId);
+		String urlParams = UrlProvider.getEditPin(user.getAccount().getUser(), board.getName(), board.getId(), description, link,
+				pinId);
 		try {
 			byte[] postData = urlParams.getBytes(Charset.forName("UTF-8"));
 			int len = postData.length;
@@ -399,7 +402,7 @@ public class PinterestApi {
 	}
 
 	private User setUpUser(PinterestAccount acc) {
-		this.user=PinBot.getUser(acc.getUser());
+		this.user = PinBot.getUser(acc.getUser());
 		user.setAccount(acc);
 		user.setCookies(this.login());
 		user.setBoards(this.getBoards());
@@ -498,6 +501,7 @@ public class PinterestApi {
 	private String upload(String pathToImage) {
 		Log.log("Uploading image");
 		String image_url = "";
+		Cookies cookies = user.getCookies();
 		try {
 			File imageFile = new File(pathToImage);
 
@@ -508,12 +512,25 @@ public class PinterestApi {
 			Path path = Paths.get(pathToImage);
 			byte[] data = Files.readAllBytes(path);
 			String boundary = "---------------------------14956123715492";
-			HttpsURLConnection con = (HttpsURLConnection) url.openConnection(proxy);
-			CommonHeaders.addCommonHeaders(con, user.getCookies());
+			String CRLF = "\r\n";
+			HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
+			con.setDoOutput(true);
+			con.setDoInput(true);
+			con.setInstanceFollowRedirects(true);
 			con.setRequestMethod("POST");
 			con.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary);
+			con.setRequestProperty("Accept-Encoding", "json,deflate");
+			con.setRequestProperty("Accept-Language", "en-gb,en;q=0.5");
+			con.setRequestProperty("Accept", "application/json");
+			con.setRequestProperty("X-Requested-With", "XMLHttpRequest");
 			con.setRequestProperty("Content-Length", Integer.toString(postDataLength));
-			con.setRequestProperty("X-File-Name", imageFile.getName());
+			con.setRequestProperty("Cookie", cookies.toString());
+			con.setRequestProperty("X-CSRFToken", cookies.getSslCookie().getValue());
+			con.setRequestProperty("X-File-Name", "g.png");
+			con.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.3; WOW64; rv:35.0) Gecko/20100101 Firefox/35.0");
+			con.setRequestProperty("Referer", "https://www.pinterest.com/");
+			con.setRequestProperty("Origin", "https://www.pinterest.com/");
+			con.setUseCaches(false);
 
 			try (OutputStream output = con.getOutputStream(); OutputStreamWriter writer = new OutputStreamWriter(output)) {
 				writer.append("--" + boundary).append(CRLF);
@@ -528,9 +545,11 @@ public class PinterestApi {
 			StringWriter writer = new StringWriter();
 			IOUtils.copy(con.getInputStream(), writer, "utf-8");
 			String theString = writer.toString();
+			System.out.println(theString);
 			JSONObject jsonObject = new JSONObject(theString);
 			image_url = jsonObject.getString("image_url");
 		} catch (Exception e) {
+			e.printStackTrace();
 			Log.log("Failed on upload  " + e.getMessage());
 		}
 		return image_url;
