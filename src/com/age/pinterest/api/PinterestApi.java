@@ -2,7 +2,6 @@ package com.age.pinterest.api;
 
 import java.io.DataOutputStream;
 import java.io.File;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.StringWriter;
@@ -16,6 +15,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -38,7 +38,7 @@ import com.age.ui.Log;
 
 public class PinterestApi {
 	private static final int WAVE_FOLLOW_USERS_NUM = 100;
-	private static final String CRLF = "";
+	private static final String CRLF = "\r\n";
 	private User user;
 	private final Proxy proxy = Proxy.NO_PROXY;
 
@@ -85,15 +85,12 @@ public class PinterestApi {
 		Log.log("Getting boards for user " + user.getAccount().getUser());
 		try {
 			URL requestUrl = new URL(UrlProvider.getBoards(user.getAccount().getUser()));
-			HttpURLConnection con = (HttpURLConnection) requestUrl.openConnection(proxy);
+			HttpsURLConnection con = (HttpsURLConnection) requestUrl.openConnection(proxy);
 			CommonHeaders.addCommonHeaders(con, user.getCookies());
 			con.setRequestMethod("GET");
-			StringWriter writer = new StringWriter();
-			IOUtils.copy(con.getInputStream(), writer, "utf-8");
+			con.connect();
 			Log.log("Response code from get boards is " + con.getResponseCode());
-			con.disconnect();
-			String theString = writer.toString();
-			JSONObject jsonObject = new JSONObject(theString);
+			JSONObject jsonObject = this.getJsonResponse(con);
 			JSONObject module = jsonObject.getJSONObject("module");
 			JSONObject tree = module.getJSONObject("tree");
 			JSONArray children1 = tree.getJSONArray("children");
@@ -134,15 +131,11 @@ public class PinterestApi {
 					url = UrlProvider.getFollowedPost(target, bookmark);
 				}
 				URL requestUrl = new URL(url);
-				HttpURLConnection con = (HttpURLConnection) requestUrl.openConnection(proxy);
+				HttpsURLConnection con = (HttpsURLConnection) requestUrl.openConnection(proxy);
 				CommonHeaders.addCommonHeaders(con, user.getCookies());
 				con.setRequestMethod("GET");
-
-				StringWriter writer = new StringWriter();
-				IOUtils.copy(con.getInputStream(), writer, "utf-8");
-				con.disconnect();
-				String theString = writer.toString();
-				JSONObject jsonObject = new JSONObject(theString);
+				Log.log("Response code from get followed " + con.getResponseCode());
+				JSONObject jsonObject = this.getJsonResponse(con);
 				JSONObject resource = jsonObject.getJSONObject("resource");
 				JSONObject options = resource.getJSONObject("options");
 				JSONArray markArr = options.getJSONArray("bookmarks");
@@ -188,15 +181,11 @@ public class PinterestApi {
 				}
 
 				URL requestUrl = new URL(url);
-				HttpURLConnection con = (HttpURLConnection) requestUrl.openConnection(proxy);
+				HttpsURLConnection con = (HttpsURLConnection) requestUrl.openConnection(proxy);
 				CommonHeaders.addCommonHeaders(con, user.getCookies());
 				con.setRequestMethod("GET");
-				con.setUseCaches(false);
-
-				StringWriter writer = new StringWriter();
-				IOUtils.copy(con.getInputStream(), writer, "utf-8");
-				String theString = writer.toString();
-				JSONObject jsonObject = new JSONObject(theString);
+				JSONObject jsonObject = this.getJsonResponse(con);
+				Log.log("Response code from get followers is " + con.getResponseCode());
 				try {
 					if (bookmark.isEmpty()) {
 						JSONObject module = jsonObject.getJSONObject("module");
@@ -249,17 +238,11 @@ public class PinterestApi {
 		String url = "https://www.pinterest.com/search/boards/?q=" + keyword;
 		try {
 			URL requestUrl = new URL(url);
-			HttpURLConnection con = (HttpURLConnection) requestUrl.openConnection(proxy);
+			HttpsURLConnection con = (HttpsURLConnection) requestUrl.openConnection(proxy);
 			CommonHeaders.addCommonHeaders(con, user.getCookies());
 			con.setRequestMethod("GET");
 			Log.log("Response code from Get pinners by keyword is " + con.getResponseMessage());
-
-			InputStream instream = con.getInputStream();
-			StringWriter writer = new StringWriter();
-
-			IOUtils.copy(instream, writer, "utf-8");
-			String theString = writer.toString();
-			JSONObject jsonObject = new JSONObject(theString);
+			JSONObject jsonObject = this.getJsonResponse(con);
 			JSONObject mod = jsonObject.getJSONObject("module");
 			JSONObject tree = mod.getJSONObject("tree");
 			JSONObject data = tree.getJSONObject("data");
@@ -288,7 +271,6 @@ public class PinterestApi {
 		String pinId = "";
 		String image_url = this.upload(pin.getImage());
 		String username = user.getAccount().getUser();
-		System.out.println("here");
 		String boardId = board.getId();
 		String boardName = board.getName();
 		Log.log("Pinning with user " + username + " to board " + boardName);
@@ -305,20 +287,17 @@ public class PinterestApi {
 			con.setRequestMethod("POST");
 			con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
 			con.setRequestProperty("Content-Length", Integer.toString(len));
+			con.setRequestProperty("Referer", "https://www.pinterest.com/" + username + "/" + boardName + "/");
+			con.setRequestProperty("Origin", "https://www.pinterest.com/");
 
 			try (DataOutputStream wr = new DataOutputStream(con.getOutputStream())) {
 				wr.write(postData);
 			}
-			StringWriter writer = new StringWriter();
-			IOUtils.copy(con.getInputStream(), writer, "utf-8");
-			String theString = writer.toString();
-			System.out.println(theString);
-			JSONObject root = new JSONObject(theString);
+			JSONObject root = this.getJsonResponse(con);
 			JSONObject res = root.getJSONObject("resource_response");
 			JSONObject data = res.getJSONObject("data");
 			pinId = data.getString("id");
 			Log.log("Response code from pin " + con.getResponseCode());
-			con.disconnect();
 		} catch (Exception e) {
 			Log.log("Failed when pinning " + e.getMessage());
 		}
@@ -350,29 +329,76 @@ public class PinterestApi {
 
 	}
 
+	public void repin(Board board) {
+		Cookies cookies = user.getCookies();
+		try {
+			String pinId = "302022718737947533";
+			String boardId = board.getId();
+			String description = "SoMe DeScRiPtIoN";
+			String urlParams = "source_url=%2F&data=%7B%22options%22%3A%7B%22pin_id%22%3A%22"
+					+ pinId
+					+ "%22%2C%22description%22%3A%22"
+					+ description
+					+ "%22%2C%22link%22%3A%22%22%2C%22is_video%22%3Afalse%2C%22board_id%22%3A%22"
+					+ boardId
+					+ "%22%7D%2C%22context%22%3A%7B%7D%7D&module_path=Modal()%3EPinCreate3(resource%3DPinResource(id%3D"
+					+ pinId
+					+ "%2C+allow_stale%3Dtrue))%3EBoardPicker(resource%3DBoardPickerBoardsResource(filter%3Dall%2C+allow_stale%3Dtrue))%3ESelectList(view_type%3DpinCreate3%2C+selected_section_index%3Dundefined%2C+selected_item_index%3Dundefined%2C+highlight_matched_text%3Dtrue%2C+suppress_hover_events%3Dundefined%2C+item_module%3D%5Bobject+Object%5D)";
+			byte[] postData = urlParams.getBytes(Charset.forName("UTF-8"));
+			int len = postData.length;
+			String url = "https://www.pinterest.com/resource/RepinResource/create/";
+			HttpsURLConnection con = (HttpsURLConnection) new URL(url).openConnection(proxy);
+			CommonHeaders.addCommonHeaders(con);
+			con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+			con.setRequestProperty("Accept-Encoding", "json,deflate");
+			con.setRequestProperty("Accept", "application/json");
+			con.setRequestProperty("Content-Length", Integer.toString(len));
+			con.setRequestProperty("Cookie", cookies.toString());
+			con.setRequestProperty("X-CSRFToken", cookies.getSslCookie().getValue());
+			con.setRequestProperty("Referer", "https://www.pinterest.com/");
+			con.setRequestProperty("Origin", "https://www.pinterest.com/");
+			try (DataOutputStream wr = new DataOutputStream(con.getOutputStream())) {
+				wr.write(postData);
+			}
+			con.connect();
+			System.out.println("Response code from repin  " + con.getResponseCode());
+			JSONObject root = this.getJsonResponse(con);
+			JSONObject response = root.getJSONObject("resource_response");
+			JSONObject data = response.getJSONObject("data");
+			String newPinId = data.getString("id");
+			this.editPin(board, newPinId, "NEW DESCRIPTION", "https://www.pinterest.com/huntjudith8/health/");
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+
 	public void editPin(Board board, String pinId, String description, String link) {
-		String urlParams = UrlProvider.getEditPin(user.getAccount().getUser(), board.getName(), board.getId(), description, link,
-				pinId);
+		Cookies cookies = user.getCookies();
+		String urlParams = UrlProvider.getEditPin(user.getAccount().getUser(), board.getName(), board.getId(), description, link, pinId);
 		try {
 			byte[] postData = urlParams.getBytes(Charset.forName("UTF-8"));
 			int len = postData.length;
 			String req = "https://www.pinterest.com/resource/PinResource/update/";
-			HttpsURLConnection con = (HttpsURLConnection) new URL(req).openConnection(proxy);
-			CommonHeaders.addCommonHeaders(con, user.getCookies());
-
-			if (!con.usingProxy()) {
-				System.out.println("No proxy On pin edit!!");
-			}
+			HttpsURLConnection con = (HttpsURLConnection) new URL(req).openConnection();
+			CommonHeaders.addCommonHeaders(con);
 			con.setRequestMethod("POST");
 			con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+			con.setRequestProperty("Accept-Encoding", "json,deflate");
+			con.setRequestProperty("Accept", "application/json");
+			con.setRequestProperty("Cookie", cookies.toString());
 			con.setRequestProperty("Content-Length", Integer.toString(len));
+			con.setRequestProperty("X-CSRFToken", cookies.getSslCookie().getValue());
+			con.setRequestProperty("Referer", "https://www.pinterest.com/");
+			con.setRequestProperty("Origin", "https://www.pinterest.com/");
 
 			try (DataOutputStream wr = new DataOutputStream(con.getOutputStream())) {
 				wr.write(postData);
 			}
+			con.connect();
+			this.getJsonResponse(con);
 			Log.log("Response code from edit " + con.getResponseCode());
-
-			con.disconnect();
 		} catch (Exception e) {
 			Log.log("Failed on editing pin " + e.getMessage());
 		}
@@ -472,9 +498,6 @@ public class PinterestApi {
 			}
 			con.connect();
 			Log.log("Response code from login is   " + con.getResponseCode());
-			StringWriter writer = new StringWriter();
-
-			IOUtils.copy(con.getInputStream(), writer, "utf-8");
 			con.disconnect();
 
 			Cookie sessionCookie = getCookieFromString(sessionTokenStr);
@@ -512,25 +535,18 @@ public class PinterestApi {
 			Path path = Paths.get(pathToImage);
 			byte[] data = Files.readAllBytes(path);
 			String boundary = "---------------------------14956123715492";
-			String CRLF = "\r\n";
-			HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
-			con.setDoOutput(true);
-			con.setDoInput(true);
-			con.setInstanceFollowRedirects(true);
+			HttpsURLConnection con = (HttpsURLConnection) url.openConnection(proxy);
+			CommonHeaders.addCommonHeaders(con);
 			con.setRequestMethod("POST");
 			con.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary);
 			con.setRequestProperty("Accept-Encoding", "json,deflate");
-			con.setRequestProperty("Accept-Language", "en-gb,en;q=0.5");
 			con.setRequestProperty("Accept", "application/json");
-			con.setRequestProperty("X-Requested-With", "XMLHttpRequest");
 			con.setRequestProperty("Content-Length", Integer.toString(postDataLength));
 			con.setRequestProperty("Cookie", cookies.toString());
 			con.setRequestProperty("X-CSRFToken", cookies.getSslCookie().getValue());
 			con.setRequestProperty("X-File-Name", "g.png");
-			con.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.3; WOW64; rv:35.0) Gecko/20100101 Firefox/35.0");
 			con.setRequestProperty("Referer", "https://www.pinterest.com/");
 			con.setRequestProperty("Origin", "https://www.pinterest.com/");
-			con.setUseCaches(false);
 
 			try (OutputStream output = con.getOutputStream(); OutputStreamWriter writer = new OutputStreamWriter(output)) {
 				writer.append("--" + boundary).append(CRLF);
@@ -542,16 +558,38 @@ public class PinterestApi {
 			}
 			con.connect();
 			Log.log("Response code form upload  " + con.getResponseCode());
-			StringWriter writer = new StringWriter();
-			IOUtils.copy(con.getInputStream(), writer, "utf-8");
-			String theString = writer.toString();
-			System.out.println(theString);
-			JSONObject jsonObject = new JSONObject(theString);
+			JSONObject jsonObject = this.getJsonResponse(con);
 			image_url = jsonObject.getString("image_url");
 		} catch (Exception e) {
-			e.printStackTrace();
 			Log.log("Failed on upload  " + e.getMessage());
 		}
 		return image_url;
+	}
+
+	@SuppressWarnings({ "unused", "rawtypes" })
+	private void printObject(JSONObject obj) {
+		Iterator iter = obj.keys();
+		while (iter.hasNext()) {
+			System.out.println(iter.next());
+		}
+	}
+
+	private JSONObject getJsonResponse(HttpsURLConnection con) {
+		Validate.notNull(con);
+		JSONObject json = null;
+		String theString = "error";
+		try {
+			StringWriter writer = new StringWriter();
+			IOUtils.copy(con.getInputStream(), writer, "utf-8");
+			theString = writer.toString();
+			json = new JSONObject(theString);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			con.disconnect();
+		}
+		System.out.println("Response from " + con.getURL());
+		System.out.println(theString);
+		return json;
 	}
 }
