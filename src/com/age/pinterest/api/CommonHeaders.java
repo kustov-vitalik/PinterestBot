@@ -21,10 +21,8 @@ public class CommonHeaders {
 		cox.setRequestProperty("X-NEW-APP", "1");
 		cox.setRequestProperty("X-Requested-With", "XMLHttpRequest");
 		cox.setRequestProperty("Accept-Encoding", "json, deflate");
-		cox.setRequestProperty("Accept", "application/json, text/javascript, */*; q=0.01");
 		cox.setRequestProperty("Accept-Language", "en-gb,en;q=0.5");
 		cox.setRequestProperty("X-APP-VERSION", "8718db9");
-		cox.setRequestProperty("Host", "www.pinterest.com");
 		cox.setUseCaches(false);
 	}
 

@@ -63,17 +63,22 @@ public class PinterestApi {
 			String request = "https://www.pinterest.com/resource/UserFollowResource/create/";
 			URL url = new URL(request);
 			HttpURLConnection con = (HttpURLConnection) url.openConnection(proxy);
-			CommonHeaders.addCommonHeaders(con, user.getCookies());
+			CommonHeaders.addCommonHeaders(con);
 			con.setRequestMethod("POST");
 			con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+			con.setRequestProperty("Accept-Encoding", "json, deflate");
+			con.setRequestProperty("Accept", "application/json, text/javascript, */*; q=0.01");
 			con.setRequestProperty("Content-Length", Integer.toString(postDataLength));
-
+			con.setRequestProperty("Cookie", user.getCookies().toString());
+			con.setRequestProperty("X-Requested-With", "XMLHttpRequest");
+			con.setRequestProperty("X-CSRFToken", user.getCookies().getSslCookie().getValue());
+			con.setRequestProperty("Referer", "https://www.pinterest.com/" + user.getAccount().getUser() + "/");
 			try (DataOutputStream wr = new DataOutputStream(con.getOutputStream())) {
 				wr.write(postData);
 			}
 			con.connect();
 			Log.log("Response code from follow  " + con.getResponseCode());
-			con.disconnect();
+			System.out.println(this.getJsonResponse(con).toString());
 		} catch (Exception e) {
 			Log.log("Failed when following " + e.getMessage());
 		}
@@ -282,7 +287,7 @@ public class PinterestApi {
 			byte[] postData = pinUrl.getBytes(Charset.forName("UTF-8"));
 			int len = postData.length;
 			String req = "https://www.pinterest.com/resource/PinResource/create/";
-			HttpsURLConnection con = (HttpsURLConnection) new URL(req).openConnection(proxy);
+			HttpURLConnection con = (HttpURLConnection) new URL(req).openConnection(proxy);
 			CommonHeaders.addCommonHeaders(con, user.getCookies());
 			con.setRequestMethod("POST");
 			con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
@@ -300,6 +305,7 @@ public class PinterestApi {
 			Log.log("Response code from pin " + con.getResponseCode());
 		} catch (Exception e) {
 			Log.log("Failed when pinning " + e.getMessage());
+			e.printStackTrace();
 		}
 		this.editPin(board, pinId, pin.getDescription(), pin.getSource());
 	}
@@ -325,16 +331,16 @@ public class PinterestApi {
 			con.disconnect();
 		} catch (Exception e) {
 			Log.log("Failed when unfollowing " + e.getMessage());
+			e.printStackTrace();
 		}
 
 	}
 
-	public void repin(Board board) {
+	public String repin(Board board, String pinId, String description) {
 		Cookies cookies = user.getCookies();
+		String id = null;
 		try {
-			String pinId = "302022718737947533";
 			String boardId = board.getId();
-			String description = "SoMe DeScRiPtIoN";
 			String urlParams = "source_url=%2F&data=%7B%22options%22%3A%7B%22pin_id%22%3A%22"
 					+ pinId
 					+ "%22%2C%22description%22%3A%22"
@@ -365,18 +371,52 @@ public class PinterestApi {
 			JSONObject root = this.getJsonResponse(con);
 			JSONObject response = root.getJSONObject("resource_response");
 			JSONObject data = response.getJSONObject("data");
-			String newPinId = data.getString("id");
-			this.editPin(board, newPinId, "NEW DESCRIPTION", "https://www.pinterest.com/huntjudith8/health/");
+			id = data.getString("id");
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		return id;
 
 	}
 
+	public Pin getPinInfo(String pinId) {
+		Pin pin = new Pin();
+		try {
+			String url = "https://www.pinterest.com/pin/" + pinId + "/";
+			HttpsURLConnection con = (HttpsURLConnection) new URL(url).openConnection();
+			CommonHeaders.addCommonHeaders(con);
+			con.setRequestMethod("GET");
+			con.setRequestProperty("Cookie", user.getCookies().toString());
+			JSONObject root = this.getJsonResponse(con);
+			JSONObject module = root.getJSONObject("module");
+			JSONObject tree = module.getJSONObject("tree");
+			JSONObject data = tree.getJSONObject("data");
+
+			String description = data.getString("description");
+			pin.setDescription(description);
+
+			String link = data.getString("link");
+			pin.setSource(link);
+			pin.setImage("");
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return pin;
+	}
+
 	public void editPin(Board board, String pinId, String description, String link) {
+		Pin pin = this.getPinInfo(pinId);
+		if (description.isEmpty()) {
+			description = pin.getDescription();
+		}
+		if (link == null) {
+			link = pin.getSource();
+		}
 		Cookies cookies = user.getCookies();
-		String urlParams = UrlProvider.getEditPin(user.getAccount().getUser(), board.getName(), board.getId(), description, link, pinId);
+		String urlParams = UrlProvider.getEditPin(user.getAccount().getUser(), board.getName(), board.getId(), description, link,
+				pinId);
 		try {
 			byte[] postData = urlParams.getBytes(Charset.forName("UTF-8"));
 			int len = postData.length;
@@ -401,6 +441,7 @@ public class PinterestApi {
 			Log.log("Response code from edit " + con.getResponseCode());
 		} catch (Exception e) {
 			Log.log("Failed on editing pin " + e.getMessage());
+			e.printStackTrace();
 		}
 
 	}
@@ -425,6 +466,71 @@ public class PinterestApi {
 			targets.addAll(this.getFollowers(p.getUsername(), remaining));
 		}
 		return targets;
+	}
+
+	public List<String> searchPins(String keyword, int repinCount) {
+		List<String> pinIds = new ArrayList<String>();
+		String bookmark = "";
+		int pinCount = 0;
+		while (true) {
+			try {
+				if (bookmark.isEmpty()) {
+					String url = "https://www.pinterest.com/search/pins/?q=" + keyword;
+					HttpURLConnection con = (HttpURLConnection) new URL(url).openConnection(proxy);
+					con.setRequestMethod("GET");
+					CommonHeaders.addCommonHeaders(con);
+					con.setRequestProperty("Cookie", user.getCookies().toString());
+					JSONObject root = this.getJsonResponse(con);
+					JSONArray dataCache = root.getJSONArray("resource_data_cache");
+					JSONObject guides = dataCache.getJSONObject(0);
+					JSONObject resource = guides.getJSONObject("resource");
+					JSONObject options = resource.getJSONObject("options");
+					JSONArray bookmarks = options.getJSONArray("bookmarks");
+					bookmark = bookmarks.getString(0);
+					JSONObject module = root.getJSONObject("module");
+					JSONObject tree = module.getJSONObject("tree");
+					JSONObject data = tree.getJSONObject("data");
+					JSONArray results = data.getJSONArray("results");
+					for (int i = 0; i < results.length(); i++) {
+						JSONObject pin = results.getJSONObject(i);
+						pinCount++;
+						int repins = Integer.parseInt(pin.getString("repin_count"));
+						if (repins > repinCount) {
+							pinIds.add(pin.getString("id"));
+						}
+					}
+				} else {
+					String url = UrlProvider.getPinSearch(keyword, bookmark);
+					HttpURLConnection con = (HttpURLConnection) new URL(url).openConnection(proxy);
+					con.setRequestMethod("GET");
+					CommonHeaders.addCommonHeaders(con);
+					con.setRequestProperty("Cookie", user.getCookies().toString());
+					JSONObject root = this.getJsonResponse(con);
+					System.out.println("Response from search " + con.getResponseCode());
+					JSONObject response = root.getJSONObject("resource_response");
+					JSONArray data = response.getJSONArray("data");
+					for (int i = 0; i < data.length(); i++) {
+						JSONObject pin = data.getJSONObject(i);
+						pinCount++;
+						int repins = Integer.parseInt(pin.getString("repin_count"));
+						if (repins > repinCount) {
+							pinIds.add(pin.getString("id"));
+						}
+					}
+					JSONObject resource = root.getJSONObject("resource");
+					JSONObject options = resource.getJSONObject("options");
+					JSONArray bookmarks = options.getJSONArray("bookmarks");
+					bookmark = bookmarks.getString(0);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				break;
+			}
+		}
+		System.out.println("Processed " + pinCount);
+		System.out.println("Found " + pinIds.size() + " pins with more than  " + repinCount + " repins");
+		return pinIds;
+
 	}
 
 	private User setUpUser(PinterestAccount acc) {
@@ -510,6 +616,7 @@ public class PinterestApi {
 			return cookieListResult;
 		} catch (Exception e) {
 			e.printStackTrace();
+			e.printStackTrace();
 		}
 		Log.log("FAILED TO LOGIN");
 		return null;
@@ -535,7 +642,7 @@ public class PinterestApi {
 			Path path = Paths.get(pathToImage);
 			byte[] data = Files.readAllBytes(path);
 			String boundary = "---------------------------14956123715492";
-			HttpsURLConnection con = (HttpsURLConnection) url.openConnection(proxy);
+			HttpURLConnection con = (HttpURLConnection) url.openConnection(proxy);
 			CommonHeaders.addCommonHeaders(con);
 			con.setRequestMethod("POST");
 			con.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary);
@@ -562,6 +669,7 @@ public class PinterestApi {
 			image_url = jsonObject.getString("image_url");
 		} catch (Exception e) {
 			Log.log("Failed on upload  " + e.getMessage());
+			e.printStackTrace();
 		}
 		return image_url;
 	}
@@ -588,8 +696,50 @@ public class PinterestApi {
 		} finally {
 			con.disconnect();
 		}
-		System.out.println("Response from " + con.getURL());
-		System.out.println(theString);
+		// System.out.println("Response from " + con.getURL());
+		// System.out.println(theString);
 		return json;
+	}
+
+	private JSONObject getJsonResponse(HttpURLConnection con) {
+		Validate.notNull(con);
+		JSONObject json = null;
+		String theString = "error";
+		try {
+			StringWriter writer = new StringWriter();
+			IOUtils.copy(con.getInputStream(), writer, "utf-8");
+			theString = writer.toString();
+			System.out.println(theString);
+			json = new JSONObject(theString);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			con.disconnect();
+		}
+		// System.out.println("Response from " + con.getURL());
+		// System.out.println(theString);
+		return json;
+	}
+
+	@SuppressWarnings("unused")
+	private String getTxtResponse(HttpURLConnection con) {
+		StringWriter writer = new StringWriter();
+		try {
+			IOUtils.copy(con.getInputStream(), writer, "utf-8");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return writer.toString();
+	}
+
+	@SuppressWarnings("unused")
+	private void printArray(JSONArray arr) {
+		try {
+			for (int i = 0; i < arr.length(); i++) {
+				System.out.println(arr.get(i).toString());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }
