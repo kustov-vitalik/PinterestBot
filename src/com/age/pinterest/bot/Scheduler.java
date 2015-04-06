@@ -19,8 +19,8 @@ public class Scheduler {
 	public void scheduleRepin(Repin repin) {
 		this.startNewTask(new RepinTask(repin));
 	}
-	public void scheduleFollow(Follow follow)
-	{
+
+	public void scheduleFollow(Follow follow) {
 		this.startNewTask(new FollowTask(follow));
 	}
 	
