@@ -29,7 +29,7 @@ import org.json.JSONObject;
 import com.age.data.Board;
 import com.age.data.Cookie;
 import com.age.data.Cookies;
-import com.age.data.Pin;
+import com.age.data.PinData;
 import com.age.data.Pinner;
 import com.age.data.PinterestAccount;
 import com.age.data.User;
@@ -272,7 +272,7 @@ public class PinterestApi {
 		return followList;
 	}
 
-	public void pin(Pin pin, Board board) {
+	public void pin(PinData pin, Board board) {
 		String pinId = "";
 		String image_url = this.upload(pin.getImage());
 		String username = user.getAccount().getUser();
@@ -380,8 +380,8 @@ public class PinterestApi {
 
 	}
 
-	public Pin getPinInfo(String pinId) {
-		Pin pin = new Pin();
+	public PinData getPinInfo(String pinId) {
+		PinData pin = new PinData();
 		try {
 			String url = "https://www.pinterest.com/pin/" + pinId + "/";
 			HttpsURLConnection con = (HttpsURLConnection) new URL(url).openConnection();
@@ -407,7 +407,7 @@ public class PinterestApi {
 	}
 
 	public void editPin(Board board, String pinId, String description, String link) {
-		Pin pin = this.getPinInfo(pinId);
+		PinData pin = this.getPinInfo(pinId);
 		if (description.isEmpty()) {
 			description = pin.getDescription();
 		}

@@ -6,11 +6,11 @@ import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
-import org.eclipse.jetty.util.UrlEncoded;
 import org.json.JSONException;
+import org.mortbay.util.UrlEncoded;
 
 import com.age.data.Board;
-import com.age.data.Pin;
+import com.age.data.PinData;
 import com.age.data.User;
 import com.age.pinterest.api.PinterestApi;
 
@@ -28,12 +28,11 @@ public class App {
 			}
 		}
 		for (String id : pinIds) {
-			Pin p = api.getPinInfo(id);
+			PinData p = api.getPinInfo(id);
 			String descr = UrlEncoded.encodeString(p.getDescription(), "utf-8");
 			String newId = api.repin(board, id, "");
 			api.editPin(board, newId, descr, "http://inspirationaldresses.com/");
 			Thread.sleep(1000 * 60 * 90);
 		}
-
 	}
 }

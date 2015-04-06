@@ -7,7 +7,7 @@ import org.apache.commons.lang3.Validate;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import com.age.data.Board;
-import com.age.data.Pin;
+import com.age.data.PinData;
 import com.age.data.User;
 import com.age.help.BotPaths;
 import com.age.help.FileUtill;
@@ -37,7 +37,7 @@ public class PinTask extends Task {
 			if (this.intervalPassed(interval)) {
 				try {
 					String filePath = pinFiles.get(0);
-					Pin pin = mapper.readValue(new File(filePath), Pin.class);
+					PinData pin = mapper.readValue(new File(filePath), PinData.class);
 					api.pin(pin, board);
 					new File(filePath).delete();
 					pinFiles.remove(0);

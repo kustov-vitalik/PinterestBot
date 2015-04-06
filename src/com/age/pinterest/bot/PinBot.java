@@ -19,6 +19,7 @@ import com.age.data.User;
 import com.age.data.UserConfig;
 import com.age.help.BotPaths;
 import com.age.help.FileUtill;
+import com.age.param.Follow;
 import com.age.pinterest.api.PinterestApi;
 import com.age.pinterest.task.FollowTask;
 import com.age.pinterest.task.GenerateBasicPinsTask;
@@ -34,7 +35,7 @@ public class PinBot {
 
 	public void addFollowTask(String user, int count, long interval) throws ClientProtocolException, IOException, JSONException {
 		User userData = getUser(user);
-		this.startNewTask(new FollowTask(userData, count, interval));
+		this.startNewTask(new FollowTask(new Follow(userData, count, interval)));
 	}
 
 	public void addPinTask(String user, Board board, long interval) throws IOException, InterruptedException {
