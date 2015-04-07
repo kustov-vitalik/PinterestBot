@@ -7,7 +7,7 @@ import java.util.Random;
 
 import org.codehaus.jackson.map.ObjectMapper;
 
-import com.age.data.PinData;
+import com.age.data.Pin;
 import com.age.help.BotPaths;
 import com.age.help.DescriptionGenerator;
 import com.age.help.FileUtill;
@@ -40,7 +40,7 @@ public class GenerateBasicPinsTask extends Task {
 				}
 				String imagePath = imageIter.next();
 				String quote = quoteIter.next();
-				PinData pin = new PinData();
+				Pin pin = new Pin();
 				pin.setDescription(quote);
 				pin.setImage(imagePath);
 				pin.setSource(source);

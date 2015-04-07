@@ -3,15 +3,15 @@ package com.age.data;
 public class PinterestAccount {
 	private String email;
 	private String password;
-	private String user;
+	private String username;
 
 	public PinterestAccount() {
 	}
 
-	public PinterestAccount(String email, String password, String user) {
+	public PinterestAccount(String email, String password, String username) {
 		this.email = email;
 		this.password = password;
-		this.user = user;
+		this.username = username;
 
 	}
 
@@ -31,12 +31,12 @@ public class PinterestAccount {
 		return this.password;
 	}
 
-	public void setUser(String user) {
-		this.user = user;
+	public void setUsername(String username) {
+		this.username = username;
 	}
 
-	public String getUser() {
-		return this.user;
+	public String getUsername() {
+		return this.username;
 	}
 
 }

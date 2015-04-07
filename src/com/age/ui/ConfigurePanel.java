@@ -49,7 +49,7 @@ public class ConfigurePanel extends JFrame implements ActionListener {
 		this.account = account;
 		UserConfig cfg = null;
 		try {
-			cfg = PinBot.getUserConfig(account.getUser());
+			cfg = PinBot.getUserConfig(account.getUsername());
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
@@ -99,7 +99,7 @@ public class ConfigurePanel extends JFrame implements ActionListener {
 
 		boardsCombo = new JComboBox<Board>();
 		boardsCombo.setPreferredSize(dim);
-		for (Board b : PinBot.getUser(account.getUser()).getBoards()) {
+		for (Board b : PinBot.getUser(account.getUsername()).getBoards()) {
 			boardsCombo.addItem(b);
 		}
 		if (cfg.getPinBoard() == null) {
@@ -153,7 +153,7 @@ public class ConfigurePanel extends JFrame implements ActionListener {
 			config.setPinBoard(pinBoard);
 
 			try {
-				File root = new File(String.format(CONFIG_FILE_ROOT, account.getUser()));
+				File root = new File(String.format(CONFIG_FILE_ROOT, account.getUsername()));
 				root.mkdirs();
 				File cfgFile = new File(root, CONFIG_FILE);
 				System.out.println(cfgFile.getAbsolutePath());

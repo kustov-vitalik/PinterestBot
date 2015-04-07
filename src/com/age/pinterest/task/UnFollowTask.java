@@ -3,27 +3,25 @@ package com.age.pinterest.task;
 import java.util.List;
 
 import com.age.data.Pinner;
-import com.age.data.User;
+import com.age.param.UnfollowParam;
 import com.age.pinterest.api.PinterestApi;
 import com.age.ui.Log;
 
 public class UnFollowTask extends Task {
-	private final long interval;
-	private final int minFollowers;
-	private final User user;
+	private final UnfollowParam unfollowParam;
 
-	public UnFollowTask(User user, int minFollowers, long interval) {
-		this.interval = interval;
-		this.user = user;
-		this.minFollowers = minFollowers;
+	public UnFollowTask(UnfollowParam unfollowParam) {
+		this.unfollowParam = unfollowParam;
+
 	}
 
 	@Override
 	public void run() {
-		PinterestApi api = new PinterestApi(user);
-		List<Pinner> trashPinners = api.getFollowed(user.getAccount().getUser(), -1, minFollowers);
+		PinterestApi api = new PinterestApi(unfollowParam.getUser());
+		List<Pinner> trashPinners = api
+				.getFollowed(unfollowParam.getUser().getAccount().getUsername(), -1, unfollowParam.getMinFollowers());
 		do {
-			if (this.intervalPassed(interval)) {
+			if (this.intervalPassed(unfollowParam.getInterval())) {
 				try {
 					Pinner pinner = trashPinners.get(0);
 					api.unfollow(pinner);
@@ -34,7 +32,7 @@ public class UnFollowTask extends Task {
 				}
 			}
 		} while (!trashPinners.isEmpty());
-		Log.log("Unfollow task ended for " + user.getAccount().getUser());
+		Log.log("Unfollow task ended for " + unfollowParam.getUser().getAccount().getUsername());
 	}
 
 	@Override

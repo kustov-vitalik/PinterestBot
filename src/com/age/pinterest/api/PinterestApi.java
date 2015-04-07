@@ -29,11 +29,10 @@ import org.json.JSONObject;
 import com.age.data.Board;
 import com.age.data.Cookie;
 import com.age.data.Cookies;
-import com.age.data.PinData;
+import com.age.data.Pin;
 import com.age.data.Pinner;
 import com.age.data.PinterestAccount;
 import com.age.data.User;
-import com.age.pinterest.bot.PinBot;
 import com.age.ui.Log;
 
 public class PinterestApi {
@@ -44,7 +43,6 @@ public class PinterestApi {
 
 	public PinterestApi(PinterestAccount account) {
 		Validate.notNull(account);
-		this.user = PinBot.getUser(account.getUser());
 		this.user = setUpUser(account);
 
 	}
@@ -72,7 +70,7 @@ public class PinterestApi {
 			con.setRequestProperty("Cookie", user.getCookies().toString());
 			con.setRequestProperty("X-Requested-With", "XMLHttpRequest");
 			con.setRequestProperty("X-CSRFToken", user.getCookies().getSslCookie().getValue());
-			con.setRequestProperty("Referer", "https://www.pinterest.com/" + user.getAccount().getUser() + "/");
+			con.setRequestProperty("Referer", "https://www.pinterest.com/" + user.getAccount().getUsername() + "/");
 			try (DataOutputStream wr = new DataOutputStream(con.getOutputStream())) {
 				wr.write(postData);
 			}
@@ -85,13 +83,13 @@ public class PinterestApi {
 
 	}
 
-	public List<Board> getBoards() {
+	public List<Board> getBoards(User targetUser) {
 		List<Board> boards = new ArrayList<Board>();
-		Log.log("Getting boards for user " + user.getAccount().getUser());
+		Log.log("Getting boards for user " + targetUser.getAccount().getUsername());
 		try {
-			URL requestUrl = new URL(UrlProvider.getBoards(user.getAccount().getUser()));
+			URL requestUrl = new URL(UrlProvider.getBoards(targetUser.getAccount().getUsername()));
 			HttpsURLConnection con = (HttpsURLConnection) requestUrl.openConnection(proxy);
-			CommonHeaders.addCommonHeaders(con, user.getCookies());
+			CommonHeaders.addCommonHeaders(con, targetUser.getCookies());
 			con.setRequestMethod("GET");
 			con.connect();
 			Log.log("Response code from get boards is " + con.getResponseCode());
@@ -272,10 +270,10 @@ public class PinterestApi {
 		return followList;
 	}
 
-	public void pin(PinData pin, Board board) {
+	public void pin(Pin pin, Board board) {
 		String pinId = "";
 		String image_url = this.upload(pin.getImage());
-		String username = user.getAccount().getUser();
+		String username = user.getAccount().getUsername();
 		String boardId = board.getId();
 		String boardName = board.getName();
 		Log.log("Pinning with user " + username + " to board " + boardName);
@@ -312,7 +310,7 @@ public class PinterestApi {
 
 	public void unfollow(Pinner target) {
 		try {
-			String urlParam = UrlProvider.getUnfollow(user.getAccount().getUser(), target.getUsername(), target.getId());
+			String urlParam = UrlProvider.getUnfollow(user.getAccount().getUsername(), target.getUsername(), target.getId());
 			byte[] postData = urlParam.getBytes(Charset.forName("UTF-8"));
 			int postDataLength = postData.length;
 			String request = "https://www.pinterest.com/resource/UserFollowResource/delete/";
@@ -327,7 +325,7 @@ public class PinterestApi {
 				wr.write(postData);
 			}
 			con.connect();
-			Log.log(user.getAccount().getUser() + "  unfollowed  " + target.getUsername());
+			Log.log(user.getAccount().getUsername() + "  unfollowed  " + target.getUsername());
 			con.disconnect();
 		} catch (Exception e) {
 			Log.log("Failed when unfollowing " + e.getMessage());
@@ -380,8 +378,8 @@ public class PinterestApi {
 
 	}
 
-	public PinData getPinInfo(String pinId) {
-		PinData pin = new PinData();
+	public Pin getPinInfo(String pinId) {
+		Pin pin = new Pin();
 		try {
 			String url = "https://www.pinterest.com/pin/" + pinId + "/";
 			HttpsURLConnection con = (HttpsURLConnection) new URL(url).openConnection();
@@ -407,7 +405,7 @@ public class PinterestApi {
 	}
 
 	public void editPin(Board board, String pinId, String description, String link) {
-		PinData pin = this.getPinInfo(pinId);
+		Pin pin = this.getPinInfo(pinId);
 		if (description.isEmpty()) {
 			description = pin.getDescription();
 		}
@@ -415,8 +413,8 @@ public class PinterestApi {
 			link = pin.getSource();
 		}
 		Cookies cookies = user.getCookies();
-		String urlParams = UrlProvider.getEditPin(user.getAccount().getUser(), board.getName(), board.getId(), description, link,
-				pinId);
+		String urlParams = UrlProvider
+				.getEditPin(user.getAccount().getUsername(), board.getName(), board.getId(), description, link, pinId);
 		try {
 			byte[] postData = urlParams.getBytes(Charset.forName("UTF-8"));
 			int len = postData.length;
@@ -452,7 +450,7 @@ public class PinterestApi {
 
 	public List<Pinner> getFollowList(int minListSize) {
 		Log.log("Will get " + minListSize);
-		List<Pinner> userFollowers = this.getFollowers(user.getAccount().getUser(), WAVE_FOLLOW_USERS_NUM);
+		List<Pinner> userFollowers = this.getFollowers(user.getAccount().getUsername(), WAVE_FOLLOW_USERS_NUM);
 		while (userFollowers.size() <= WAVE_FOLLOW_USERS_NUM) {
 			List<Pinner> extraPinners = this.getPinnersByKeyword("fashion", WAVE_FOLLOW_USERS_NUM);
 			userFollowers.addAll(extraPinners);
@@ -534,17 +532,19 @@ public class PinterestApi {
 	}
 
 	private User setUpUser(PinterestAccount acc) {
-		this.user = PinBot.getUser(acc.getUser());
-		user.setAccount(acc);
-		user.setCookies(this.login());
-		user.setBoards(this.getBoards());
-		return user;
+		User tmpUser = new User();
+		tmpUser.setAccount(acc);
+		Cookies cookies = this.login(acc);
+		tmpUser.setCookies(cookies);
+		List<Board> boards = this.getBoards(tmpUser);
+		tmpUser.setBoards(boards);
+		return tmpUser;
 	}
 
-	private Cookies login() {
+	private Cookies login(PinterestAccount account) {
 		String url = "https://www.pinterest.com/login/";
-		Log.log("Logging in with user " + user.getAccount().getEmail());
-		Log.log("Password is  " + user.getAccount().getPassword());
+		Log.log("Logging in with user " + account.getEmail());
+		Log.log("Password is  " + account.getPassword());
 		try {
 			URL requestUrl = new URL(url);
 			HttpURLConnection con = (HttpURLConnection) requestUrl.openConnection(proxy);
@@ -615,7 +615,6 @@ public class PinterestApi {
 			cookieListResult.setBCookie(bCookie);
 			return cookieListResult;
 		} catch (Exception e) {
-			e.printStackTrace();
 			e.printStackTrace();
 		}
 		Log.log("FAILED TO LOGIN");

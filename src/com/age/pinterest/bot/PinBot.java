@@ -19,7 +19,10 @@ import com.age.data.User;
 import com.age.data.UserConfig;
 import com.age.help.BotPaths;
 import com.age.help.FileUtill;
-import com.age.param.Follow;
+import com.age.param.FollowParam;
+import com.age.param.PinParam;
+import com.age.param.ScrapeParam;
+import com.age.param.UnfollowParam;
 import com.age.pinterest.api.PinterestApi;
 import com.age.pinterest.task.FollowTask;
 import com.age.pinterest.task.GenerateBasicPinsTask;
@@ -35,21 +38,21 @@ public class PinBot {
 
 	public void addFollowTask(String user, int count, long interval) throws ClientProtocolException, IOException, JSONException {
 		User userData = getUser(user);
-		this.startNewTask(new FollowTask(new Follow(userData, count, interval)));
+		this.startNewTask(new FollowTask(new FollowParam(userData, count, interval)));
 	}
 
-	public void addPinTask(String user, Board board, long interval) throws IOException, InterruptedException {
-		User userData = getUser(user);
-		this.startNewTask(new PinTask(userData, board, interval));
+	public void addPinTask(String username, Board board, long interval) throws IOException, InterruptedException {
+		User userData = getUser(username);
+		this.startNewTask(new PinTask(new PinParam(userData, board, interval)));
 	}
 
 	public void addUnfollowTask(String user, int minFollower, long interval) throws IOException, JSONException, InterruptedException {
 		User userData = getUser(user);
-		this.startNewTask(new UnFollowTask(userData, minFollower, interval));
+		this.startNewTask(new UnFollowTask(new UnfollowParam(userData, minFollower, interval)));
 	}
 
 	public void addScrapeTask(String keyword, String tag, int count) {
-		this.startNewTask(new ScrapeTask(keyword, tag, count));
+		this.startNewTask(new ScrapeTask(new ScrapeParam(keyword, tag, count)));
 	}
 
 	public void addGenerateBasicPinsTask(String tag, String source) {
@@ -102,8 +105,8 @@ public class PinBot {
 	}
 
 	public static void addAccount(PinterestAccount acc) throws JsonGenerationException, JsonMappingException, IOException {
-		Log.log("Setting up user " + acc.getUser());
-		String root = BotPaths.USER_ROOT + acc.getUser();
+		Log.log("Setting up user " + acc.getUsername());
+		String root = BotPaths.USER_ROOT + acc.getUsername();
 		File rootDir = new File(root);
 		rootDir.mkdirs();
 		File pinDir = new File(rootDir, "pins");

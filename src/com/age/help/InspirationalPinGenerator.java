@@ -22,7 +22,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
-import com.age.data.PinData;
+import com.age.data.Pin;
 
 public class InspirationalPinGenerator {
 	public static void main(String[] args) throws MalformedURLException, IOException, InterruptedException {
@@ -46,7 +46,7 @@ public class InspirationalPinGenerator {
 				File subDir = new File(root, category);
 				subDir.mkdirs();
 				String imgUrl = getImageUrlForItem(url);
-				PinData pin = new PinData();
+				Pin pin = new Pin();
 				pin.setSource(url);
 				pin.setImage(downloadUrl(imgUrl, subDir));
 				pin.setDescription(iter.next());

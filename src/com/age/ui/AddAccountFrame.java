@@ -77,7 +77,7 @@ public class AddAccountFrame extends JFrame implements ActionListener {
 			PinterestAccount acc = new PinterestAccount(email.getText(),pass.getText(),user.getText());
 			acc.setEmail(email.getText());
 			acc.setPassword(pass.getText());
-			acc.setUser(user.getText());
+			acc.setUsername(user.getText());
 			try {
 				PinBot.addAccount(acc);
 			} catch (IOException e1) {

@@ -13,6 +13,7 @@ import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 
 import com.age.pinterest.bot.PinBot;
+import com.age.pinterest.bot.Scheduler;
 
 public class UI implements ActionListener, KeyListener {
 	private static final Dimension mainSize = new Dimension(300, 300);
@@ -23,10 +24,10 @@ public class UI implements ActionListener, KeyListener {
 	private final JButton scrapeButton;
 	private final JButton genBasicPinsButton;
 	private final JButton dashboard;
-	private final PinBot bot;
+	private final Scheduler scheduler;
 
-	public UI(PinBot bot) {
-		this.bot = bot;
+	public UI(Scheduler scheduler) {
+		this.scheduler = scheduler;
 		mainFrame = new JFrame("Pinterest bot");
 		JPanel panel = new JPanel();
 		panel.setLayout(new GridLayout(4, 1));

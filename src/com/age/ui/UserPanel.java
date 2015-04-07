@@ -42,7 +42,7 @@ public class UserPanel extends JPanel implements ActionListener {
 		refreshBtn.addActionListener(this);
 
 		user = new JLabel();
-		user.setText(acc.getUser());
+		user.setText(acc.getUsername());
 		user.setSize(btnDim);
 		user.setPreferredSize(btnDim);
 
@@ -99,7 +99,7 @@ public class UserPanel extends JPanel implements ActionListener {
 
 	private void toggleTask(TaskType type, JButton btn) throws ClientProtocolException, IOException, JSONException,
 			InterruptedException {
-		UserConfig cfg = PinBot.getUserConfig(acc.getUser());
+		UserConfig cfg = PinBot.getUserConfig(acc.getUsername());
 		if (bot.getTask(type) == null) {
 			Log.log("Add " + type);
 			addTask(type, cfg);
@@ -115,13 +115,13 @@ public class UserPanel extends JPanel implements ActionListener {
 			InterruptedException {
 		switch (type) {
 		case FOLLOW:
-			bot.addFollowTask(acc.getUser(), cfg.getFollowCount(), cfg.getFollowTime());
+			bot.addFollowTask(acc.getUsername(), cfg.getFollowCount(), cfg.getFollowTime());
 			break;
 		case UNFOLLOW:
-			bot.addUnfollowTask(acc.getUser(), cfg.getMinFollowers(), cfg.getUnfollowTime());
+			bot.addUnfollowTask(acc.getUsername(), cfg.getMinFollowers(), cfg.getUnfollowTime());
 			break;
 		case PIN:
-			bot.addPinTask(acc.getUser(), cfg.getPinBoard(), cfg.getPinTime());
+			bot.addPinTask(acc.getUsername(), cfg.getPinBoard(), cfg.getPinTime());
 			break;
 		default:
 			return;

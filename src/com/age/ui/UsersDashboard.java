@@ -25,9 +25,9 @@ public class UsersDashboard extends JFrame implements ActionListener {
 		mainFrame.setResizable(false);
 
 		JPanel mainPanel = new JPanel();
-		for (PinterestAccount acc : PinBot.listAccount()) {
-			mainPanel.add(new UserPanel(bot, acc, width, height / 4));
-		}
+//		for (PinterestAccount acc : PinBot.listAccount()) {
+//			mainPanel.add(new UserPanel(bot, acc, width, height / 4));
+//		}
 
 		mainPanel.setLayout(new GridLayout(PinBot.listAccount().size(), 1));
 		mainPanel.setSize(width, height);
