@@ -1,13 +1,14 @@
 package com.age.ui;
 
-import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+
+import com.age.data.PinterestAccount;
+import com.age.pinterest.bot.PinBot;
 
 @SuppressWarnings("serial")
 public class UserMatrix extends JFrame {
@@ -19,8 +20,9 @@ public class UserMatrix extends JFrame {
 		int rows = 15, cols = tasks.size();
 		this.setTitle("Matrix");
 		JPanel panel = new JPanel(new GridLayout(rows, cols));
-		for (int i = 0; i < rows; i++) {
-			panel.add(new UserRow("userewrfwefwefwef", buttonW, buttonH));
+		List<PinterestAccount> accounts = PinBot.listAccount();
+		for (PinterestAccount acc : accounts) {
+			panel.add(new UserRow(acc.getUsername(), buttonW, buttonH));
 		}
 		this.add(panel);
 		this.pack();

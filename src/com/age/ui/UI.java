@@ -77,18 +77,18 @@ public class UI implements ActionListener, KeyListener {
 		if (e.getActionCommand().equals(addAccBtn.getText())) {
 			new AddAccountFrame();
 		} else if (e.getActionCommand().equals(scrapeButton.getText())) {
-			new ScrapeFrame(bot);
+//			new ScrapeFrame(bot);
 		} else if (e.getActionCommand().equals(genBasicPinsButton.getText())) {
 			new GenerateBasicPinsFrame();
 		} else if (e.getActionCommand().equals(dashboard.getText())) {
-			new UsersDashboard(bot, this);
+			new UserMatrix();
 		}
 	}
 
 	public static void main(String[] args) {
 		PinBot.setUpDirTree();
 		Log.setUpLog();
-		new UI(new PinBot());
+		new UI(new Scheduler());
 	}
 
 	@Override
