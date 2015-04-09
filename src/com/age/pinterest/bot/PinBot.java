@@ -111,11 +111,11 @@ public class PinBot {
 		rootDir.mkdirs();
 		File pinDir = new File(rootDir, "pins");
 		pinDir.mkdir();
-//		PinterestApi api = new PinterestApi(acc);
+		PinterestApi api = new PinterestApi(acc);
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.writeValue(new File(rootDir, "acc.json"), acc);
 		mapper.writeValue(new File(rootDir, "config.json"), new UserConfig());
-		mapper.writeValue(new File(rootDir, "user.json"), new User());
+		mapper.writeValue(new File(rootDir, "user.json"), api.getManagedUser());
 	}
 
 	public static List<PinterestAccount> listAccount() {

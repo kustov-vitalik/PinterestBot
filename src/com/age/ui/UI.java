@@ -81,7 +81,7 @@ public class UI implements ActionListener, KeyListener {
 		} else if (e.getActionCommand().equals(genBasicPinsButton.getText())) {
 			new GenerateBasicPinsFrame();
 		} else if (e.getActionCommand().equals(dashboard.getText())) {
-			new UserMatrix();
+			new UserMatrix(scheduler);
 		}
 	}
 

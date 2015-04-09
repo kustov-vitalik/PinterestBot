@@ -7,6 +7,11 @@ public class UnfollowParam {
 	private int minFollowers;
 	private User user;
 
+	/**
+	 * @param user
+	 * @param minFollowers
+	 * @param interval
+	 */
 	public UnfollowParam(User user, int minFollowers, long interval) {
 		this.user = user;
 		this.minFollowers = minFollowers;

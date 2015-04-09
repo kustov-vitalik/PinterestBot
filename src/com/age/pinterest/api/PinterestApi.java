@@ -137,7 +137,6 @@ public class PinterestApi {
 				HttpsURLConnection con = (HttpsURLConnection) requestUrl.openConnection(proxy);
 				CommonHeaders.addCommonHeaders(con, user.getCookies());
 				con.setRequestMethod("GET");
-				Log.log("Response code from get followed " + con.getResponseCode());
 				JSONObject jsonObject = this.getJsonResponse(con);
 				JSONObject resource = jsonObject.getJSONObject("resource");
 				JSONObject options = resource.getJSONObject("options");
@@ -188,7 +187,6 @@ public class PinterestApi {
 				CommonHeaders.addCommonHeaders(con, user.getCookies());
 				con.setRequestMethod("GET");
 				JSONObject jsonObject = this.getJsonResponse(con);
-				Log.log("Response code from get followers is " + con.getResponseCode());
 				try {
 					if (bookmark.isEmpty()) {
 						JSONObject module = jsonObject.getJSONObject("module");
@@ -244,7 +242,6 @@ public class PinterestApi {
 			HttpsURLConnection con = (HttpsURLConnection) requestUrl.openConnection(proxy);
 			CommonHeaders.addCommonHeaders(con, user.getCookies());
 			con.setRequestMethod("GET");
-			Log.log("Response code from Get pinners by keyword is " + con.getResponseMessage());
 			JSONObject jsonObject = this.getJsonResponse(con);
 			JSONObject mod = jsonObject.getJSONObject("module");
 			JSONObject tree = mod.getJSONObject("tree");
@@ -316,10 +313,15 @@ public class PinterestApi {
 			String request = "https://www.pinterest.com/resource/UserFollowResource/delete/";
 			URL url = new URL(request);
 			HttpURLConnection con = (HttpURLConnection) url.openConnection(proxy);
-			CommonHeaders.addCommonHeaders(con, user.getCookies());
+			CommonHeaders.addCommonHeaders(con);
 			con.setRequestMethod("POST");
 			con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+			con.setRequestProperty("Accept-Encoding", "gzip, deflate");
+			con.setRequestProperty("Accept", "application/json, text/javascript, */*; q=0.01");
 			con.setRequestProperty("Content-Length", Integer.toString(postDataLength));
+			con.setRequestProperty("Cookie", user.getCookies().toString());
+			con.setRequestProperty("X-CSRFToken", user.getCookies().getSslCookie().getValue());
+			con.setRequestProperty("Referer", "https://www.pinterest.com/" + user.getAccount().getUsername() + "/following/");
 
 			try (DataOutputStream wr = new DataOutputStream(con.getOutputStream())) {
 				wr.write(postData);
@@ -566,7 +568,7 @@ public class PinterestApi {
 
 			String cookieList = sslHeader + "; " + sessionHeader;
 			String sslValue = sslHeader.substring(sslHeader.indexOf("=") + 1);
-			String urlParam = UrlProvider.getLogin(user.getAccount().getEmail(), user.getAccount().getPassword());
+			String urlParam = UrlProvider.getLogin(account.getEmail(), account.getPassword());
 			url = "https://www.pinterest.com/resource/UserSessionResource/create/";
 			byte[] postData = urlParam.getBytes(Charset.forName("UTF-8"));
 			int postDataLength = postData.length;
@@ -695,8 +697,6 @@ public class PinterestApi {
 		} finally {
 			con.disconnect();
 		}
-		// System.out.println("Response from " + con.getURL());
-		// System.out.println(theString);
 		return json;
 	}
 
@@ -708,15 +708,12 @@ public class PinterestApi {
 			StringWriter writer = new StringWriter();
 			IOUtils.copy(con.getInputStream(), writer, "utf-8");
 			theString = writer.toString();
-			System.out.println(theString);
 			json = new JSONObject(theString);
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
 			con.disconnect();
 		}
-		// System.out.println("Response from " + con.getURL());
-		// System.out.println(theString);
 		return json;
 	}
 

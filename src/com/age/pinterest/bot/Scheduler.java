@@ -4,10 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.age.param.FollowParam;
+import com.age.param.PinParam;
 import com.age.param.RepinParam;
+import com.age.param.UnfollowParam;
 import com.age.pinterest.task.FollowTask;
+import com.age.pinterest.task.PinTask;
 import com.age.pinterest.task.RepinTask;
 import com.age.pinterest.task.Task;
+import com.age.pinterest.task.UnFollowTask;
 
 public class Scheduler {
 	List<Thread> tasks;
@@ -23,7 +27,14 @@ public class Scheduler {
 	public void schedule(FollowParam follow) {
 		this.startNewTask(new FollowTask(follow));
 	}
-	
+
+	public void schedule(UnfollowParam unfollow) {
+		this.startNewTask(new UnFollowTask(unfollow));
+	}
+
+	public void schedule(PinParam pin) {
+		this.startNewTask(new PinTask(pin));
+	}
 
 	private void startNewTask(Task task) {
 		Thread thread = new Thread(task);

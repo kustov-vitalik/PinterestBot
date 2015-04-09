@@ -11,6 +11,14 @@ public class RepinParam {
 	private int repinCount;
 	private long interval;
 
+	/**
+	 * @param user
+	 * @param board
+	 * @param keyword
+	 * @param link
+	 * @param repinCount
+	 * @param interval
+	 */
 	public RepinParam(User user, Board board, String keyword, String link, int repinCount, long interval) {
 		this.user = user;
 		this.board = board;
