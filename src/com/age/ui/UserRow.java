@@ -13,6 +13,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import com.age.data.User;
+import com.age.dataframes.DataFrame;
 import com.age.dataframes.FollowDataFrame;
 import com.age.dataframes.PinDataFrame;
 import com.age.dataframes.RepinDataFrame;
@@ -28,9 +29,9 @@ public class UserRow extends JPanel implements ActionListener {
 	private final String username;
 	private final Scheduler scheduler;
 
-	public UserRow(String username, Scheduler scheduler, int w, int h) {
+	public UserRow(String username, int w, int h) {
 		this.username = username;
-		this.scheduler = scheduler;
+		this.scheduler = new Scheduler();
 		this.setLayout(new GridLayout(1, tasks.size()));
 		JTextField textArea = new JTextField();
 		textArea.setPreferredSize(new Dimension(w * 2, h));
@@ -52,23 +53,38 @@ public class UserRow extends JPanel implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent a) {
-		User user = PinBot.getUser(username);
 		String cmd = a.getActionCommand();
 		if (cmd.equals(TaskType.REPIN.toString())) {
-			new RepinDataFrame(scheduler, user);
+			handleTask(TaskType.REPIN);
 		} else if (cmd.equals(TaskType.FOLLOW.toString())) {
-			new FollowDataFrame(user, scheduler);
+			handleTask(TaskType.FOLLOW);
 		} else if (cmd.equals(TaskType.UNFOLLOW.toString())) {
-			new UnfollowDataFrame(user, scheduler);
+			handleTask(TaskType.UNFOLLOW);
 		} else if (cmd.equals(TaskType.PIN.toString())) {
-			new PinDataFrame(user, scheduler);
+			handleTask(TaskType.PIN);
 		} else if (cmd.equals(TaskType.REFRESH.toString())) {
-			scheduler.schedule(new RefreshParam(user.getAccount()));
+			handleTask(TaskType.REFRESH);
 		}
 	}
-	private void handleTask()
-	{
-		
-	}
 
+	private boolean handleTask(TaskType type) {
+		Thread task = scheduler.checkForTask(type);
+		if (task != null) {
+			scheduler.terminateTask(type);
+			return false;
+		}
+		User user = PinBot.getUser(username);
+		if (type.equals(TaskType.REPIN)) {
+			new RepinDataFrame(scheduler, user);
+		} else if (type.equals(TaskType.FOLLOW)) {
+			new FollowDataFrame(user, scheduler);
+		} else if (type.equals(TaskType.PIN)) {
+			new PinDataFrame(user, scheduler);
+		} else if (type.equals(TaskType.UNFOLLOW)) {
+			new UnfollowDataFrame(user, scheduler);
+		} else if (type.equals(TaskType.REFRESH)) {
+			scheduler.schedule(new RefreshParam(user.getAccount()));
+		}
+		return true;
+	}
 }

@@ -43,8 +43,22 @@ public class Scheduler {
 		this.startNewTask(new RefreshUserTask(refresh));
 	}
 
+	@SuppressWarnings("deprecation")
 	public void terminateTask(TaskType type) {
+		Thread task = checkForTask(type);
+		if (task != null) {
+			System.out.println("Terminating " + type.toString());
+			task.stop();
+		}
+	}
 
+	public Thread checkForTask(TaskType type) {
+		for (Thread task : tasks) {
+			if (task.getName().equals(type.toString())) {
+				return task;
+			}
+		}
+		return null;
 	}
 
 	private void startNewTask(Task task) {

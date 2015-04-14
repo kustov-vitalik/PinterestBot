@@ -23,7 +23,7 @@ public class UserMatrix extends JFrame {
 		JPanel panel = new JPanel(new GridLayout(rows, cols));
 		List<User> users = PinBot.listUsers();
 		for (User user : users) {
-			panel.add(new UserRow(user.getAccount().getUsername(), scheduler, buttonW, buttonH));
+			panel.add(new UserRow(user.getAccount().getUsername(), buttonW, buttonH));
 		}
 		this.add(panel);
 		this.pack();
