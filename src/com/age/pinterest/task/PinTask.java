@@ -1,6 +1,7 @@
 package com.age.pinterest.task;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import org.codehaus.jackson.map.ObjectMapper;
@@ -25,21 +26,18 @@ public class PinTask extends Task {
 		ObjectMapper mapper = new ObjectMapper();
 		PinterestApi api = new PinterestApi(pinParam.getUser());
 		ArrayList<String> pinFiles = FileUtill.getAllFiles(String.format(PINS_LOCATION_URL, pinParam.getUser().getAccount().getUsername()));
-		do {
-			if (this.intervalPassed(pinParam.getInterval())) {
-				try {
-					String filePath = pinFiles.get(0);
-					Pin pin = mapper.readValue(new File(filePath), Pin.class);
-					api.pin(pin, pinParam.getBoard());
-					new File(filePath).delete();
-					pinFiles.remove(0);
-					Log.log("Remaining pins " + pinFiles.size());
-					Log.log("Pin interval is " + pinParam.getInterval());
-				} catch (Exception e) {
-					Log.log("Failed to pin  " + e.getMessage());
-				}
+		for (String pinFile : pinFiles) {
+			try {
+				String filePath = pinFile;
+				Pin pin = mapper.readValue(new File(filePath), Pin.class);
+				api.pin(pin, pinParam.getBoard());
+				new File(filePath).delete();
+				Log.log("Remaining pins " + pinFiles.size());
+				this.sleep(pinParam.getInterval());
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
-		} while (!pinFiles.isEmpty());
+		}
 		Log.log("No more pins for " + pinParam.getUser().getAccount().getUsername());
 	}
 

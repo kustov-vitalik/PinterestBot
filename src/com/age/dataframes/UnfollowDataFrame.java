@@ -34,8 +34,8 @@ public class UnfollowDataFrame extends DataFrame {
 
 		intervalArea = new JTextArea();
 		intervalArea.setPreferredSize(dim);
-		intervalArea.setText("interval");
-		intervalArea.setToolTipText("interval");
+		intervalArea.setText("11");
+		intervalArea.setToolTipText("Interval in seconds");
 
 		startBtn = new JButton();
 		startBtn.setPreferredSize(dim);
@@ -59,6 +59,7 @@ public class UnfollowDataFrame extends DataFrame {
 		if (e.getActionCommand().equals(startBtn.getText())) {
 			int minFollowers = Integer.parseInt(minFollowersArea.getText());
 			long interval = Integer.parseInt(intervalArea.getText());
+			interval *= 1000;
 			UnfollowParam unfollowParam = new UnfollowParam(user, minFollowers, interval);
 			scheduler.schedule(unfollowParam);
 			this.dispose();

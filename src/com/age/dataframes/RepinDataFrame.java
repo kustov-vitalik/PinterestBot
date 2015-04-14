@@ -48,12 +48,12 @@ public class RepinDataFrame extends DataFrame {
 
 		intervalArea = new JTextArea();
 		intervalArea.setPreferredSize(dim);
-		intervalArea.setText("interval");
-		intervalArea.setToolTipText("interval");
+		intervalArea.setText("10");
+		intervalArea.setToolTipText("Interval in minutes");
 
 		boardsCombo = new JComboBox<Board>();
 		boardsCombo.setPreferredSize(dim);
-		if (user.getBoards()!=null) {
+		if (user.getBoards() != null) {
 			for (Board b : user.getBoards()) {
 				boardsCombo.addItem(b);
 			}
@@ -76,7 +76,6 @@ public class RepinDataFrame extends DataFrame {
 		this.setLocationRelativeTo(null);
 		this.setVisible(true);
 		this.pack();
-
 	}
 
 	@Override
@@ -87,6 +86,7 @@ public class RepinDataFrame extends DataFrame {
 			String link = linkArea.getText();
 			int repinCount = Integer.parseInt(repinArea.getText());
 			long interval = Integer.parseInt(intervalArea.getText());
+			interval *= 1000 * 60;
 			RepinParam param = new RepinParam(user, board, keyword, link, repinCount, interval);
 			scheduler.schedule(param);
 			this.dispose();

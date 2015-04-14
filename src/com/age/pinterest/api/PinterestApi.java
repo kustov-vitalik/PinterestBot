@@ -36,7 +36,7 @@ import com.age.data.User;
 import com.age.ui.Log;
 
 public class PinterestApi {
-	private static final int WAVE_FOLLOW_USERS_NUM = 100;
+	private static final int WAVE_FOLLOW_USERS_NUM = 20;
 	private static final String CRLF = "\r\n";
 	private User user;
 	private final Proxy proxy = Proxy.NO_PROXY;
@@ -76,7 +76,7 @@ public class PinterestApi {
 			}
 			con.connect();
 			Log.log("Response code from follow  " + con.getResponseCode());
-			System.out.println(this.getJsonResponse(con).toString());
+			con.disconnect();
 		} catch (Exception e) {
 			Log.log("Failed when following " + e.getMessage());
 		}
@@ -320,6 +320,7 @@ public class PinterestApi {
 			con.setRequestProperty("Accept", "application/json, text/javascript, */*; q=0.01");
 			con.setRequestProperty("Content-Length", Integer.toString(postDataLength));
 			con.setRequestProperty("Cookie", user.getCookies().toString());
+			con.setRequestProperty("X-Requested-With", "XMLHttpRequest");
 			con.setRequestProperty("X-CSRFToken", user.getCookies().getSslCookie().getValue());
 			con.setRequestProperty("Referer", "https://www.pinterest.com/" + user.getAccount().getUsername() + "/following/");
 
@@ -328,6 +329,7 @@ public class PinterestApi {
 			}
 			con.connect();
 			Log.log(user.getAccount().getUsername() + "  unfollowed  " + target.getUsername());
+			System.out.println("Response code from unfollow " + con.getResponseCode());
 			con.disconnect();
 		} catch (Exception e) {
 			Log.log("Failed when unfollowing " + e.getMessage());
@@ -414,6 +416,7 @@ public class PinterestApi {
 		if (link == null) {
 			link = pin.getSource();
 		}
+
 		Cookies cookies = user.getCookies();
 		String urlParams = UrlProvider
 				.getEditPin(user.getAccount().getUsername(), board.getName(), board.getId(), description, link, pinId);
@@ -453,7 +456,7 @@ public class PinterestApi {
 	public List<Pinner> getFollowList(int minListSize) {
 		Log.log("Will get " + minListSize);
 		List<Pinner> userFollowers = this.getFollowers(user.getAccount().getUsername(), WAVE_FOLLOW_USERS_NUM);
-		while (userFollowers.size() <= WAVE_FOLLOW_USERS_NUM) {
+		while (userFollowers.size() < WAVE_FOLLOW_USERS_NUM) {
 			List<Pinner> extraPinners = this.getPinnersByKeyword("fashion", WAVE_FOLLOW_USERS_NUM);
 			userFollowers.addAll(extraPinners);
 		}

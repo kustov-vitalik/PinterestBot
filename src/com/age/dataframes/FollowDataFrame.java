@@ -34,8 +34,8 @@ public class FollowDataFrame extends DataFrame {
 
 		intervalArea = new JTextArea();
 		intervalArea.setPreferredSize(dim);
-		intervalArea.setText("interval");
-		intervalArea.setToolTipText("interval");
+		intervalArea.setText("11");
+		intervalArea.setToolTipText("Interval in seconds");
 
 		startBtn = new JButton();
 		startBtn.setPreferredSize(dim);
@@ -58,6 +58,7 @@ public class FollowDataFrame extends DataFrame {
 		if (a.getActionCommand().equals(startBtn.getText())) {
 			int count = Integer.parseInt(countArea.getText());
 			long interval = Integer.parseInt(intervalArea.getText());
+			interval *= 1000;
 			FollowParam followParam = new FollowParam(user, count, interval);
 			scheduler.schedule(followParam);
 			this.dispose();

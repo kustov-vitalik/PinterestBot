@@ -38,8 +38,8 @@ public class PinDataFrame extends DataFrame {
 		}
 		intervalArea = new JTextArea();
 		intervalArea.setPreferredSize(dim);
-		intervalArea.setText("interval");
-		intervalArea.setToolTipText("interval");
+		intervalArea.setText("30");
+		intervalArea.setToolTipText("Interval in minutes");
 
 		startBtn = new JButton();
 		startBtn.setPreferredSize(dim);
@@ -63,6 +63,7 @@ public class PinDataFrame extends DataFrame {
 		if (e.getActionCommand().equals(startBtn.getText())) {
 			Board board = (Board) boardsCombo.getSelectedItem();
 			long interval = Integer.parseInt(intervalArea.getText());
+			interval *= 1000 * 60;
 			PinParam pinParam = new PinParam(user, board, interval);
 			scheduler.schedule(pinParam);
 			this.dispose();

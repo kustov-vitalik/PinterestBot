@@ -62,7 +62,7 @@ public class GenerateBasicPinsFrame extends JFrame implements ActionListener {
 			PinBot bot = new PinBot();
 			String tag = (String) tags.getSelectedItem();
 			String sourceText = source.getText();
-			bot.addGenerateBasicPinsTask(tag, sourceText);
+			// bot.addGenerateBasicPinsTask(tag, sourceText);
 			this.dispose();
 		}
 

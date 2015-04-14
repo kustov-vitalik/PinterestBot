@@ -7,7 +7,7 @@ import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import com.age.data.PinterestAccount;
+import com.age.data.User;
 import com.age.pinterest.bot.PinBot;
 import com.age.pinterest.bot.Scheduler;
 
@@ -21,9 +21,9 @@ public class UserMatrix extends JFrame {
 		int rows = 15, cols = tasks.size();
 		this.setTitle("Matrix");
 		JPanel panel = new JPanel(new GridLayout(rows, cols));
-		List<PinterestAccount> accounts = PinBot.listAccount();
-		for (PinterestAccount acc : accounts) {
-			panel.add(new UserRow(acc.getUsername(), scheduler, buttonW, buttonH));
+		List<User> users = PinBot.listUsers();
+		for (User user : users) {
+			panel.add(new UserRow(user.getAccount().getUsername(), scheduler, buttonW, buttonH));
 		}
 		this.add(panel);
 		this.pack();

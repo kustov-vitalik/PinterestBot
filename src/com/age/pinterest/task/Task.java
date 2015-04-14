@@ -3,17 +3,9 @@ package com.age.pinterest.task;
 import java.util.concurrent.TimeUnit;
 
 public abstract class Task implements Runnable {
-	private long lastTimeOut = 0;
-
-	protected boolean intervalPassed(long interval) {
-		if (System.currentTimeMillis() - lastTimeOut > interval) {
-			lastTimeOut = System.currentTimeMillis();
-			return true;
-		}
-		return false;
-	}
 
 	protected void sleep(long interval) {
+		System.out.println(this.getType() + " task is sleeping");
 		long startTime = System.currentTimeMillis();
 		long waitTime = interval / (1000 * 2);
 		long passedTime = 0;

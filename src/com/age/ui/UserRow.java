@@ -17,6 +17,7 @@ import com.age.dataframes.FollowDataFrame;
 import com.age.dataframes.PinDataFrame;
 import com.age.dataframes.RepinDataFrame;
 import com.age.dataframes.UnfollowDataFrame;
+import com.age.param.RefreshParam;
 import com.age.pinterest.bot.PinBot;
 import com.age.pinterest.bot.Scheduler;
 import com.age.pinterest.task.TaskType;
@@ -62,8 +63,12 @@ public class UserRow extends JPanel implements ActionListener {
 		} else if (cmd.equals(TaskType.PIN.toString())) {
 			new PinDataFrame(user, scheduler);
 		} else if (cmd.equals(TaskType.REFRESH.toString())) {
+			scheduler.schedule(new RefreshParam(user.getAccount()));
 		}
-
+	}
+	private void handleTask()
+	{
+		
 	}
 
 }

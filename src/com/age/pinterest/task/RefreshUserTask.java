@@ -5,21 +5,21 @@ import java.io.IOException;
 
 import org.codehaus.jackson.map.ObjectMapper;
 
-import com.age.data.User;
 import com.age.help.BotPaths;
+import com.age.param.RefreshParam;
 import com.age.pinterest.api.PinterestApi;
 
 public class RefreshUserTask extends Task {
-	private final User user;
+	private final RefreshParam refreshParam;
 
-	public RefreshUserTask(User user) {
-		this.user = user;
+	public RefreshUserTask(RefreshParam refreshParam) {
+		this.refreshParam = refreshParam;
 	}
 
 	@Override
 	public void run() {
-		PinterestApi api = new PinterestApi(user.getAccount());
-		String rootPath = BotPaths.USER_ROOT + user.getAccount().getUsername();
+		PinterestApi api = new PinterestApi(refreshParam.getAccount());
+		String rootPath = BotPaths.USER_ROOT + refreshParam.getAccount().getUsername();
 		ObjectMapper mapper = new ObjectMapper();
 		File rootDir = new File(rootPath);
 		try {
