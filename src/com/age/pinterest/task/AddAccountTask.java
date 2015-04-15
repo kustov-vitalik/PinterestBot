@@ -5,23 +5,23 @@ import java.io.IOException;
 
 import org.codehaus.jackson.map.ObjectMapper;
 
-import com.age.data.PinterestAccount;
 import com.age.help.BotPaths;
+import com.age.param.AddAccountParam;
 import com.age.pinterest.api.PinterestApi;
 
 public class AddAccountTask extends Task {
 
-	private final PinterestAccount account;
+	private final AddAccountParam addAccountParam;
 
-	public AddAccountTask(PinterestAccount account) {
-		super(account.getUsername());
-		this.account = account;
+	public AddAccountTask(AddAccountParam addAccountParam) {
+		super(addAccountParam.getAccount().getUsername());
+		this.addAccountParam = addAccountParam;
 	}
 
 	@Override
 	public void run() {
-		PinterestApi api = new PinterestApi(account);
-		String root = BotPaths.USER_ROOT + account.getUsername();
+		PinterestApi api = new PinterestApi(addAccountParam.getAccount());
+		String root = BotPaths.USER_ROOT + addAccountParam.getAccount().getUsername();
 		File rootDir = new File(root);
 		rootDir.mkdirs();
 		File pinDir = new File(rootDir, "pins");

@@ -44,15 +44,14 @@ public class PinterestApi {
 
 	public PinterestApi(PinterestAccount account) {
 		Validate.notNull(account);
-		this.user = setUpUser(account);
 		logger = new FileLogger(account.getUsername());
-
+		this.user = setUpUser(account);
 	}
 
 	public PinterestApi(User user) {
 		Validate.notNull(user);
-		this.user = user;
 		logger = new FileLogger(user.getAccount().getUsername());
+		this.user = user;
 	}
 
 	public void follow(Pinner target) {
@@ -421,8 +420,8 @@ public class PinterestApi {
 		}
 
 		Cookies cookies = user.getCookies();
-		String urlParams = UrlProvider
-				.getEditPin(user.getAccount().getUsername(), board.getName(), board.getId(), description, link, pinId);
+		String urlParams = UrlProvider.getEditPin(user.getAccount().getUsername(), board.getName(), board.getId(), description,
+				link, pinId);
 		try {
 			byte[] postData = urlParams.getBytes(Charset.forName("UTF-8"));
 			int len = postData.length;

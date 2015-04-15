@@ -12,6 +12,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 
+import com.age.dataframes.AddAccountFrame;
 import com.age.dataframes.ScrapeDataFrame;
 import com.age.pinterest.bot.PinBot;
 import com.age.pinterest.bot.Scheduler;
@@ -76,7 +77,7 @@ public class UI implements ActionListener, KeyListener {
 	public void actionPerformed(ActionEvent e) {
 		System.out.println(e.getActionCommand());
 		if (e.getActionCommand().equals(addAccBtn.getText())) {
-			// new AddAccountFrame();
+			new AddAccountFrame(addAccBtn, scheduler);
 		} else if (e.getActionCommand().equals(scrapeButton.getText())) {
 			new ScrapeDataFrame(scrapeButton, scheduler);
 		} else if (e.getActionCommand().equals(genBasicPinsButton.getText())) {

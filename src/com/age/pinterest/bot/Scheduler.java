@@ -3,12 +3,14 @@ package com.age.pinterest.bot;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.age.param.AddAccountParam;
 import com.age.param.FollowParam;
 import com.age.param.PinParam;
 import com.age.param.RefreshParam;
 import com.age.param.RepinParam;
 import com.age.param.ScrapeParam;
 import com.age.param.UnfollowParam;
+import com.age.pinterest.task.AddAccountTask;
 import com.age.pinterest.task.FollowTask;
 import com.age.pinterest.task.PinTask;
 import com.age.pinterest.task.RefreshUserTask;
@@ -47,6 +49,10 @@ public class Scheduler {
 
 	public void schedule(ScrapeParam scrape) {
 		this.startNewTask(new ScrapeTask(scrape));
+	}
+
+	public void schedule(AddAccountParam add) {
+		this.startNewTask(new AddAccountTask(add));
 	}
 
 	@SuppressWarnings("deprecation")
