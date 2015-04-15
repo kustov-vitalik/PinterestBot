@@ -11,13 +11,13 @@ import com.age.data.Pin;
 import com.age.help.BotPaths;
 import com.age.help.DescriptionGenerator;
 import com.age.help.FileUtill;
-import com.age.ui.Log;
 
 public class GenerateBasicPinsTask extends Task {
 	private final String tag;
 	private final String source;
 
 	public GenerateBasicPinsTask(String tag, String source) {
+		super("GeneratePinsLog");
 		this.tag = tag;
 		this.source = source;
 	}
@@ -25,11 +25,11 @@ public class GenerateBasicPinsTask extends Task {
 	@Override
 	public void run() {
 		try {
-			Log.log("Generating pins for " + tag);
+			logger.log("Generating pins for " + tag);
 			List<String> imagePaths = FileUtill.getAllFiles(BotPaths.IMAGES_ROOT + tag);
 			DescriptionGenerator generator = new DescriptionGenerator();
 			List<String> quotes = generator.getQuotes(tag);
-			Log.log("Will generate " + imagePaths.size() + " pins");
+			logger.log("Will generate " + imagePaths.size() + " pins");
 			Iterator<String> imageIter = imagePaths.iterator();
 			Iterator<String> quoteIter = quotes.iterator();
 			ObjectMapper mapper = new ObjectMapper();
@@ -50,10 +50,10 @@ public class GenerateBasicPinsTask extends Task {
 				File jsonFile = new File(pathDirFile, r.nextInt() + ".json");
 				mapper.writeValue(jsonFile, pin);
 			}
-			Log.log("Done generating pins for  " + tag);
+			logger.log("Done generating pins for  " + tag);
 
 		} catch (Exception e) {
-			Log.log("Failed to generate pins " + e.getMessage());
+			logger.log("Failed to generate pins " + e.getMessage());
 		}
 	}
 

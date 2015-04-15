@@ -10,6 +10,7 @@ public class UnFollowTask extends Task {
 	private final UnfollowParam unfollowParam;
 
 	public UnFollowTask(UnfollowParam unfollowParam) {
+		super(unfollowParam.getUser().getAccount().getUsername());
 		this.unfollowParam = unfollowParam;
 
 	}

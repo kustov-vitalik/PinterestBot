@@ -9,15 +9,14 @@ import javax.swing.JPanel;
 
 import com.age.data.User;
 import com.age.pinterest.bot.PinBot;
-import com.age.pinterest.bot.Scheduler;
 
 @SuppressWarnings("serial")
 public class UserMatrix extends JFrame {
-	private static final int buttonW = 100;
-	private static final int buttonH = 40;
+	private static final int buttonW = 60;
+	private static final int buttonH = 30;
 	private static final List<String> tasks = Arrays.asList("Follow", "Unfollow", "Pin", "Repin", "Refresh");
 
-	public UserMatrix(Scheduler scheduler) {
+	public UserMatrix() {
 		int rows = 15, cols = tasks.size();
 		this.setTitle("Matrix");
 		JPanel panel = new JPanel(new GridLayout(rows, cols));
@@ -31,7 +30,4 @@ public class UserMatrix extends JFrame {
 		this.setVisible(true);
 	}
 
-	public static void main(String[] args) {
-		new UserMatrix(new Scheduler());
-	}
 }

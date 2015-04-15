@@ -5,15 +5,16 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import com.age.data.User;
-import com.age.dataframes.DataFrame;
 import com.age.dataframes.FollowDataFrame;
 import com.age.dataframes.PinDataFrame;
 import com.age.dataframes.RepinDataFrame;
@@ -25,9 +26,11 @@ import com.age.pinterest.task.TaskType;
 
 @SuppressWarnings("serial")
 public class UserRow extends JPanel implements ActionListener {
-	List<TaskType> tasks = Arrays.asList(TaskType.FOLLOW, TaskType.UNFOLLOW, TaskType.PIN, TaskType.REPIN, TaskType.REFRESH);
+	private final List<TaskType> tasks = Arrays.asList(TaskType.FOLLOW, TaskType.UNFOLLOW, TaskType.PIN, TaskType.REPIN, TaskType.REFRESH);
+	private List<JButton> taskButtons = new ArrayList<JButton>();
 	private final String username;
 	private final Scheduler scheduler;
+	private JFrame dataFrame;
 
 	public UserRow(String username, int w, int h) {
 		this.username = username;
@@ -47,6 +50,7 @@ public class UserRow extends JPanel implements ActionListener {
 			btn.setText(type.toString());
 			btn.setPreferredSize(new Dimension(w, h));
 			btn.addActionListener(this);
+			taskButtons.add(btn);
 			this.add(btn);
 		}
 	}
@@ -69,22 +73,41 @@ public class UserRow extends JPanel implements ActionListener {
 
 	private boolean handleTask(TaskType type) {
 		Thread task = scheduler.checkForTask(type);
+		JButton btn = this.getButtonForTask(type);
 		if (task != null) {
 			scheduler.terminateTask(type);
+			btn.setBackground(new JButton().getBackground());
 			return false;
 		}
 		User user = PinBot.getUser(username);
+		handleDataFrame(type, user);
+		return true;
+	}
+
+	private JButton getButtonForTask(TaskType type) {
+		for (JButton btn : taskButtons) {
+			if (btn.getText().endsWith(type.toString())) {
+				return btn;
+			}
+		}
+		return null;
+	}
+
+	private void handleDataFrame(TaskType type, User user) {
+		JButton btn = this.getButtonForTask(type);
+		if (this.dataFrame != null) {
+			this.dataFrame.dispose();
+		}
 		if (type.equals(TaskType.REPIN)) {
-			new RepinDataFrame(scheduler, user);
+			this.dataFrame = new RepinDataFrame(scheduler, user, btn);
 		} else if (type.equals(TaskType.FOLLOW)) {
-			new FollowDataFrame(user, scheduler);
+			this.dataFrame = new FollowDataFrame(user, scheduler, btn);
 		} else if (type.equals(TaskType.PIN)) {
-			new PinDataFrame(user, scheduler);
+			this.dataFrame = new PinDataFrame(user, scheduler, btn);
 		} else if (type.equals(TaskType.UNFOLLOW)) {
-			new UnfollowDataFrame(user, scheduler);
+			this.dataFrame = new UnfollowDataFrame(user, scheduler, btn);
 		} else if (type.equals(TaskType.REFRESH)) {
 			scheduler.schedule(new RefreshParam(user.getAccount()));
 		}
-		return true;
 	}
 }

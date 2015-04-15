@@ -8,16 +8,17 @@ import org.codehaus.jackson.map.ObjectMapper;
 
 import com.age.data.Pin;
 import com.age.help.BotPaths;
+import com.age.help.FileLogger;
 import com.age.help.FileUtill;
 import com.age.param.PinParam;
 import com.age.pinterest.api.PinterestApi;
-import com.age.ui.Log;
 
 public class PinTask extends Task {
 	private static final String PINS_LOCATION_URL = BotPaths.ROOT_DIR + "/Users/%s/pins";
 	private final PinParam pinParam;
 
 	public PinTask(PinParam pinParam) {
+		super(pinParam.getUser().getAccount().getUsername());
 		this.pinParam = pinParam;
 	}
 
@@ -32,13 +33,13 @@ public class PinTask extends Task {
 				Pin pin = mapper.readValue(new File(filePath), Pin.class);
 				api.pin(pin, pinParam.getBoard());
 				new File(filePath).delete();
-				Log.log("Remaining pins " + pinFiles.size());
+				logger.log("Remaining pins " + pinFiles.size());
 				this.sleep(pinParam.getInterval());
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
-		Log.log("No more pins for " + pinParam.getUser().getAccount().getUsername());
+		logger.log("No more pins for " + pinParam.getUser().getAccount().getUsername());
 	}
 
 	@Override

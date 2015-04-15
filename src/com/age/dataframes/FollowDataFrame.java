@@ -1,10 +1,8 @@
 package com.age.dataframes;
 
-import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 
 import javax.swing.JButton;
-import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
 import com.age.data.User;
@@ -20,37 +18,14 @@ public class FollowDataFrame extends DataFrame {
 	private final JTextArea intervalArea;
 	private final JButton startBtn;
 
-	public FollowDataFrame(User user, Scheduler scheduler) {
+	public FollowDataFrame(User user, Scheduler scheduler, JButton triggerBtn) {
+		super(triggerBtn);
 		this.user = user;
 		this.scheduler = scheduler;
 
-		JPanel panel = new JPanel();
-		panel.setLayout(new FlowLayout());
-
-		countArea = new JTextArea();
-		countArea.setPreferredSize(dim);
-		countArea.setText("count");
-		countArea.setToolTipText("count");
-
-		intervalArea = new JTextArea();
-		intervalArea.setPreferredSize(dim);
-		intervalArea.setText("11");
-		intervalArea.setToolTipText("Interval in seconds");
-
-		startBtn = new JButton();
-		startBtn.setPreferredSize(dim);
-		startBtn.setText("Start");
-		startBtn.setToolTipText("Start");
-		startBtn.addActionListener(this);
-
-		panel.add(countArea);
-		panel.add(intervalArea);
-		panel.add(startBtn);
-
-		this.add(panel);
-		this.setLocationRelativeTo(null);
-		this.setVisible(true);
-		this.pack();
+		countArea = this.addTextArea("500", "count");
+		intervalArea = this.addTextArea("11", "seconds");
+		startBtn = this.addButton("Start");
 	}
 
 	@Override
@@ -61,6 +36,7 @@ public class FollowDataFrame extends DataFrame {
 			interval *= 1000;
 			FollowParam followParam = new FollowParam(user, count, interval);
 			scheduler.schedule(followParam);
+			this.trunOnBtn();
 			this.dispose();
 		}
 	}

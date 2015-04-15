@@ -14,6 +14,7 @@ public class AddAccountTask extends Task {
 	private final PinterestAccount account;
 
 	public AddAccountTask(PinterestAccount account) {
+		super(account.getUsername());
 		this.account = account;
 	}
 

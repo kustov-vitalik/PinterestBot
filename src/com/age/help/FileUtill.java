@@ -17,7 +17,7 @@ import java.util.Set;
 import com.age.ui.Log;
 
 public class FileUtill {
-	
+
 	public static void saveToFile(String destination, String name, String content) throws FileNotFoundException {
 		File root = new File(destination);
 		if (!root.exists() || !root.isDirectory()) {
@@ -37,12 +37,11 @@ public class FileUtill {
 
 	public static void appendToFile(String file, String content) throws IOException {
 		FileWriter fw = new FileWriter(file, true);
-		fw.write(content + "\n");
+		fw.write(content);
 		fw.close();
 	}
 
 	public static ArrayList<String> getAllFiles(String path) {
-		Log.log("Getting file list for  " + path);
 		ArrayList<String> paths = new ArrayList<String>();
 		File rootFile = new File(path);
 		for (File f : rootFile.listFiles()) {

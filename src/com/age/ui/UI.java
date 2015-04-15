@@ -12,6 +12,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 
+import com.age.dataframes.ScrapeDataFrame;
 import com.age.pinterest.bot.PinBot;
 import com.age.pinterest.bot.Scheduler;
 
@@ -75,27 +76,19 @@ public class UI implements ActionListener, KeyListener {
 	public void actionPerformed(ActionEvent e) {
 		System.out.println(e.getActionCommand());
 		if (e.getActionCommand().equals(addAccBtn.getText())) {
-			new AddAccountFrame();
+			// new AddAccountFrame();
 		} else if (e.getActionCommand().equals(scrapeButton.getText())) {
-//			new ScrapeFrame(bot);
+			new ScrapeDataFrame(scrapeButton, scheduler);
 		} else if (e.getActionCommand().equals(genBasicPinsButton.getText())) {
-			new GenerateBasicPinsFrame();
+			// new GenerateBasicPinsFrame();
 		} else if (e.getActionCommand().equals(dashboard.getText())) {
-			new UserMatrix(scheduler);
+			new UserMatrix();
 		}
 	}
 
 	public static void main(String[] args) {
 		PinBot.setUpDirTree();
-		Log.setUpLog();
 		new UI(new Scheduler());
-	}
-
-	@Override
-	public void keyPressed(KeyEvent k) {
-		if (k.getKeyChar() == 'k') {
-			Log.setUpLog();
-		}
 	}
 
 	@Override
@@ -104,5 +97,11 @@ public class UI implements ActionListener, KeyListener {
 
 	@Override
 	public void keyTyped(KeyEvent k) {
+	}
+
+	@Override
+	public void keyPressed(KeyEvent arg0) {
+		// TODO Auto-generated method stub
+
 	}
 }

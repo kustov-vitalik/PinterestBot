@@ -8,23 +8,24 @@ import com.age.pinterest.api.PinterestApi;
 
 public class RepinTask extends Task {
 
-	private static final String REPIN_HISTORY_PATH="";
-	private final RepinParam repinData;
+	private static final String REPIN_HISTORY_PATH = "";
+	private final RepinParam repinParam;
 
-	public RepinTask(RepinParam repinData) {
-		this.repinData = repinData;
+	public RepinTask(RepinParam repinParam) {
+		super(repinParam.getUser().getAccount().getUsername());
+		this.repinParam = repinParam;
 	}
 
 	@Override
 	public void run() {
-		PinterestApi api = new PinterestApi(repinData.getUser());
-		List<String> pinIds = api.searchPins(repinData.getKeyword(), repinData.getRepinCount());
+		PinterestApi api = new PinterestApi(repinParam.getUser());
+		List<String> pinIds = api.searchPins(repinParam.getKeyword(), repinParam.getRepinCount());
 		for (String id : pinIds) {
-			String newPinId = api.repin(repinData.getBoard(), id, "");
+			String newPinId = api.repin(repinParam.getBoard(), id, "");
 			System.out.println("Repining pin:  " + id);
 			Pin pin = api.getPinInfo(id);
-			api.editPin(repinData.getBoard(), newPinId, pin.getDescription(), repinData.getLink());
-			this.sleep(repinData.getInterval());
+			api.editPin(repinParam.getBoard(), newPinId, pin.getDescription(), repinParam.getLink());
+			this.sleep(repinParam.getInterval());
 		}
 	}
 

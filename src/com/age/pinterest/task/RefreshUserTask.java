@@ -13,6 +13,7 @@ public class RefreshUserTask extends Task {
 	private final RefreshParam refreshParam;
 
 	public RefreshUserTask(RefreshParam refreshParam) {
+		super(refreshParam.getAccount().getUsername());
 		this.refreshParam = refreshParam;
 	}
 

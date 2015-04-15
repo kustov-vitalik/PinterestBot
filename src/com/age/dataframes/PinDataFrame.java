@@ -1,11 +1,9 @@
 package com.age.dataframes;
 
-import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
 import com.age.data.Board;
@@ -22,12 +20,10 @@ public class PinDataFrame extends DataFrame {
 	private final Scheduler scheduler;
 	private final JButton startBtn;
 
-	public PinDataFrame(User user, Scheduler scheduler) {
+	public PinDataFrame(User user, Scheduler scheduler, JButton triggerBtn) {
+		super(triggerBtn);
 		this.user = user;
 		this.scheduler = scheduler;
-
-		JPanel panel = new JPanel();
-		panel.setLayout(new FlowLayout());
 
 		boardsCombo = new JComboBox<Board>();
 		boardsCombo.setPreferredSize(dim);
@@ -36,26 +32,9 @@ public class PinDataFrame extends DataFrame {
 				boardsCombo.addItem(b);
 			}
 		}
-		intervalArea = new JTextArea();
-		intervalArea.setPreferredSize(dim);
-		intervalArea.setText("30");
-		intervalArea.setToolTipText("Interval in minutes");
-
-		startBtn = new JButton();
-		startBtn.setPreferredSize(dim);
-		startBtn.setText("Start");
-		startBtn.setToolTipText("Start");
-		startBtn.addActionListener(this);
-
-		panel.add(boardsCombo);
-		panel.add(intervalArea);
-		panel.add(startBtn);
-
-		this.add(panel);
-		this.setLocationRelativeTo(null);
-		this.setVisible(true);
-		this.pack();
-
+		this.addComponent(boardsCombo);
+		intervalArea = this.addTextArea("30", "Interval in minutes");
+		startBtn = this.addButton("Start");
 	}
 
 	@Override
@@ -66,6 +45,7 @@ public class PinDataFrame extends DataFrame {
 			interval *= 1000 * 60;
 			PinParam pinParam = new PinParam(user, board, interval);
 			scheduler.schedule(pinParam);
+			this.trunOnBtn();
 			this.dispose();
 		}
 	}

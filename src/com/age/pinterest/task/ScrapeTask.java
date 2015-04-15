@@ -31,25 +31,27 @@ public class ScrapeTask extends Task {
 	private final String dowloadLocation;
 
 	public ScrapeTask(ScrapeParam scrapeParam) {
+		super("Scrape-" + scrapeParam.getKeyword());
 		this.scrapeParam = scrapeParam;
 		this.dowloadLocation = BotPaths.IMAGES_ROOT + scrapeParam.getTag();
+		new Log("Scrape-" + scrapeParam.getKeyword());
 	}
 
 	@Override
 	public void run() {
 		try {
 			ArrayList<String> images = new ArrayList<String>();
-			Log.log("Scraping for  " + scrapeParam.getKeyword());
+			logger.log("Scraping for  " + scrapeParam.getKeyword());
 			for (int i = 0; images.size() < scrapeParam.getCount(); i++) {
 				List<String> newImages = scrapeIndex(scrapeParam.getKeyword(), i);
 				if (newImages.isEmpty()) {
-					Log.log("No more images for " + scrapeParam.getKeyword() + "  got " + images.size());
+					logger.log("No more images for " + scrapeParam.getKeyword() + "  got " + images.size());
 					break;
 				}
 				images.addAll(scrapeIndex(scrapeParam.getKeyword(), i));
-				Log.log("Found  " + images.size() + " images.   Remaining  " + (scrapeParam.getCount() - images.size()));
+				logger.log("Found  " + images.size() + " images.   Remaining  " + (scrapeParam.getCount() - images.size()));
 			}
-			Log.log("Downloading images for " + scrapeParam.getKeyword());
+			logger.log("Downloading images for " + scrapeParam.getKeyword());
 			downloadAll(images);
 		} catch (Exception e) {
 
@@ -108,7 +110,7 @@ public class ScrapeTask extends Task {
 			imgType = "gif";
 		}
 		if (imgType.isEmpty()) {
-			Log.log("empty for   " + imgUrl);
+			logger.log("empty for   " + imgUrl);
 			return "";
 		}
 		imgUrl = imgUrl.substring(0, imgUrl.indexOf(imgType) + imgType.length());
@@ -126,14 +128,14 @@ public class ScrapeTask extends Task {
 				String imgDestination = this.cutImageUrl(str);
 				pool.submit(new DownloadCallable(imgDestination));
 			} catch (Exception e) {
-				Log.log("Failed to start download " + e.getMessage());
+				logger.log("Failed to start download " + e.getMessage());
 			}
 		}
 		pool.shutdown();
 		while (!pool.isTerminated()) {
 
 		}
-		Log.log("Scrape completed");
+		logger.log("Scrape completed");
 	}
 
 	private class DownloadCallable implements Callable<String> {

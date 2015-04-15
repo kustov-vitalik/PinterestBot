@@ -7,11 +7,13 @@ import com.age.param.FollowParam;
 import com.age.param.PinParam;
 import com.age.param.RefreshParam;
 import com.age.param.RepinParam;
+import com.age.param.ScrapeParam;
 import com.age.param.UnfollowParam;
 import com.age.pinterest.task.FollowTask;
 import com.age.pinterest.task.PinTask;
 import com.age.pinterest.task.RefreshUserTask;
 import com.age.pinterest.task.RepinTask;
+import com.age.pinterest.task.ScrapeTask;
 import com.age.pinterest.task.Task;
 import com.age.pinterest.task.TaskType;
 import com.age.pinterest.task.UnFollowTask;
@@ -43,12 +45,17 @@ public class Scheduler {
 		this.startNewTask(new RefreshUserTask(refresh));
 	}
 
+	public void schedule(ScrapeParam scrape) {
+		this.startNewTask(new ScrapeTask(scrape));
+	}
+
 	@SuppressWarnings("deprecation")
 	public void terminateTask(TaskType type) {
 		Thread task = checkForTask(type);
 		if (task != null) {
 			System.out.println("Terminating " + type.toString());
 			task.stop();
+			tasks.remove(task);
 		}
 	}
 

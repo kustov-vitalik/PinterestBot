@@ -14,6 +14,7 @@ public class FollowTask extends Task {
 	private final FollowParam followParam;
 
 	public FollowTask(FollowParam followParam) {
+		super(followParam.getUser().getAccount().getUsername());
 		this.followParam = followParam;
 	}
 

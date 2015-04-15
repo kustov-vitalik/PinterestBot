@@ -5,17 +5,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 
-import com.age.data.PinterestAccount;
 import com.age.data.User;
 import com.age.data.UserConfig;
 import com.age.help.BotPaths;
-import com.age.pinterest.api.PinterestApi;
-import com.age.ui.Log;
 
 public class PinBot {
 	public static void setUpDirTree() {
@@ -27,20 +23,10 @@ public class PinBot {
 		root.mkdirs();
 		root = new File(BotPaths.IMAGES_ROOT);
 		root.mkdirs();
+		root = new File(BotPaths.LOGS);
+		root.mkdirs();
 	}
 
-	public static void addAccount(PinterestAccount acc) throws JsonGenerationException, JsonMappingException, IOException {
-		Log.log("Setting up user " + acc.getUsername());
-		String root = BotPaths.USER_ROOT + acc.getUsername();
-		File rootDir = new File(root);
-		rootDir.mkdirs();
-		File pinDir = new File(rootDir, "pins");
-		pinDir.mkdir();
-		PinterestApi api = new PinterestApi(acc);
-		ObjectMapper mapper = new ObjectMapper();
-		mapper.writeValue(new File(rootDir, "acc.json"), acc);
-		mapper.writeValue(new File(rootDir, "user.json"), api.getManagedUser());
-	}
 
 	public static List<User> listUsers() {
 

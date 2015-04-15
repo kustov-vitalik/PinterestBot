@@ -16,19 +16,18 @@ import org.jsoup.nodes.Attribute;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
-import com.age.ui.Log;
-
 public class DescriptionGenerator {
 
 	public List<String> getQuotes(String keyword) throws FileNotFoundException, UnsupportedEncodingException, InterruptedException {
-		Log.log("Generating quotes for " + keyword);
+//		Log.log("Generating quotes for " + keyword);
 		ArrayList<String> allQuotes = new ArrayList<String>();
 		try {
 			for (int i = 1; i <= 10; i++) {
 				allQuotes.addAll(getQuotesOnPage(keyword, i));
 			}
 		} catch (Exception e) {
-			Log.log("Failed when collecting quotes  " + e.getMessage());
+			e.printStackTrace();
+//			Log.log("Failed when collecting quotes  " + e.getMessage());
 		}
 		return allQuotes;
 	}

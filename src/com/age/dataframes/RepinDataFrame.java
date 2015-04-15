@@ -1,11 +1,9 @@
 package com.age.dataframes;
 
-import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
 import com.age.data.Board;
@@ -24,33 +22,15 @@ public class RepinDataFrame extends DataFrame {
 	private final JTextArea repinArea;
 	private final JTextArea intervalArea;
 
-	public RepinDataFrame(Scheduler scheduler, User user) {
+	public RepinDataFrame(Scheduler scheduler, User user, JButton triggerBtn) {
+		super(triggerBtn);
 		this.scheduler = scheduler;
 		this.user = user;
 
-		JPanel panel = new JPanel();
-		panel.setLayout(new FlowLayout());
-
-		keywordArea = new JTextArea();
-		keywordArea.setPreferredSize(dim);
-		keywordArea.setText("keyword");
-		keywordArea.setToolTipText("keyword");
-
-		repinArea = new JTextArea();
-		repinArea.setPreferredSize(dim);
-		repinArea.setText("repin count");
-		repinArea.setToolTipText("repin count");
-
-		linkArea = new JTextArea();
-		linkArea.setPreferredSize(dim);
-		linkArea.setText("link");
-		linkArea.setToolTipText("link");
-
-		intervalArea = new JTextArea();
-		intervalArea.setPreferredSize(dim);
-		intervalArea.setText("10");
-		intervalArea.setToolTipText("Interval in minutes");
-
+		keywordArea = this.addTextArea("keyword", "keyword");
+		repinArea = this.addTextArea("100", "repin count");
+		linkArea = this.addTextArea("", "link");
+		intervalArea = this.addTextArea("10", "Interval in minutes");
 		boardsCombo = new JComboBox<Board>();
 		boardsCombo.setPreferredSize(dim);
 		if (user.getBoards() != null) {
@@ -58,24 +38,8 @@ public class RepinDataFrame extends DataFrame {
 				boardsCombo.addItem(b);
 			}
 		}
-
-		startBtn = new JButton();
-		startBtn.setPreferredSize(dim);
-		startBtn.setText("Start");
-		startBtn.setToolTipText("Start");
-		startBtn.addActionListener(this);
-
-		panel.add(keywordArea);
-		panel.add(linkArea);
-		panel.add(repinArea);
-		panel.add(intervalArea);
-		panel.add(boardsCombo);
-		panel.add(startBtn);
-
-		this.add(panel);
-		this.setLocationRelativeTo(null);
-		this.setVisible(true);
-		this.pack();
+		this.addComponent(boardsCombo);
+		startBtn = this.addButton("Start");
 	}
 
 	@Override
@@ -89,6 +53,7 @@ public class RepinDataFrame extends DataFrame {
 			interval *= 1000 * 60;
 			RepinParam param = new RepinParam(user, board, keyword, link, repinCount, interval);
 			scheduler.schedule(param);
+			this.trunOnBtn();
 			this.dispose();
 		}
 	}

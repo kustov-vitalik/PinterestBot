@@ -33,27 +33,30 @@ import com.age.data.Pin;
 import com.age.data.Pinner;
 import com.age.data.PinterestAccount;
 import com.age.data.User;
-import com.age.ui.Log;
+import com.age.help.FileLogger;
 
 public class PinterestApi {
 	private static final int WAVE_FOLLOW_USERS_NUM = 20;
 	private static final String CRLF = "\r\n";
 	private User user;
 	private final Proxy proxy = Proxy.NO_PROXY;
+	private final FileLogger logger;
 
 	public PinterestApi(PinterestAccount account) {
 		Validate.notNull(account);
 		this.user = setUpUser(account);
+		logger = new FileLogger(account.getUsername());
 
 	}
 
 	public PinterestApi(User user) {
 		Validate.notNull(user);
 		this.user = user;
+		logger = new FileLogger(user.getAccount().getUsername());
 	}
 
 	public void follow(Pinner target) {
-		Log.log("Following  " + target.getUsername());
+		logger.log("Following  " + target.getUsername());
 		try {
 			String urlParameters = UrlProvider.getFollow(target.getUsername(), target.getId());
 			byte[] postData = urlParameters.getBytes(Charset.forName("UTF-8"));
@@ -75,24 +78,24 @@ public class PinterestApi {
 				wr.write(postData);
 			}
 			con.connect();
-			Log.log("Response code from follow  " + con.getResponseCode());
+			logger.log("Response code from follow  " + con.getResponseCode());
 			con.disconnect();
 		} catch (Exception e) {
-			Log.log("Failed when following " + e.getMessage());
+			logger.log("Failed when following " + e.getMessage());
 		}
 
 	}
 
 	public List<Board> getBoards(User targetUser) {
 		List<Board> boards = new ArrayList<Board>();
-		Log.log("Getting boards for user " + targetUser.getAccount().getUsername());
+		logger.log("Getting boards for user " + targetUser.getAccount().getUsername());
 		try {
 			URL requestUrl = new URL(UrlProvider.getBoards(targetUser.getAccount().getUsername()));
 			HttpsURLConnection con = (HttpsURLConnection) requestUrl.openConnection(proxy);
 			CommonHeaders.addCommonHeaders(con, targetUser.getCookies());
 			con.setRequestMethod("GET");
 			con.connect();
-			Log.log("Response code from get boards is " + con.getResponseCode());
+			logger.log("Response code from get boards is " + con.getResponseCode());
 			JSONObject jsonObject = this.getJsonResponse(con);
 			JSONObject module = jsonObject.getJSONObject("module");
 			JSONObject tree = module.getJSONObject("tree");
@@ -112,7 +115,7 @@ public class PinterestApi {
 				}
 			}
 		} catch (Exception e) {
-			Log.log("Failed when getting boards " + e.getMessage());
+			logger.log("Failed when getting boards " + e.getMessage());
 		}
 		return boards;
 	}
@@ -120,11 +123,11 @@ public class PinterestApi {
 	public List<Pinner> getFollowed(String target, int maxListSize, int minFollowers) {
 		List<Pinner> resultList = new ArrayList<Pinner>();
 		String bookmark = "";
-		Log.log("Getting unfollow list for  " + target);
+		logger.log("Getting unfollow list for  " + target);
 		while (!bookmark.equals("-end-")) {
 			// TODO make it use timer
 			if (resultList.size() % 10 == 0 && !resultList.isEmpty()) {
-				Log.log("unfollow list size is " + resultList.size());
+				logger.log("unfollow list size is " + resultList.size());
 			}
 			try {
 				String url = "";
@@ -160,14 +163,14 @@ public class PinterestApi {
 					}
 				}
 			} catch (Exception e) {
-				Log.log("Failed when getting followed " + e.getMessage());
+				logger.log("Failed when getting followed " + e.getMessage());
 			}
 		}
 		return resultList;
 	}
 
 	public List<Pinner> getFollowers(String target, int max) {
-		Log.log("Getting followers from  " + target);
+		logger.log("Getting followers from  " + target);
 		ArrayList<Pinner> result = new ArrayList<Pinner>();
 		if (max <= 0) {
 			return result;
@@ -212,7 +215,7 @@ public class PinterestApi {
 								result.add(pinner);
 							}
 							if (max >= 0 && result.size() >= max) {
-								Log.log("Got " + result.size() + "  followers from " + target);
+								logger.log("Got " + result.size() + "  followers from " + target);
 								return result;
 							}
 							JSONObject resource = jsonObject.getJSONObject("resource");
@@ -222,19 +225,19 @@ public class PinterestApi {
 						}
 					}
 				} catch (JSONException jsonE) {
-					Log.log("No followers from  " + target);
+					logger.log("No followers from  " + target);
 					break;
 				}
 			} catch (Exception e) {
-				Log.log("Error while getting followers  " + e.getMessage());
+				logger.log("Error while getting followers  " + e.getMessage());
 			}
 		}
-		Log.log("Got " + result.size() + "  followers from " + target);
+		logger.log("Got " + result.size() + "  followers from " + target);
 		return result;
 	}
 
 	public List<Pinner> getPinnersByKeyword(String keyword, int max) {
-		Log.log("Collection users related to  " + keyword);
+		logger.log("Collection users related to  " + keyword);
 		ArrayList<Pinner> followList = new ArrayList<Pinner>();
 		String url = "https://www.pinterest.com/search/boards/?q=" + keyword;
 		try {
@@ -247,7 +250,7 @@ public class PinterestApi {
 			JSONObject tree = mod.getJSONObject("tree");
 			JSONObject data = tree.getJSONObject("data");
 			JSONArray results = data.getJSONArray("results");
-			Log.log("Found " + results.length() + "  users");
+			logger.log("Found " + results.length() + "  users");
 			for (int i = 1; i < results.length(); i++) {
 				if (followList.size() > max) {
 					break;
@@ -259,10 +262,10 @@ public class PinterestApi {
 				for (Pinner p : pinners) {
 					followList.add(p);
 				}
-				Log.log("Follow list is:  " + followList.size());
+				logger.log("Follow list is:  " + followList.size());
 			}
 		} catch (Exception e) {
-			Log.log("Account manager failed to get follow list. It will probably return empty list.  " + e.getMessage());
+			logger.log("Account manager failed to get follow list. It will probably return empty list.  " + e.getMessage());
 		}
 		return followList;
 	}
@@ -273,7 +276,7 @@ public class PinterestApi {
 		String username = user.getAccount().getUsername();
 		String boardId = board.getId();
 		String boardName = board.getName();
-		Log.log("Pinning with user " + username + " to board " + boardName);
+		logger.log("Pinning with user " + username + " to board " + boardName);
 		String description = pin.getDescription();
 		try {
 			description = URLEncoder.encode(description, "UTF-8");
@@ -297,9 +300,9 @@ public class PinterestApi {
 			JSONObject res = root.getJSONObject("resource_response");
 			JSONObject data = res.getJSONObject("data");
 			pinId = data.getString("id");
-			Log.log("Response code from pin " + con.getResponseCode());
+			logger.log("Response code from pin " + con.getResponseCode());
 		} catch (Exception e) {
-			Log.log("Failed when pinning " + e.getMessage());
+			logger.log("Failed when pinning " + e.getMessage());
 			e.printStackTrace();
 		}
 		this.editPin(board, pinId, pin.getDescription(), pin.getSource());
@@ -328,11 +331,11 @@ public class PinterestApi {
 				wr.write(postData);
 			}
 			con.connect();
-			Log.log(user.getAccount().getUsername() + "  unfollowed  " + target.getUsername());
+			logger.log(user.getAccount().getUsername() + "  unfollowed  " + target.getUsername());
 			System.out.println("Response code from unfollow " + con.getResponseCode());
 			con.disconnect();
 		} catch (Exception e) {
-			Log.log("Failed when unfollowing " + e.getMessage());
+			logger.log("Failed when unfollowing " + e.getMessage());
 			e.printStackTrace();
 		}
 
@@ -441,9 +444,9 @@ public class PinterestApi {
 			}
 			con.connect();
 			this.getJsonResponse(con);
-			Log.log("Response code from edit " + con.getResponseCode());
+			logger.log("Response code from edit " + con.getResponseCode());
 		} catch (Exception e) {
-			Log.log("Failed on editing pin " + e.getMessage());
+			logger.log("Failed on editing pin " + e.getMessage());
 			e.printStackTrace();
 		}
 
@@ -454,7 +457,7 @@ public class PinterestApi {
 	}
 
 	public List<Pinner> getFollowList(int minListSize) {
-		Log.log("Will get " + minListSize);
+		logger.log("Will get " + minListSize);
 		List<Pinner> userFollowers = this.getFollowers(user.getAccount().getUsername(), WAVE_FOLLOW_USERS_NUM);
 		while (userFollowers.size() < WAVE_FOLLOW_USERS_NUM) {
 			List<Pinner> extraPinners = this.getPinnersByKeyword("fashion", WAVE_FOLLOW_USERS_NUM);
@@ -548,8 +551,8 @@ public class PinterestApi {
 
 	private Cookies login(PinterestAccount account) {
 		String url = "https://www.pinterest.com/login/";
-		Log.log("Logging in with user " + account.getEmail());
-		Log.log("Password is  " + account.getPassword());
+		logger.log("loggerging in with user " + account.getEmail());
+		logger.log("Password is  " + account.getPassword());
 		try {
 			URL requestUrl = new URL(url);
 			HttpURLConnection con = (HttpURLConnection) requestUrl.openConnection(proxy);
@@ -608,7 +611,7 @@ public class PinterestApi {
 				}
 			}
 			con.connect();
-			Log.log("Response code from login is   " + con.getResponseCode());
+			logger.log("Response code from login is   " + con.getResponseCode());
 			con.disconnect();
 
 			Cookie sessionCookie = getCookieFromString(sessionTokenStr);
@@ -622,7 +625,7 @@ public class PinterestApi {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		Log.log("FAILED TO LOGIN");
+		logger.log("FAILED TO LOGIN");
 		return null;
 	}
 
@@ -633,7 +636,7 @@ public class PinterestApi {
 	}
 
 	private String upload(String pathToImage) {
-		Log.log("Uploading image");
+		logger.log("Uploading image");
 		String image_url = "";
 		Cookies cookies = user.getCookies();
 		try {
@@ -668,11 +671,11 @@ public class PinterestApi {
 				writer.append("--" + boundary + "--").append(CRLF).flush();
 			}
 			con.connect();
-			Log.log("Response code form upload  " + con.getResponseCode());
+			logger.log("Response code form upload  " + con.getResponseCode());
 			JSONObject jsonObject = this.getJsonResponse(con);
 			image_url = jsonObject.getString("image_url");
 		} catch (Exception e) {
-			Log.log("Failed on upload  " + e.getMessage());
+			logger.log("Failed on upload  " + e.getMessage());
 			e.printStackTrace();
 		}
 		return image_url;
