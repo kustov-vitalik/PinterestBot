@@ -13,6 +13,7 @@ import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 
 import com.age.dataframes.AddAccountFrame;
+import com.age.dataframes.GeneratePinsDataFrame;
 import com.age.dataframes.ScrapeDataFrame;
 import com.age.pinterest.bot.PinBot;
 import com.age.pinterest.bot.Scheduler;
@@ -81,9 +82,9 @@ public class UI implements ActionListener, KeyListener {
 		} else if (e.getActionCommand().equals(scrapeButton.getText())) {
 			new ScrapeDataFrame(scrapeButton, scheduler);
 		} else if (e.getActionCommand().equals(genBasicPinsButton.getText())) {
-			// new GenerateBasicPinsFrame();
+			new GeneratePinsDataFrame(genBasicPinsButton, scheduler);
 		} else if (e.getActionCommand().equals(dashboard.getText())) {
-			new UserMatrix();
+			new UserDashboard();
 		}
 	}
 

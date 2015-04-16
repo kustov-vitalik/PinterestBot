@@ -14,18 +14,19 @@ public abstract class Task implements Runnable {
 	protected void sleep(long interval) {
 		logger.log(this.getType() + " task is sleeping");
 		long startTime = System.currentTimeMillis();
-		long waitTime = interval / (1000 * 2);
 		long passedTime = 0;
 		logger.log("Will wait " + TimeUnit.MILLISECONDS.toSeconds(interval - passedTime) + " seconds");
 		while (passedTime < interval) {
 			try {
-				Thread.sleep(waitTime * 1000);
+				Thread.sleep(1000);
 			} catch (InterruptedException e) {
 				logger.log("Wait was interupted");
 				e.printStackTrace();
 			}
 			passedTime = System.currentTimeMillis() - startTime;
-			logger.log("Will wait " + TimeUnit.MILLISECONDS.toSeconds(interval - passedTime) + " more seconds");
+			if (passedTime % 10000 == 0) {
+				logger.log("Will wait " + TimeUnit.MILLISECONDS.toSeconds(interval - passedTime) + " more seconds");
+			}
 		}
 	}
 

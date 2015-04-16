@@ -2,12 +2,12 @@ package com.age.pinterest.bot;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.net.URLEncoder;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 import org.json.JSONException;
-import org.mortbay.util.UrlEncoded;
 
 import com.age.data.Board;
 import com.age.data.Pin;
@@ -29,7 +29,7 @@ public class App {
 		}
 		for (String id : pinIds) {
 			Pin p = api.getPinInfo(id);
-			String descr = UrlEncoded.encodeString(p.getDescription(), "utf-8");
+			String descr = URLEncoder.encode(p.getDescription(), "utf-8");
 			String newId = api.repin(board, id, "");
 			api.editPin(board, newId, descr, "http://inspirationaldresses.com/");
 			Thread.sleep(1000 * 60 * 90);

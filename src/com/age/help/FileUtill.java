@@ -14,8 +14,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.age.ui.Log;
-
 public class FileUtill {
 
 	public static void saveToFile(String destination, String name, String content) throws FileNotFoundException {
@@ -35,10 +33,14 @@ public class FileUtill {
 		}
 	}
 
-	public static void appendToFile(String file, String content) throws IOException {
-		FileWriter fw = new FileWriter(file, true);
-		fw.write(content);
-		fw.close();
+	public static void appendToFile(String file, String content) {
+		try {
+			FileWriter fw = new FileWriter(file, true);
+			fw.write(content);
+			fw.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public static ArrayList<String> getAllFiles(String path) {
@@ -51,9 +53,14 @@ public class FileUtill {
 
 	}
 
-	public static String getFileContents(String path) throws IOException {
-		byte[] encoded = Files.readAllBytes(Paths.get(path));
-		return new String(encoded, "UTF-8");
+	public static String getFileContents(String path) {
+		try {
+			byte[] encoded = Files.readAllBytes(Paths.get(path));
+			return new String(encoded, "UTF-8");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return "";
 	}
 
 	public static ArrayList<String> getFileListContents(String root) throws IOException {

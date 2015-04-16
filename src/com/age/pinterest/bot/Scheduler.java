@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.age.param.AddAccountParam;
 import com.age.param.FollowParam;
+import com.age.param.GeneratePinsParam;
 import com.age.param.PinParam;
 import com.age.param.RefreshParam;
 import com.age.param.RepinParam;
@@ -12,6 +13,7 @@ import com.age.param.ScrapeParam;
 import com.age.param.UnfollowParam;
 import com.age.pinterest.task.AddAccountTask;
 import com.age.pinterest.task.FollowTask;
+import com.age.pinterest.task.GenerateBasicPinsTask;
 import com.age.pinterest.task.PinTask;
 import com.age.pinterest.task.RefreshUserTask;
 import com.age.pinterest.task.RepinTask;
@@ -53,6 +55,10 @@ public class Scheduler {
 
 	public void schedule(AddAccountParam add) {
 		this.startNewTask(new AddAccountTask(add));
+	}
+
+	public void schedule(GeneratePinsParam gen) {
+		this.startNewTask(new GenerateBasicPinsTask(gen));
 	}
 
 	@SuppressWarnings("deprecation")

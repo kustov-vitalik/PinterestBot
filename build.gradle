@@ -6,12 +6,18 @@ repositories {
     mavenCentral()
 }
 dependencies {
-    compile  'org.seleniumhq.selenium:selenium-java:2.44.0'
-	compile  'org.seleniumhq.selenium:selenium-server:2.0a2'
-	compile  'org.seleniumhq.selenium:selenium-firefox-driver:2.39.0'
-	compile  'org.json:json:20090211'
-	compile  'commons-io:commons-io:2.4'
-	compile  'org.codehaus.jackson:jackson-mapper-asl:1.8.5'
-	compile  'log4j:log4j:1.2.17'
-	compile  'org.jsoup:jsoup:1.7.2'
+
+  compile('org.seleniumhq.selenium:selenium-java:2.45.0') {
+    exclude group: 'org.seleniumhq.selenium', module: 'selenium-htmlunit-driver'
+    exclude group: 'org.seleniumhq.selenium', module: 'selenium-android-driver'
+    exclude group: 'org.seleniumhq.selenium', module: 'selenium-iphone-driver'
+    exclude group: 'org.seleniumhq.selenium', module: 'selenium-safari-driver'
+    exclude group: 'org.webbitserver', module: 'webbit'
+  }
+    compile  'org.json:json:20090211'
+    compile  'commons-io:commons-io:2.4'
+    compile  'org.codehaus.jackson:jackson-mapper-asl:1.8.5'
+    compile  'log4j:log4j:1.2.17'
+    compile  'org.jsoup:jsoup:1.7.2'
+    compile  'org.apache.commons:commons-lang3:3.0'
 }

@@ -8,7 +8,6 @@ import org.codehaus.jackson.map.ObjectMapper;
 
 import com.age.data.Pin;
 import com.age.help.BotPaths;
-import com.age.help.FileLogger;
 import com.age.help.FileUtill;
 import com.age.param.PinParam;
 import com.age.pinterest.api.PinterestApi;

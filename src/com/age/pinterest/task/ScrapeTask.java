@@ -24,7 +24,7 @@ import org.jsoup.nodes.Element;
 
 import com.age.help.BotPaths;
 import com.age.param.ScrapeParam;
-import com.age.ui.Log;
+import com.age.ui.LogConsole;
 
 public class ScrapeTask extends Task {
 	private final ScrapeParam scrapeParam;
@@ -34,7 +34,7 @@ public class ScrapeTask extends Task {
 		super("Scrape-" + scrapeParam.getKeyword());
 		this.scrapeParam = scrapeParam;
 		this.dowloadLocation = BotPaths.IMAGES_ROOT + scrapeParam.getTag();
-		new Log("Scrape-" + scrapeParam.getKeyword());
+		new LogConsole("Scrape-" + scrapeParam.getKeyword());
 	}
 
 	@Override
