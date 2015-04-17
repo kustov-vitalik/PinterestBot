@@ -1,5 +1,6 @@
 package com.age.pinterest.task;
 
+import java.util.Iterator;
 import java.util.List;
 
 import com.age.data.Pin;
@@ -20,24 +21,29 @@ public class RepinTask extends Task {
 
 	@Override
 	public void run() {
+		logger.log("Starting repin task for user " + repinParam.getUser());
+		logger.log("Keyword is " + repinParam.getKeyword());
 		PinterestApi api = new PinterestApi(repinParam.getUser());
 		List<String> pinIds = api.searchPins(repinParam.getKeyword(), repinParam.getRepinCount());
 		String pathToHistory = String.format(REPIN_HISTORY_FORMAT, repinParam.getUser().getAccount().getUsername());
 		String history = FileUtill.getFileContents(pathToHistory);
-		for (String id : pinIds) {
+		Iterator<String> iter = pinIds.iterator();
+		while (iter.hasNext()) {
+			String id = iter.next();
 			if (!history.contains(id)) {
-				 String newPinId = api.repin(repinParam.getBoard(), id, "");
-				 logger.log("Repining pin:  " + id);
-				 Pin pin = api.getPinInfo(id);
-				 api.editPin(repinParam.getBoard(), newPinId,
-				 pin.getDescription(), repinParam.getLink());
+				String newPinId = api.repin(repinParam.getBoard(), id, "");
+				logger.log("Repining pin:  " + id);
+				Pin pin = api.getPinInfo(id);
+				api.editPin(repinParam.getBoard(), newPinId, pin.getDescription(), repinParam.getLink());
 				FileUtill.appendToFile(pathToHistory, id + "\n");
-				 this.sleep(repinParam.getInterval());
-				this.sleep(2000);
+				this.sleep(repinParam.getInterval());
 			} else {
-				System.out.println("Skiping repin with id " + id);
+				logger.log("Skiping repin with id " + id);
 			}
+			iter.remove();
+			logger.log("Remaining repins " + pinIds.size());
 		}
+		logger.log("Repin task ended");
 	}
 
 	@Override

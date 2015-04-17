@@ -8,6 +8,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import com.age.help.BotPaths;
 import com.age.param.AddAccountParam;
 import com.age.pinterest.api.PinterestApi;
+import com.age.ui.UI;
 
 public class AddAccountTask extends Task {
 
@@ -20,6 +21,7 @@ public class AddAccountTask extends Task {
 
 	@Override
 	public void run() {
+		UI.syslog.log("Adding account " + addAccountParam.getAccount().getEmail());
 		PinterestApi api = new PinterestApi(addAccountParam.getAccount());
 		String root = BotPaths.USER_ROOT + addAccountParam.getAccount().getUsername();
 		File rootDir = new File(root);
@@ -30,8 +32,10 @@ public class AddAccountTask extends Task {
 		try {
 			mapper.writeValue(new File(rootDir, "user.json"), api.getManagedUser());
 		} catch (IOException e) {
-			e.printStackTrace();
+			UI.syslog.log("Failed to add account " + addAccountParam.getAccount().getEmail(), e);
 		}
+
+		UI.syslog.log("Account " + addAccountParam.getAccount().getEmail() + " was added");
 
 	}
 

@@ -8,7 +8,7 @@ import org.openqa.selenium.firefox.FirefoxProfile;
 import com.age.data.User;
 
 public class FirefoxUtil {
-	public static void startBrowser(User user) {
+	public static void startBrowser(final User user) {
 		new Thread(new Runnable() {
 
 			@Override
@@ -17,8 +17,8 @@ public class FirefoxUtil {
 				String password = user.getAccount().getPassword();
 				FirefoxProfile profile = new FirefoxProfile();
 				WebDriver driver = new FirefoxDriver(profile);
-				System.out.println("Loggin in with user " + email);
-				System.out.println("Password is " + password);
+				UI.syslog.log("Firefox: Loggin in with user " + email);
+				UI.syslog.log("Firefox: Password is " + password);
 				try {
 					driver.get("https://www.pinterest.com/login/");
 					while (driver.findElements(By.name("username_or_email")).size() <= 0) {
@@ -28,11 +28,9 @@ public class FirefoxUtil {
 					driver.findElement(By.name("password")).sendKeys(password);
 					driver.findElement(By.xpath("/html/body/div[1]/div[1]/div[1]/div/div/div/form/div[4]/div/button")).click();
 				} catch (Exception e) {
-					System.out.println("Failed to login");
-					e.printStackTrace();
+					UI.syslog.log("Firefox: Failed to login", e);
 				}
-				System.out.println("Logged as " + email);
-
+				UI.syslog.log("Firefox: Logged as " + email);
 			}
 		}).start();
 	}

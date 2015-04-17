@@ -25,6 +25,7 @@ import org.jsoup.nodes.Element;
 import com.age.help.BotPaths;
 import com.age.param.ScrapeParam;
 import com.age.ui.LogConsole;
+import com.age.ui.UI;
 
 public class ScrapeTask extends Task {
 	private final ScrapeParam scrapeParam;
@@ -41,21 +42,22 @@ public class ScrapeTask extends Task {
 	public void run() {
 		try {
 			ArrayList<String> images = new ArrayList<String>();
-			logger.log("Scraping for  " + scrapeParam.getKeyword());
+			UI.syslog.log("Scraping for  " + scrapeParam.getKeyword());
 			for (int i = 0; images.size() < scrapeParam.getCount(); i++) {
 				List<String> newImages = scrapeIndex(scrapeParam.getKeyword(), i);
 				if (newImages.isEmpty()) {
-					logger.log("No more images for " + scrapeParam.getKeyword() + "  got " + images.size());
+					UI.syslog.log("No more images for " + scrapeParam.getKeyword() + "  got " + images.size());
 					break;
 				}
 				images.addAll(scrapeIndex(scrapeParam.getKeyword(), i));
-				logger.log("Found  " + images.size() + " images.   Remaining  " + (scrapeParam.getCount() - images.size()));
+				UI.syslog.log("Found  " + images.size() + " images.   Remaining  " + (scrapeParam.getCount() - images.size()));
 			}
-			logger.log("Downloading images for " + scrapeParam.getKeyword());
+			UI.syslog.log("Downloading images for " + scrapeParam.getKeyword());
 			downloadAll(images);
 		} catch (Exception e) {
-
+			UI.syslog.log("Failed when scraping ", e);
 		}
+		UI.syslog.log("Scrape completed");
 	}
 
 	private List<String> scrapeIndex(String keywords, int index) throws IOException {
@@ -110,7 +112,7 @@ public class ScrapeTask extends Task {
 			imgType = "gif";
 		}
 		if (imgType.isEmpty()) {
-			logger.log("empty for   " + imgUrl);
+			UI.syslog.log("empty for   " + imgUrl);
 			return "";
 		}
 		imgUrl = imgUrl.substring(0, imgUrl.indexOf(imgType) + imgType.length());
@@ -128,14 +130,14 @@ public class ScrapeTask extends Task {
 				String imgDestination = this.cutImageUrl(str);
 				pool.submit(new DownloadCallable(imgDestination));
 			} catch (Exception e) {
-				logger.log("Failed to start download " + e.getMessage());
+				UI.syslog.log("Failed to start download", e);
 			}
 		}
 		pool.shutdown();
 		while (!pool.isTerminated()) {
 
 		}
-		logger.log("Scrape completed");
+		UI.syslog.log("Scrape completed");
 	}
 
 	private class DownloadCallable implements Callable<String> {
@@ -156,13 +158,12 @@ public class ScrapeTask extends Task {
 					File file = new File(dowloadLocation + "/" + System.currentTimeMillis() + r.nextInt() + ".png");
 					file.createNewFile();
 					ImageIO.write(image1, "png", file);
-					// Log.log("Downloaded " + imgDestination);
+					UI.syslog.log("Downloaded " + imgDestination);
 				}
 			} catch (Exception e) {
-				// Log.log("Failed to download:  " + imgDestination + "  " +
-				// e.getMessage());
+				UI.syslog.log("Failed to download:  " + imgDestination, e);
 			}
-			return "OK";
+			return "SCRAPE";
 		}
 
 	}

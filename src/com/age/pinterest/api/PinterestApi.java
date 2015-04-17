@@ -33,6 +33,7 @@ import com.age.data.Pin;
 import com.age.data.Pinner;
 import com.age.data.PinterestAccount;
 import com.age.data.User;
+import com.age.help.BotPaths;
 import com.age.help.FileLogger;
 
 public class PinterestApi {
@@ -44,13 +45,13 @@ public class PinterestApi {
 
 	public PinterestApi(PinterestAccount account) {
 		Validate.notNull(account);
-		logger = new FileLogger(account.getUsername());
+		logger = new FileLogger(BotPaths.LOGS + account.getUsername());
 		this.user = setUpUser(account);
 	}
 
 	public PinterestApi(User user) {
 		Validate.notNull(user);
-		logger = new FileLogger(user.getAccount().getUsername());
+		logger = new FileLogger(BotPaths.LOGS + user.getAccount().getUsername());
 		this.user = user;
 	}
 
@@ -80,7 +81,7 @@ public class PinterestApi {
 			logger.log("Response code from follow  " + con.getResponseCode());
 			con.disconnect();
 		} catch (Exception e) {
-			logger.log("Failed when following " + e.getMessage());
+			logger.log("Failed when following", e);
 		}
 
 	}
@@ -110,11 +111,11 @@ public class PinterestApi {
 				try {
 					boards.add(new Board(aBoard.getString("name"), aBoard.getString("id")));
 				} catch (Exception e) {
-					System.out.println("Some stupid bug in pinterest...");
+					logger.log("Some stupid bug in pinterest...");
 				}
 			}
 		} catch (Exception e) {
-			logger.log("Failed when getting boards " + e.getMessage());
+			logger.log("Failed when getting boards", e);
 		}
 		return boards;
 	}
@@ -125,7 +126,7 @@ public class PinterestApi {
 		logger.log("Getting unfollow list for  " + target);
 		while (!bookmark.equals("-end-")) {
 			// TODO make it use timer
-			if (resultList.size() % 10 == 0 && !resultList.isEmpty()) {
+			if (resultList.size() % 13 == 0 && !resultList.isEmpty()) {
 				logger.log("unfollow list size is " + resultList.size());
 			}
 			try {
@@ -162,7 +163,7 @@ public class PinterestApi {
 					}
 				}
 			} catch (Exception e) {
-				logger.log("Failed when getting followed " + e.getMessage());
+				logger.log("Failed when getting followed", e);
 			}
 		}
 		return resultList;
@@ -331,7 +332,7 @@ public class PinterestApi {
 			}
 			con.connect();
 			logger.log(user.getAccount().getUsername() + "  unfollowed  " + target.getUsername());
-			System.out.println("Response code from unfollow " + con.getResponseCode());
+			logger.log("Response code from unfollow " + con.getResponseCode());
 			con.disconnect();
 		} catch (Exception e) {
 			logger.log("Failed when unfollowing " + e.getMessage());
@@ -371,7 +372,7 @@ public class PinterestApi {
 				wr.write(postData);
 			}
 			con.connect();
-			System.out.println("Response code from repin  " + con.getResponseCode());
+			logger.log("Response code from repin  " + con.getResponseCode());
 			JSONObject root = this.getJsonResponse(con);
 			JSONObject response = root.getJSONObject("resource_response");
 			JSONObject data = response.getJSONObject("data");
@@ -420,8 +421,8 @@ public class PinterestApi {
 		}
 
 		Cookies cookies = user.getCookies();
-		String urlParams = UrlProvider.getEditPin(user.getAccount().getUsername(), board.getName(), board.getId(), description,
-				link, pinId);
+		String urlParams = UrlProvider
+				.getEditPin(user.getAccount().getUsername(), board.getName(), board.getId(), description, link, pinId);
 		try {
 			byte[] postData = urlParams.getBytes(Charset.forName("UTF-8"));
 			int len = postData.length;
@@ -511,7 +512,7 @@ public class PinterestApi {
 					CommonHeaders.addCommonHeaders(con);
 					con.setRequestProperty("Cookie", user.getCookies().toString());
 					JSONObject root = this.getJsonResponse(con);
-					System.out.println("Response from search " + con.getResponseCode());
+					logger.log("Response from search " + con.getResponseCode());
 					JSONObject response = root.getJSONObject("resource_response");
 					JSONArray data = response.getJSONArray("data");
 					for (int i = 0; i < data.length(); i++) {
@@ -532,8 +533,8 @@ public class PinterestApi {
 				break;
 			}
 		}
-		System.out.println("Processed " + pinCount);
-		System.out.println("Found " + pinIds.size() + " pins with more than  " + repinCount + " repins");
+		logger.log("Processed " + pinCount);
+		logger.log("Found " + pinIds.size() + " pins with more than  " + repinCount + " repins");
 		return pinIds;
 
 	}
@@ -684,7 +685,7 @@ public class PinterestApi {
 	private void printObject(JSONObject obj) {
 		Iterator iter = obj.keys();
 		while (iter.hasNext()) {
-			System.out.println(iter.next());
+			logger.log(iter.next());
 		}
 	}
 
@@ -737,7 +738,7 @@ public class PinterestApi {
 	private void printArray(JSONArray arr) {
 		try {
 			for (int i = 0; i < arr.length(); i++) {
-				System.out.println(arr.get(i).toString());
+				logger.log(arr.get(i).toString());
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

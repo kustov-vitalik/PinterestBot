@@ -10,7 +10,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
@@ -23,14 +22,15 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 import com.age.data.Pin;
+import com.age.ui.UI;
 
 public class InspirationalPinGenerator {
 	public static void main(String[] args) throws MalformedURLException, IOException, InterruptedException {
 		List<String> categories = Arrays.asList("casual", "wear-to-work", "special-occasion", "night-out-and-cocktail");
 
-		DescriptionGenerator generator = new DescriptionGenerator();
-		List<String> quotes = generator.getQuotes("dress");
-		Iterator<String> iter = quotes.iterator();
+		// DescriptionGenerator generator = new DescriptionGenerator();
+		// List<String> quotes = generator.getQuotes("dress");
+		// Iterator<String> iter = quotes.iterator();
 
 		ObjectMapper mapper = new ObjectMapper();
 		File root = new File("D:/pin");
@@ -39,17 +39,17 @@ public class InspirationalPinGenerator {
 			List<String> items = getItems(category);
 			int i = items.size();
 			for (String url : items) {
-				if (!iter.hasNext()) {
-					iter = quotes.iterator();
-				}
-				System.out.println("Remaining for " + category + "  " + i);
+				// if (!iter.hasNext()) {
+				// iter = quotes.iterator();
+				// }
+				UI.syslog.log("Remaining for " + category + "  " + i);
 				File subDir = new File(root, category);
 				subDir.mkdirs();
 				String imgUrl = getImageUrlForItem(url);
 				Pin pin = new Pin();
 				pin.setSource(url);
 				pin.setImage(downloadUrl(imgUrl, subDir));
-				pin.setDescription(iter.next());
+				// pin.setDescription(iter.next());
 				mapper.writeValue(new File(subDir, Long.toHexString(System.currentTimeMillis()) + ".json"), pin);
 				i--;
 			}
@@ -87,10 +87,10 @@ public class InspirationalPinGenerator {
 			try {
 				IOUtils.copy(con.getInputStream(), writer, "utf-8");
 			} catch (FileNotFoundException e) {
-				System.out.println("No more pages");
+				UI.syslog.log("No more pages");
 				return items;
 			}
-			System.out.println("Response from getn pin " + con.getResponseMessage());
+			UI.syslog.log("Response from get pin " + con.getResponseMessage());
 			con.disconnect();
 			String theString = writer.toString();
 			Document doc = Jsoup.parse(theString);
@@ -100,7 +100,7 @@ public class InspirationalPinGenerator {
 						if (sube.className().equals("kd_hp_item_image")) {
 							for (Element node : sube.children()) {
 								if (node.tagName().equals("a")) {
-									System.out.println(node.attr("href"));
+									UI.syslog.log(node.attr("href"));
 									items.add(node.attr("href"));
 								}
 							}
@@ -121,7 +121,7 @@ public class InspirationalPinGenerator {
 			file = new File(root, System.currentTimeMillis() + r.nextInt() + ".png");
 			file.createNewFile();
 			ImageIO.write(image1, "png", file);
-			System.out.println("Downloaded " + urlParam);
+			UI.syslog.log("Downloaded " + urlParam);
 		}
 		return file.getAbsolutePath();
 	}

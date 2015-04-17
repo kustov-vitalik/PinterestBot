@@ -19,6 +19,7 @@ public class RefreshUserTask extends Task {
 
 	@Override
 	public void run() {
+		logger.log("Refreshing " + refreshParam.getAccount().getEmail());
 		PinterestApi api = new PinterestApi(refreshParam.getAccount());
 		String rootPath = BotPaths.USER_ROOT + refreshParam.getAccount().getUsername();
 		ObjectMapper mapper = new ObjectMapper();
@@ -26,8 +27,10 @@ public class RefreshUserTask extends Task {
 		try {
 			mapper.writeValue(new File(rootDir, "user.json"), api.getManagedUser());
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.log("Failed to save user", e);
+			return;
 		}
+		logger.log("Refreshed user " + refreshParam.getAccount().getEmail());
 	}
 
 	@Override

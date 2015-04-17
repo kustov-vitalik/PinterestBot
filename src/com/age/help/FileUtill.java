@@ -35,6 +35,8 @@ public class FileUtill {
 
 	public static void appendToFile(String file, String content) {
 		try {
+			File f = new File(file);
+			f.createNewFile();
 			FileWriter fw = new FileWriter(file, true);
 			fw.write(content);
 			fw.close();
@@ -58,7 +60,7 @@ public class FileUtill {
 			byte[] encoded = Files.readAllBytes(Paths.get(path));
 			return new String(encoded, "UTF-8");
 		} catch (IOException e) {
-			e.printStackTrace();
+			// swallow since it only show there are no logs.
 		}
 		return "";
 	}

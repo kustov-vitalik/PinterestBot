@@ -2,13 +2,14 @@ package com.age.pinterest.task;
 
 import java.util.concurrent.TimeUnit;
 
+import com.age.help.BotPaths;
 import com.age.help.FileLogger;
 
 public abstract class Task implements Runnable {
 	protected final FileLogger logger;
 
 	protected Task(String pathToLog) {
-		logger = new FileLogger(pathToLog);
+		logger = new FileLogger(BotPaths.LOGS + pathToLog);
 	}
 
 	protected void sleep(long interval) {

@@ -25,6 +25,7 @@ public abstract class DataFrame extends JFrame implements ActionListener {
 		this.add(panel);
 		this.setLocationRelativeTo(null);
 		this.setVisible(true);
+		this.setResizable(false);
 	}
 
 	protected void trunOffBtn() {

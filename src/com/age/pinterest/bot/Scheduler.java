@@ -21,6 +21,7 @@ import com.age.pinterest.task.ScrapeTask;
 import com.age.pinterest.task.Task;
 import com.age.pinterest.task.TaskType;
 import com.age.pinterest.task.UnFollowTask;
+import com.age.ui.UI;
 
 public class Scheduler {
 	List<Thread> tasks;
@@ -65,7 +66,7 @@ public class Scheduler {
 	public void terminateTask(TaskType type) {
 		Thread task = checkForTask(type);
 		if (task != null) {
-			System.out.println("Terminating " + type.toString());
+			UI.syslog.log("Terminating " + type.toString());
 			task.stop();
 			tasks.remove(task);
 		}

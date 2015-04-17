@@ -1,5 +1,6 @@
 package com.age.pinterest.task;
 
+import java.util.Iterator;
 import java.util.List;
 
 import com.age.data.Pinner;
@@ -25,15 +26,20 @@ public class FollowTask extends Task {
 		String pathToHistory = String.format(FOLLOW_HISTORY_PATH, followParam.getUser().getAccount().getUsername());
 		String history = FileUtill.getFileContents(pathToHistory);
 		List<Pinner> followList = api.getFollowList(followParam.getSize());
-		for (Pinner p : followList) {
+		Iterator<Pinner> iter = followList.iterator();
+		while (iter.hasNext()) {
+			Pinner p = iter.next();
 			if (!history.contains(p.getId())) {
 				api.follow(p);
 				FileUtill.appendToFile(pathToHistory, p.getId() + "\n");
 				this.sleep(followParam.getInterval());
 			} else {
-				System.out.println("Sciping user with id " + p.getId());
+				logger.log("Sciping user with id " + p.getId());
 			}
+			iter.remove();
+			logger.log("Remaining to follow " + followList.size());
 		}
+		logger.log("Follow Task ended");
 	}
 
 	@Override
