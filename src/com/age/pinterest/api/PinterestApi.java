@@ -478,6 +478,7 @@ public class PinterestApi {
 		List<String> pinIds = new ArrayList<String>();
 		String bookmark = "";
 		int pinCount = 0;
+		logger.log("Searching for pins related to  " + keyword);
 		while (true) {
 			try {
 				if (bookmark.isEmpty()) {
@@ -512,7 +513,6 @@ public class PinterestApi {
 					CommonHeaders.addCommonHeaders(con);
 					con.setRequestProperty("Cookie", user.getCookies().toString());
 					JSONObject root = this.getJsonResponse(con);
-					logger.log("Response from search " + con.getResponseCode());
 					JSONObject response = root.getJSONObject("resource_response");
 					JSONArray data = response.getJSONArray("data");
 					for (int i = 0; i < data.length(); i++) {
