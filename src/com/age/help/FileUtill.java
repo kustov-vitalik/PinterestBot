@@ -90,4 +90,18 @@ public class FileUtill {
 		writer.close();
 	}
 
+	public static boolean searchFile(String path, String searched) {
+		try (BufferedReader br = new BufferedReader(new FileReader(path))) {
+			String line;
+			while ((line = br.readLine()) != null) {
+				if (searched.equals(line)) {
+					return true;
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
 }

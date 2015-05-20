@@ -55,6 +55,7 @@ public class PinBot {
 		}
 		return new User();
 	}
+	
 
 	public static UserConfig getUserConfig(String user) throws JsonParseException, JsonMappingException, IOException {
 		ObjectMapper mapper = new ObjectMapper();

@@ -26,11 +26,10 @@ public class RepinTask extends Task {
 		PinterestApi api = new PinterestApi(repinParam.getUser());
 		List<String> pinIds = api.searchPins(repinParam.getKeyword(), repinParam.getRepinCount());
 		String pathToHistory = String.format(REPIN_HISTORY_FORMAT, repinParam.getUser().getAccount().getUsername());
-		String history = FileUtill.getFileContents(pathToHistory);
 		Iterator<String> iter = pinIds.iterator();
 		while (iter.hasNext()) {
 			String id = iter.next();
-			if (!history.contains(id)) {
+			if (!FileUtill.searchFile(pathToHistory, id)) {
 				String newPinId = api.repin(repinParam.getBoard(), id, "");
 				logger.log("Repining pin:  " + id);
 				Pin pin = api.getPinInfo(id);

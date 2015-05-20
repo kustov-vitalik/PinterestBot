@@ -24,12 +24,11 @@ public class FollowTask extends Task {
 	public void run() {
 		PinterestApi api = new PinterestApi(followParam.getUser());
 		String pathToHistory = String.format(FOLLOW_HISTORY_PATH, followParam.getUser().getAccount().getUsername());
-		String history = FileUtill.getFileContents(pathToHistory);
 		List<Pinner> followList = api.getFollowList(followParam.getSize());
 		Iterator<Pinner> iter = followList.iterator();
 		while (iter.hasNext()) {
 			Pinner p = iter.next();
-			if (!history.contains(p.getId())) {
+			if (!FileUtill.searchFile(pathToHistory ,p.getId())) {
 				api.follow(p);
 				FileUtill.appendToFile(pathToHistory, p.getId() + "\n");
 				this.sleep(followParam.getInterval());
