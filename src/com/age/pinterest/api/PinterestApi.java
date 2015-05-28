@@ -35,6 +35,7 @@ import com.age.data.PinterestAccount;
 import com.age.data.User;
 import com.age.help.BotPaths;
 import com.age.help.FileLogger;
+import com.google.gson.JsonObject;
 
 public class PinterestApi {
 	private static final int WAVE_FOLLOW_USERS_NUM = 20;
@@ -452,6 +453,30 @@ public class PinterestApi {
 
 	}
 
+	public void listPins(Board board) {
+		try {
+			String req = "https://www.pinterest.com/" + this.getManagedUser().getAccount().getUsername() + "/" + board.getName() + "/";
+			HttpsURLConnection con = (HttpsURLConnection) new URL(req).openConnection();
+			CommonHeaders.addCommonHeaders(con);
+			con.setRequestMethod("GET");
+			JSONObject jsonObject = this.getJsonResponse(con);
+			// printObject(jsonObject);
+			JSONObject module = jsonObject.getJSONObject("module");
+			// printObject(module);
+			JSONObject tree = module.getJSONObject("tree");
+			printObject(tree);
+			JSONArray children=tree.getJSONArray("children");
+			System.out.println(children);
+			// JSONObject resp=jsonObject.getJSONObject("resource_response");
+			// System.out.println(resp);
+			// JSONArray data=resp.getJSONArray("data");
+			// printArray(data);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+
 	public User getManagedUser() {
 		return this.user;
 	}
@@ -681,14 +706,6 @@ public class PinterestApi {
 		return image_url;
 	}
 
-	@SuppressWarnings({ "unused", "rawtypes" })
-	private void printObject(JSONObject obj) {
-		Iterator iter = obj.keys();
-		while (iter.hasNext()) {
-			logger.log(iter.next());
-		}
-	}
-
 	private JSONObject getJsonResponse(HttpsURLConnection con) {
 		Validate.notNull(con);
 		JSONObject json = null;
@@ -742,6 +759,14 @@ public class PinterestApi {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+		}
+	}
+
+	@SuppressWarnings({ "unused", "rawtypes" })
+	private void printObject(JSONObject obj) {
+		Iterator iter = obj.keys();
+		while (iter.hasNext()) {
+			logger.log(iter.next());
 		}
 	}
 }

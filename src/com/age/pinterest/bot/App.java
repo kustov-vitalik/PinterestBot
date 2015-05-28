@@ -7,18 +7,12 @@ import java.security.NoSuchAlgorithmException;
 
 import org.json.JSONException;
 
-import com.age.help.FileUtill;
+import com.age.data.Board;
+import com.age.data.PinterestAccount;
+import com.age.pinterest.api.PinterestApi;
 
 public class App {
 	public static void main(String[] args) throws InterruptedException, IOException, JSONException, KeyManagementException,
 			NoSuchAlgorithmException, URISyntaxException {
-
-		String history = "c:\\h.txt";
-		String pinId = "someId";
-		boolean b= FileUtill.searchFile(history, pinId);
-//		String content = FileUtill.getFileContents(history);
-		System.out.println(b);
-		Thread.sleep(1000 * 60 * 69);
-		// System.out.println(hist);
 	}
 }
